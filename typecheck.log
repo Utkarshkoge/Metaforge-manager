@@ -1,0 +1,56 @@
+
+> typecheck
+> react-router typegen && tsc --noEmit
+
+app/routes/app._index.tsx(312,49): error TS2322: Type '{ children: string; variant: "headingMd"; as: "h2"; textAlign: string; }' is not assignable to type 'IntrinsicAttributes & TextProps'.
+  Property 'textAlign' does not exist on type 'IntrinsicAttributes & TextProps'.
+app/routes/app._index.tsx(316,53): error TS2322: Type '{ children: string; variant: "bodyMd"; tone: "subdued"; textAlign: string; }' is not assignable to type 'IntrinsicAttributes & TextProps'.
+  Property 'textAlign' does not exist on type 'IntrinsicAttributes & TextProps'.
+app/routes/app._index.tsx(347,19): error TS2322: Type '"border-subdued"' is not assignable to type '"transparent" | ColorBorderAlias | undefined'.
+app/routes/app._index.tsx(352,23): error TS2322: Type '"bg-surface-critical-subdued" | "bg-surface-secondary"' is not assignable to type 'ColorBackgroundAlias | undefined'.
+  Type '"bg-surface-critical-subdued"' is not assignable to type 'ColorBackgroundAlias | undefined'. Did you mean '"bg-surface-critical"'?
+app/routes/app._index.tsx(369,25): error TS2322: Type '"default" | "critical"' is not assignable to type 'Tone | undefined'.
+  Type '"default"' is not assignable to type 'Tone | undefined'.
+app/routes/app._index.tsx(465,23): error TS2322: Type '"bg-surface-info-subdued"' is not assignable to type 'ColorBackgroundAlias | undefined'.
+app/routes/app.add-tags.tsx(741,46): error TS2322: Type '{ children: Element[]; align: "space-between"; verticalAlign: string; }' is not assignable to type 'IntrinsicAttributes & InlineStackProps'.
+  Property 'verticalAlign' does not exist on type 'IntrinsicAttributes & InlineStackProps'.
+app/routes/app.add-tags.tsx(820,19): error TS2322: Type '"border-subdued"' is not assignable to type '"transparent" | ColorBorderAlias | undefined'.
+app/routes/app.add-tags.tsx(825,23): error TS2322: Type '"bg-surface-critical-subdued" | "bg-surface-secondary"' is not assignable to type 'ColorBackgroundAlias | undefined'.
+  Type '"bg-surface-critical-subdued"' is not assignable to type 'ColorBackgroundAlias | undefined'. Did you mean '"bg-surface-critical"'?
+app/routes/app.add-tags.tsx(842,25): error TS2322: Type '"default" | "critical"' is not assignable to type 'Tone | undefined'.
+  Type '"default"' is not assignable to type 'Tone | undefined'.
+app/routes/app.export-data.tsx(89,19): error TS2339: Property 'errors' does not exist on type 'FetchResponseBody<any>'.
+app/routes/app.export-data.tsx(89,33): error TS2339: Property 'errors' does not exist on type 'FetchResponseBody<any>'.
+app/routes/app.export-data.tsx(309,17): error TS2322: Type '{ children: Element; sectioned: true; }' is not assignable to type 'IntrinsicAttributes & CardProps'.
+  Property 'sectioned' does not exist on type 'IntrinsicAttributes & CardProps'.
+app/routes/app.export-data.tsx(374,23): error TS2322: Type '{ children: Element; subdued: true; }' is not assignable to type 'IntrinsicAttributes & CardProps'.
+  Property 'subdued' does not exist on type 'IntrinsicAttributes & CardProps'.
+app/routes/app.metafield-manage.tsx(77,31): error TS2538: Type 'File' cannot be used as an index type.
+app/routes/app.metafield-manage.tsx(77,31): error TS2538: Type 'null' cannot be used as an index type.
+app/routes/app.metafield-manage.tsx(116,9): error TS2345: Argument of type 'FormDataEntryValue | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.
+app/routes/app.metafield-manage.tsx(143,9): error TS2345: Argument of type 'FormDataEntryValue | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.
+app/routes/app.metafield-manage.tsx(1333,9): error TS2554: Expected 2 arguments, but got 1.
+app/routes/app.metafield-manage.tsx(1753,46): error TS2322: Type '{ children: Element[]; align: "space-between"; verticalAlign: string; }' is not assignable to type 'IntrinsicAttributes & InlineStackProps'.
+  Property 'verticalAlign' does not exist on type 'IntrinsicAttributes & InlineStackProps'.
+app/routes/app.metafield-manage.tsx(1877,19): error TS2322: Type '"border-subdued"' is not assignable to type '"transparent" | ColorBorderAlias | undefined'.
+app/routes/app.metafield-manage.tsx(1882,23): error TS2322: Type '"bg-surface-critical-subdued" | "bg-surface-secondary"' is not assignable to type 'ColorBackgroundAlias | undefined'.
+  Type '"bg-surface-critical-subdued"' is not assignable to type 'ColorBackgroundAlias | undefined'. Did you mean '"bg-surface-critical"'?
+app/routes/app.metafield-manage.tsx(1899,25): error TS2322: Type '"default" | "critical"' is not assignable to type 'Tone | undefined'.
+  Type '"default"' is not assignable to type 'Tone | undefined'.
+app/routes/app.metafield-manage.tsx(2194,57): error TS2339: Property 'name' does not exist on type 'string | { name: string; }'.
+  Property 'name' does not exist on type 'string'.
+app/routes/app.metafield-manage.tsx(2296,30): error TS2322: Type 'number' is not assignable to type 'string'.
+app/routes/app.remove-tags.tsx(850,46): error TS2322: Type '{ children: Element[]; align: "space-between"; verticalAlign: string; }' is not assignable to type 'IntrinsicAttributes & InlineStackProps'.
+  Property 'verticalAlign' does not exist on type 'IntrinsicAttributes & InlineStackProps'.
+app/routes/app.remove-tags.tsx(944,19): error TS2322: Type '"border-subdued"' is not assignable to type '"transparent" | ColorBorderAlias | undefined'.
+app/routes/app.remove-tags.tsx(949,23): error TS2322: Type '"bg-surface-critical-subdued" | "bg-surface-secondary"' is not assignable to type 'ColorBackgroundAlias | undefined'.
+  Type '"bg-surface-critical-subdued"' is not assignable to type 'ColorBackgroundAlias | undefined'. Did you mean '"bg-surface-critical"'?
+app/routes/app.remove-tags.tsx(966,25): error TS2322: Type '"default" | "critical"' is not assignable to type 'Tone | undefined'.
+  Type '"default"' is not assignable to type 'Tone | undefined'.
+app/routes/app.tsx(112,9): error TS2339: Property 's-app-nav' does not exist on type 'JSX.IntrinsicElements'.
+app/routes/app.tsx(117,9): error TS2339: Property 's-app-nav' does not exist on type 'JSX.IntrinsicElements'.
+app/routes/webhooks.app.subscriptions.update.tsx(22,32): error TS18048: 'admin' is possibly 'undefined'.
+app/routes/webhooks.app.subscriptions.update.tsx(78,13): error TS2322: Type 'string | null' is not assignable to type 'string | StringFieldUpdateOperationsInput | undefined'.
+  Type 'null' is not assignable to type 'string | StringFieldUpdateOperationsInput | undefined'.
