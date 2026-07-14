@@ -80,6 +80,8 @@ export async function action({ request }: ActionFunctionArgs) {
     // REMOVE ALL METAFIELDS (PAGINATED)
     if (mode === "removeMetafield") {
       const cursor: any = formData.get("cursor") || null;
+      const limitVal = formData.get("limit");
+      const limit = limitVal ? parseInt(String(limitVal), 10) : 200;
 
       const payload = await removeAllMetafields(
         admin,
@@ -87,6 +89,7 @@ export async function action({ request }: ActionFunctionArgs) {
         namespace,
         key,
         cursor,
+        limit,
       );
 
       return { success: true, payload };
@@ -312,11 +315,13 @@ export default function MetafieldManage() {
   const [hasSearched, setHasSearched] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [manualLoading, setManualLoading] = useState(false);
-  const loading = !isSubmitting && (isDeleting || (fetcher.state === "submitting" || manualLoading));
+  const isFetchingPagination = fetcher.state === "submitting" && fetcher.formData?.get("mode") === "getPaginationInfo";
+  const loading = !isSubmitting && (isDeleting || ((fetcher.state === "submitting" && !isFetchingPagination) || manualLoading));
   const [showInfo, setshowInfo] = useState("");
   const [showInfoMeta, setshowInfoMeta] = useState(false);
   const lastProcessedRef = useRef<any>(null);
   const hasUpdatedLimitRef = useRef(false);
+  const isFetchingPaginationInfoRef = useRef(false);
 
   // Pagination states for Remove All
   const [paginationInfo, setPaginationInfo] = useState<{
@@ -483,6 +488,10 @@ export default function MetafieldManage() {
     setCsvData(0);
     setManualLoading(true);
     setHasSearched(false);
+    setPaginationInfo(null);
+    setSelectedBatch(null);
+    setLoadingPagination(false);
+    isFetchingPaginationInfoRef.current = false;
   };
 
   const handleMetafieldSelection = (m: MetafieldDefinition) => {
@@ -496,6 +505,10 @@ export default function MetafieldManage() {
     setCurrentIndex(0);
     setAccumulatedResults([]);
     setFileName(null);
+    setPaginationInfo(null);
+    setSelectedBatch(null);
+    setLoadingPagination(false);
+    isFetchingPaginationInfoRef.current = false;
   };
 
   const handleCsvInput = useCallback(async (_dropFiles: File[], acceptedFiles: File[], _rejectedFiles: File[]) => {
@@ -842,6 +855,16 @@ export default function MetafieldManage() {
     });
   }
 
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    if (loadingPagination) {
+      setLoadingPagination(false);
+      setPaginationInfo(null);
+      setSelectedBatch(null);
+      isFetchingPaginationInfoRef.current = false;
+    }
+  };
+
   const confirmDelete = () => {
     if (!selectedMetafield) {
       setAlert({ active: true, title: "Selection Required", message: "Select a metafield!", tone: 'critical' });
@@ -862,6 +885,13 @@ export default function MetafieldManage() {
       }
 
       setModalOpen(true);
+
+      // If we already have the paginationInfo loaded, use it!
+      if (paginationInfo) {
+        setLoadingPagination(false);
+        return;
+      }
+
       setLoadingPagination(true);
       setPaginationInfo(null);
       setSelectedBatch(null);
@@ -869,6 +899,7 @@ export default function MetafieldManage() {
       const formData = new FormData();
       formData.append("mode", "getPaginationInfo");
       formData.append("objectType", objectType);
+      isFetchingPaginationInfoRef.current = true;
       fetcher.submit(formData, { method: "post" });
       return;
     }
@@ -898,11 +929,14 @@ export default function MetafieldManage() {
     if (removeMode === "all") {
       setIsDeleting(true);
       setBatchProcessedCount(0);
+      const batchSize = selectedBatch ? (selectedBatch.end - selectedBatch.start + 1) : 5000;
+      const initialLimit = Math.min(200, batchSize);
       const formData = new FormData();
       formData.append("mode", "removeMetafield");
       formData.append("objectType", objectType);
       formData.append("namespace", selectedMetafield?.namespace || "");
       formData.append("key", selectedMetafield?.key || "");
+      formData.append("limit", String(initialLimit));
       if (selectedBatch && selectedBatch.cursor) {
         formData.append("cursor", selectedBatch.cursor);
       }
@@ -995,6 +1029,11 @@ export default function MetafieldManage() {
 
       // Handle pagination info response
       if (data?.success && data?.payload && 'pages' in data.payload) {
+        if (!isFetchingPaginationInfoRef.current) {
+          // The request was cancelled! Do not set pagination info.
+          return;
+        }
+        isFetchingPaginationInfoRef.current = false;
         setPaginationInfo(data.payload);
         setLoadingPagination(false);
         if (data.payload.pages.length > 0) {
@@ -1112,12 +1151,14 @@ export default function MetafieldManage() {
         }
 
         if (hasMore && nextCursor && newProcessedCount < batchSize) {
+          const nextLimit = Math.min(200, batchSize - newProcessedCount);
           const formData = new FormData();
           formData.append("mode", "removeMetafield");
           formData.append("objectType", objectType);
           formData.append("namespace", selectedMetafield?.namespace || "");
           formData.append("key", selectedMetafield?.key || "");
           formData.append("cursor", nextCursor);
+          formData.append("limit", String(nextLimit));
           fetcher.submit(formData, { method: "post" });
         } else {
           setProgress(100);
@@ -1658,6 +1699,10 @@ export default function MetafieldManage() {
     setSpecificField("Id");
     setResourceCount(0);
     setAlert(prev => ({ ...prev, active: false }));
+    setPaginationInfo(null);
+    setSelectedBatch(null);
+    setLoadingPagination(false);
+    isFetchingPaginationInfoRef.current = false;
   }, [removeMode]);
 
   useEffect(() => {
@@ -2229,15 +2274,13 @@ export default function MetafieldManage() {
                     </InlineStack>
 
                     {/* Modes */}
-
-
                     <ChoiceList
                       title="Operation Mode"
                       choices={(typeof selectedMetafield?.type === 'string' ? selectedMetafield.type : selectedMetafield?.type?.name) === 'file_reference' ? [
-                        { label: 'Global Deletion (Remove from starting 5000 items)', value: 'all' }] :
+                        { label: 'Global Deletion (from 5000 records at a time)', value: 'all' }] :
                         [
-                          { label: 'Global Deletion (Remove from starting 5000 items)', value: 'all' },
-                          { label: 'Targeted Removal (Remove from CSV list)', value: 'specific' },
+                          { label: 'Global Deletion (from 5000 records at a time)', value: 'all' },
+                          { label: 'Targeted Removal (from CSV)', value: 'specific' },
                           { label: 'Bulk Update (Update/Add via CSV)', value: 'update' }
                         ]}
                       selected={[removeMode]}
@@ -2430,7 +2473,7 @@ export default function MetafieldManage() {
 
       <Modal
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={handleCloseModal}
         title={removeMode === "update" ? "Confirm Metafield Update" : "Confirm Metafield Deletion"}
         primaryAction={{
           content: removeMode === "update" ? "Update" : "Delete",
@@ -2438,7 +2481,7 @@ export default function MetafieldManage() {
           destructive: removeMode !== 'update',
           disabled: removeMode === "all" && (loadingPagination || !paginationInfo || !selectedBatch),
         }}
-        secondaryActions={[{ content: "Cancel", onAction: () => setModalOpen(false) }]}
+        secondaryActions={[{ content: "Cancel", onAction: handleCloseModal }]}
       >
         <Modal.Section>
           {removeMode === "all" ? (
@@ -2446,13 +2489,13 @@ export default function MetafieldManage() {
               <BlockStack align="center" inlineAlign="center" gap="200">
                 <Spinner size="large" />
                 <Text as="p" tone="subdued">
-                  Loading total counts and pagination cursors...
+                  Loading total counts and pages..
                 </Text>
               </BlockStack>
             ) : paginationInfo ? (
               <BlockStack gap="400">
                 <Text as="p">
-                  This metafield will be deleted across the selected 5,000-record batch.
+                  This metafield will be deleted across the selected 5,000 records/pages.
                 </Text>
                 <Text as="p">
                   Total {specificField}s: <Text as="span" fontWeight="bold">{paginationInfo.totalCount.toLocaleString()}</Text>
@@ -2477,9 +2520,6 @@ export default function MetafieldManage() {
                             <BlockStack gap="100">
                               <Text as="span" variant="bodyMd" fontWeight={isSelected ? "bold" : "regular"}>
                                 Page {item.page} (Records {item.start.toLocaleString()} - {item.end.toLocaleString()})
-                              </Text>
-                              <Text as="span" variant="bodySm" tone="subdued">
-                                {item.cursor ? `Starts after cursor: ${item.cursor.substring(0, 15)}...` : "Starts from the beginning"}
                               </Text>
                             </BlockStack>
                             {isSelected && (

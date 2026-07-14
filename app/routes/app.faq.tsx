@@ -187,6 +187,13 @@ export default function FaqPage() {
             </p>
           </div>
 
+          <div className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200 text-sm">
+            <Database className="w-5 h-5 text-gray-600 mt-0.5 shrink-0" />
+            <p>
+              <strong>Global Removal Limit:</strong> Maximum <strong>5,000 resource entries</strong> can be processed at a time. If more entries are available, you can continue removing from the subsequent 5,000-entries.
+            </p>
+          </div>
+
           <div className="flex items-start gap-3 bg-red-50 p-3 rounded-lg border border-red-100 text-sm">
             <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 shrink-0" />
             <p className="text-red-900 font-medium">

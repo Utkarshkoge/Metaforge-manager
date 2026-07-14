@@ -109,6 +109,11 @@ const TagMetafieldManagerFAQ: React.FC = () => {
                             must be split into multiple files.
                         </p>
 
+                        <h3 style={styles.h3}>Global Removal Limit</h3>
+                        <p style={styles.p}>
+                            Maximum <strong style={styles.strong}>5,000 resource entries</strong> can be processed at a time. If more entries are available, you can continue removing from the subsequent 5,000-entries.
+                        </p>
+
                         <h3 style={styles.h3}>Important</h3>
                         <p style={styles.p}>
                             Keep the app tab open while an operation is running. Refreshing the page,

@@ -70,12 +70,18 @@ export async function fetchResourceCount(admin: any, resource: keyof typeof coun
 }
 
 /* ------------------ FETCH ONE PAGE OF RESOURCE ITEMS ------------------ */
-export async function fetchAllItemIds(admin: any, resource: any, cursor: string | null = null) {
+export async function fetchAllItemIds(
+  admin: any,
+  resource: any,
+  cursor: string | null = null,
+  limit: number = 200,
+) {
   const count = await fetchResourceCount(admin, resource);
+  const connectionName = resource === "blog" ? "blogs" : resource;
 
   const query = `
-    query ($cursor: String) {
-      ${resource}(first: 50, after: $cursor) {
+    query ($cursor: String, $first: Int!) {
+      ${connectionName}(first: $first, after: $cursor) {
         edges {
           cursor
           node { id }
@@ -85,9 +91,9 @@ export async function fetchAllItemIds(admin: any, resource: any, cursor: string 
     }
   `;
 
-  const res = await admin.graphql(query, { variables: { cursor } });
+  const res = await admin.graphql(query, { variables: { cursor, first: limit } });
   const json = await res.json();
-  const data = json?.data?.[resource];
+  const data = json?.data?.[connectionName];
 
   if (!data) {
     return {
@@ -116,8 +122,9 @@ export async function removeAllMetafields(
   namespace: string,
   key: string,
   cursor: string | null = null,
+  limit: number = 200,
 ) {
-  const page = await fetchAllItemIds(admin, resource, cursor);
+  const page = await fetchAllItemIds(admin, resource, cursor, limit);
 
   const metafields = page.items.map((item: any) => ({
     ownerId: item.id,
@@ -690,80 +697,149 @@ export async function removeSpecificMetafield(
 }
 
 export async function deleteMetafields(admin: any, metafields: any[]) {
-  const results = [];
+  if (!metafields || metafields.length === 0) {
+    return [];
+  }
 
-  const checkQuery = `
-    query ($ownerId: ID!, $namespace: String!, $key: String!) {
-      node(id: $ownerId) {
-        ... on HasMetafields {
-          metafield(namespace: $namespace, key: $key) {
-            id
-            namespace
-            key
-            type
-            value
+  const results: any[] = [];
+  const chunkSize = 200;
+
+  for (let i = 0; i < metafields.length; i += chunkSize) {
+    const chunk = metafields.slice(i, i + chunkSize);
+
+    const ownerIds = chunk.map((mf) => mf.ownerId);
+    const namespace = chunk[0].namespace;
+    const key = chunk[0].key;
+
+    const checkQuery = `
+      query GetNodesMetafields($ids: [ID!]!, $namespace: String!, $key: String!) {
+        nodes(ids: $ids) {
+          id
+          ... on HasMetafields {
+            metafield(namespace: $namespace, key: $key) {
+              id
+              namespace
+              key
+              type
+              value
+            }
+          }
+        }
+      }
+    `;
+
+    let nodesData: any[] = [];
+    try {
+      const checkRes = await admin.graphql(checkQuery, {
+        variables: { ids: ownerIds, namespace, key },
+      });
+      const checkJson = await checkRes.json();
+      nodesData = checkJson?.data?.nodes ?? [];
+    } catch (e: any) {
+      for (const mf of chunk) {
+        results.push({
+          id: mf.ownerId,
+          success: false,
+          errors: `Failed to fetch metafield presence: ${e.message}`,
+          data: null,
+        });
+      }
+      continue;
+    }
+
+    const nodeStatusMap: Record<string, { present: boolean; data?: any }> = {};
+    for (const ownerId of ownerIds) {
+      nodeStatusMap[ownerId] = { present: false };
+    }
+
+    const presentMetafieldsToDelete: any[] = [];
+    for (const node of nodesData) {
+      if (node && node.metafield) {
+        nodeStatusMap[node.id] = {
+          present: true,
+          data: {
+            ownerId: node.id,
+            namespace: node.metafield.namespace,
+            key: node.metafield.key,
+            metafieldId: node.metafield.id,
+            type: node.metafield.type,
+            value: node.metafield.value,
+          },
+        };
+        presentMetafieldsToDelete.push({
+          ownerId: node.id,
+          namespace: node.metafield.namespace,
+          key: node.metafield.key,
+        });
+      }
+    }
+
+    for (const mf of chunk) {
+      if (!nodeStatusMap[mf.ownerId].present) {
+        results.push({
+          id: mf.ownerId,
+          success: false,
+          errors: "Metafield value is not present",
+          data: null,
+        });
+      }
+    }
+
+    if (presentMetafieldsToDelete.length > 0) {
+      const deleteQuery = `
+        mutation MetafieldsDelete($metafields: [MetafieldIdentifierInput!]!) {
+          metafieldsDelete(metafields: $metafields) {
+            deletedMetafields { ownerId namespace key }
+            userErrors { field message }
+          }
+        }
+      `;
+
+      try {
+        const deleteRes = await admin.graphql(deleteQuery, {
+          variables: { metafields: presentMetafieldsToDelete },
+        });
+        const deleteJson = await deleteRes.json();
+        const deleted = deleteJson?.data?.metafieldsDelete?.deletedMetafields ?? [];
+        const userErrors = deleteJson?.data?.metafieldsDelete?.userErrors ?? [];
+
+        const deletedOwnerIds = new Set<string>();
+        for (const item of deleted) {
+          if (item && item.ownerId) {
+            deletedOwnerIds.add(item.ownerId);
+          }
+        }
+
+        const errorsString = userErrors.length
+          ? userErrors.map((e: any) => e.message).join(", ")
+          : "Failed to delete";
+
+        for (const mf of chunk) {
+          if (nodeStatusMap[mf.ownerId].present) {
+            const isDeleted = deletedOwnerIds.has(mf.ownerId);
+            results.push({
+              id: mf.ownerId,
+              success: isDeleted,
+              errors: isDeleted ? null : errorsString,
+              data: isDeleted ? nodeStatusMap[mf.ownerId].data : null,
+            });
+          }
+        }
+      } catch (e: any) {
+        for (const mf of chunk) {
+          if (nodeStatusMap[mf.ownerId].present) {
+            results.push({
+              id: mf.ownerId,
+              success: false,
+              errors: `Delete request error: ${e.message}`,
+              data: null,
+            });
           }
         }
       }
     }
-  `;
-
-  const deleteQuery = `
-    mutation ($metafields: [MetafieldIdentifierInput!]!) {
-      metafieldsDelete(metafields: $metafields) {
-        deletedMetafields { ownerId namespace key }
-        userErrors { field message }
-      }
-    }
-  `;
-
-  for (const mf of metafields) {
-    const { ownerId, namespace, key } = mf;
-
-    const checkRes = await admin.graphql(checkQuery, {
-      variables: { ownerId, namespace, key },
-    });
-
-    const checkJson = await checkRes.json();
-    const found = checkJson?.data?.node?.metafield ?? null;
-
-    if (!found) {
-      results.push({
-        id: ownerId,
-        success: false,
-        errors: "Metafield value is not present",
-        data: null,
-      });
-      continue;
-    }
-
-    const data = {
-      ownerId,
-      namespace,
-      key,
-      metafieldId: found.id,
-      type: found.type,
-      value: found.value,
-    };
-
-    const deleteRes = await admin.graphql(deleteQuery, {
-      variables: { metafields: [{ ownerId, namespace, key }] },
-    });
-
-    const deleteJson = await deleteRes.json();
-    const deleted = deleteJson?.data?.metafieldsDelete?.deletedMetafields ?? [];
-    const userErrors = deleteJson?.data?.metafieldsDelete?.userErrors ?? [];
-
-    const success = deleted[0] !== null;
-    const error = success ? null : userErrors?.[0]?.message || "Failed";
-
-    results.push({
-      id: ownerId,
-      success,
-      errors: error,
-      data,
-    });
   }
+
   return results;
 }
 

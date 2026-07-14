@@ -6,6 +6,7 @@ import {
   handleFetch,
   handleRemoveFromAll,
   handleRemoveSpecific,
+  handleFetchCount,
 } from "app/functions/remove-tag-action";
 import Papa from "papaparse";
 import CsvPreviewModal from "../component/CsvPreviewModal";
@@ -58,6 +59,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     if (mode === "fetch") {
       return await handleFetch(admin, formData);
     }
+    if (mode === "fetch-count") {
+      return await handleFetchCount(admin, formData);
+    }
     if (mode === "remove-global") {
       return await handleRemoveFromAll(admin, formData);
     }
@@ -81,12 +85,16 @@ type AppOutletContext = {
 
 export default function TagManager() {
   const fetcher = useFetcher();
+  const countFetcher = useFetcher();
   const navigate = useNavigate();
   const breakpoints = useBreakpoints();
   const { planData } = useOutletContext<AppOutletContext>();
 
   // State
   const [objectType, setObjectType] = useState("product");
+  const [matchingCount, setMatchingCount] = useState<number | null>(null);
+  const [isCountFetching, setIsCountFetching] = useState(false);
+  const isFetchingCount = isCountFetching || (countFetcher.state !== "idle" && countFetcher.formData?.get("mode") === "fetch-count");
   const [matchType, setMatchType] = useState("contain");
   const [conditions, setConditions] = useState([{ tag: "", operator: "OR" }]);
   const [fetchedItems, setFetchedItems] = useState<string[]>([]);
@@ -320,6 +328,45 @@ export default function TagManager() {
       setNoTagsFound(true);
     }
   }, [isFetchingTags]);
+
+  useEffect(() => {
+    if (removalMode === "global" && selectedTags.length > 0 && matchingCount === null && !isCountFetching) {
+      setIsCountFetching(true);
+      const fd = new FormData();
+      fd.append("mode", "fetch-count");
+      fd.append("objectType", objectType);
+      fd.append("tags", JSON.stringify(selectedTags));
+      countFetcher.submit(fd, { method: "POST" });
+    }
+  }, [removalMode, selectedTags, objectType, matchingCount, isCountFetching]);
+
+  useEffect(() => {
+    if (countFetcher.data && countFetcher.state === "idle") {
+      const returnedTags = countFetcher.data.tags || [];
+      const returnedType = countFetcher.data.objectType;
+      const currentTagsSorted = [...selectedTags].sort().join(",");
+      const returnedTagsSorted = [...returnedTags].sort().join(",");
+
+      if (currentTagsSorted === returnedTagsSorted && returnedType === objectType) {
+        if (countFetcher.data.success) {
+          setMatchingCount(countFetcher.data.count);
+        } else {
+          setAlert({
+            active: true,
+            title: "Failed to Fetch Count",
+            message: countFetcher.data.error || "Failed to fetch matching resource count.",
+            tone: "critical",
+          });
+        }
+        setIsCountFetching(false);
+      }
+    }
+  }, [countFetcher.data, countFetcher.state, selectedTags, objectType]);
+
+  useEffect(() => {
+    setMatchingCount(null);
+    setIsCountFetching(false);
+  }, [selectedTags, conditions, objectType, matchType]);
 
   useEffect(() => {
     if (fetcher.state !== "idle" || !fetcher.data) return;
@@ -677,6 +724,8 @@ export default function TagManager() {
   const handleRemoveConfirm = () => {
     // Always close modal at the end
     setModalOpen(false);
+    setMatchingCount(null);
+    setIsCountFetching(false);
     hasUpdatedLimitRef.current = false;
 
     // GLOBAL REMOVE
@@ -744,6 +793,7 @@ export default function TagManager() {
     setFileName(null);
     setAlert((prev) => ({ ...prev, active: false }));
     hasUpdatedLimitRef.current = false;
+    setMatchingCount(null);
   };
 
   useEffect(() => {
@@ -1248,7 +1298,7 @@ export default function TagManager() {
                             title=""
                             choices={[
                               {
-                                label: `Global Removal (From starting 5000 ${objectType}s)`,
+                                label: `Global Removal (From 5000 ${objectType}s at a time)`,
                                 value: "global",
                               },
                               {
@@ -1536,7 +1586,10 @@ export default function TagManager() {
 
       <Modal
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={() => {
+          setModalOpen(false);
+          setIsCountFetching(false);
+        }}
         title="Confirm Removal"
         primaryAction={{
           content: "Yes, Remove Tags",
@@ -1544,13 +1597,35 @@ export default function TagManager() {
           destructive: true,
         }}
         secondaryActions={[
-          { content: "Cancel", onAction: () => setModalOpen(false) },
+          {
+            content: "Cancel",
+            onAction: () => {
+              setModalOpen(false);
+              setIsCountFetching(false);
+            },
+          },
         ]}
       >
         <Modal.Section>
-          <Text as="p">
-            Are you sure you want to remove {selectedTags.length === 1 ? "1 tag" : `${selectedTags.length} tag's`} from starting 5000 {objectType}'s ?
-          </Text>
+          <BlockStack gap="300">
+            {isFetchingCount ? (
+              <InlineStack gap="300" blockAlign="center">
+                <Spinner size="small" />
+                <Text as="p" tone="subdued">
+                  Loading total of matching {objectType}s...
+                </Text>
+              </InlineStack>
+            ) : (
+              matchingCount !== null && (
+                <Text as="p" variant="headingMd">
+                  Total matching {objectType}s: <strong>{matchingCount.toLocaleString()}</strong>
+                </Text>
+              )
+            )}
+            <Text as="p">
+              Are you sure you want to remove {selectedTags.length === 1 ? "1 tag" : `${selectedTags.length} tags`} from up to 5,000 {objectType} entries where these tags are present? If more matching entries are available, repeat this operation again.
+            </Text>
+          </BlockStack>
         </Modal.Section>
       </Modal>
       <RemoveTagsInstructionsModal

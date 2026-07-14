@@ -1,5 +1,15 @@
 import { validateShopifyId } from "app/utils/shopifyIdValidator";
 
+function buildTagSearchQuery(tags: string[], forVariable: boolean = false) {
+  const quote = forVariable ? '"' : '\\"';
+  return tags
+    .map((t) => {
+      const cleanTag = t.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      return `tag:${quote}${cleanTag}${quote}`;
+    })
+    .join(" OR ");
+}
+
 async function fetchTagsPage(admin: any, objectType: string, cursor = null) {
   // ---------- PRODUCT TAGS ----------
   if (objectType === "product") {
@@ -476,3 +486,116 @@ export async function fetchResourceId(admin: any, resourceType: string, value: a
     return null;
   }
 }
+
+const countQueryMap: Record<string, string | null> = {
+  product: "productsCount",
+  customer: "customersCount",
+  order: "ordersCount",
+};
+
+export async function handleFetchCount(admin: any, formData: any) {
+  try {
+    const objectType = formData.get("objectType");
+    const tags = JSON.parse(formData.get("tags") || "[]");
+
+    if (!objectType) {
+      return { success: false, error: "objectType is required" };
+    }
+    if (!tags.length) {
+      return { success: true, count: 0, tags, objectType };
+    }
+
+    const isArticle = objectType === "article" || objectType === "blogPost";
+
+    if (!isArticle && !(objectType in countQueryMap)) {
+      return { success: false, error: `No count field configured for objectType: ${objectType}`, tags, objectType };
+    }
+
+    const tagQuery = tags.map((t: string) => `tag:${t}`).join(" OR ");
+    let count = 0;
+
+    if (isArticle) {
+      let hasNextPage = true;
+      let cursor = null;
+
+      while (hasNextPage) {
+        const articlesQuery = `
+          query ArticlesByTagsPage($query: String, $first: Int, $after: String) {
+            articles(first: $first, after: $after, query: $query) {
+              edges {
+                cursor
+              }
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+            }
+          }
+        `;
+
+        const res: any = await admin.graphql(articlesQuery, {
+          variables: {
+            query: tagQuery,
+            first: 250,
+            after: cursor,
+          },
+        });
+
+        const json = await res.json();
+        const data = json?.data?.articles;
+        if (!data) break;
+
+        count += (data.edges || []).length;
+        hasNextPage = data.pageInfo.hasNextPage;
+        cursor = data.pageInfo.endCursor;
+      }
+    } else {
+      const countField = countQueryMap[objectType];
+      if (!countField) {
+        return { success: false, error: `Direct count query is not supported for ${objectType}`, tags, objectType };
+      }
+
+      const query = `
+        query CountByQuery($query: String) {
+          ${countField}(query: $query) {
+            count
+            precision
+          }
+        }
+      `;
+
+      const res: any = await admin.graphql(query, {
+        variables: {
+          query: tagQuery,
+        },
+      });
+
+      const json = await res.json();
+      if (json?.errors && !json?.data?.[countField]) {
+        throw new Error(json.errors[0]?.message || "GraphQL Error");
+      }
+      count = json?.data?.[countField]?.count ?? 0;
+    }
+
+    return {
+      success: true,
+      count,
+      tags,
+      objectType,
+    };
+  } catch (err: any) {
+    let tags: string[] = [];
+    let objectType = "";
+    try {
+      objectType = formData.get("objectType") || "";
+      tags = JSON.parse(formData.get("tags") || "[]");
+    } catch { }
+    return {
+      success: false,
+      error: err?.message || "Failed to fetch count",
+      tags,
+      objectType,
+    };
+  }
+}
+

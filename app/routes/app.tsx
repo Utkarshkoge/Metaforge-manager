@@ -149,8 +149,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
         }
 
-        console.log("plan", plan, remainingDays);
-
       } catch (apiError) {
         console.error("Error querying active subscriptions via API:", apiError);
       }
