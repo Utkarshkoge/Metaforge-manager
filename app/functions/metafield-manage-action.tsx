@@ -1942,7 +1942,7 @@ export async function getPaginationInfo(admin: any, resource: string) {
   }
 
   const pages = [];
-  const pageSize = 10;
+  const pageSize = 5000;
   const loopLimit = 200; // items per fetch
   const fetchesPerPage = pageSize / loopLimit; // 25 fetches
 

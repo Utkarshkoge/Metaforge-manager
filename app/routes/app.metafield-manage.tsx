@@ -576,8 +576,8 @@ export default function MetafieldManage() {
       }).filter((r): r is CsvRow => r !== null);
 
 
-      if (rows.length > 10) {
-        setAlert({ active: true, title: "Limit Exceeded", message: "Only 10 records will add at a time", tone: 'critical' });
+      if (rows.length > 5000) {
+        setAlert({ active: true, title: "Limit Exceeded", message: "Only 5000 records will add at a time", tone: 'critical' });
         setWarning((prev) => ({ ...prev, active: false }));
         setCsvRows([]); setRawCsvData([]); setCsvData(0); return;
       }
@@ -659,8 +659,8 @@ export default function MetafieldManage() {
           }).filter((r: unknown): r is CsvRow => r !== null);
 
 
-          if (rows.length > 10) {
-            setAlert({ active: true, title: "Limit Exceeded", message: "Only 10 records will add at a time", tone: 'critical' });
+          if (rows.length > 5000) {
+            setAlert({ active: true, title: "Limit Exceeded", message: "Only 5000 records will add at a time", tone: 'critical' });
             setWarning((prev) => ({ ...prev, active: false }));
             setCsvRows([]); setRawCsvData([]); setCsvData(0); return;
           }
@@ -1102,7 +1102,7 @@ export default function MetafieldManage() {
         const newProcessedCount = batchProcessedCount + batch.length;
         setBatchProcessedCount(newProcessedCount);
 
-        const batchSize = selectedBatch ? (selectedBatch.end - selectedBatch.start + 1) : 10;
+        const batchSize = selectedBatch ? (selectedBatch.end - selectedBatch.start + 1) : 5000;
 
         if (batchSize && batchSize > 0) {
           const percent = Math.min(100, Math.round((newProcessedCount / batchSize) * 100));
@@ -2234,9 +2234,9 @@ export default function MetafieldManage() {
                     <ChoiceList
                       title="Operation Mode"
                       choices={(typeof selectedMetafield?.type === 'string' ? selectedMetafield.type : selectedMetafield?.type?.name) === 'file_reference' ? [
-                        { label: 'Global Deletion (Remove from starting 10 items)', value: 'all' }] :
+                        { label: 'Global Deletion (Remove from starting 5000 items)', value: 'all' }] :
                         [
-                          { label: 'Global Deletion (Remove from starting 10 items)', value: 'all' },
+                          { label: 'Global Deletion (Remove from starting 5000 items)', value: 'all' },
                           { label: 'Targeted Removal (Remove from CSV list)', value: 'specific' },
                           { label: 'Bulk Update (Update/Add via CSV)', value: 'update' }
                         ]}
@@ -2301,7 +2301,7 @@ export default function MetafieldManage() {
                               <DropZone onDrop={handleCsvInput} accept=".csv" allowMultiple={false} disabled={isDeleting}>
                                 <DropZone.FileUpload actionTitle="Add CSV File" />
                               </DropZone>
-                              <Text as="p" tone="subdued">Only 10 records will add at a time</Text>
+                              <Text as="p" tone="subdued">Only 5000 records will add at a time</Text>
                             </BlockStack>
                           ) : (
                             <Banner tone="success" onDismiss={handleClearCSV}>
