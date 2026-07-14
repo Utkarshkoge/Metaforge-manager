@@ -43,6 +43,7 @@ import {
   removeAllMetafields,
   removeSpecificMetafield,
   updateSpecificMetafield,
+  getPaginationInfo,
 } from "app/functions/metafield-manage-action";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import Papa from "papaparse";
@@ -88,6 +89,11 @@ export async function action({ request }: ActionFunctionArgs) {
         cursor,
       );
 
+      return { success: true, payload };
+    }
+
+    if (mode === "getPaginationInfo") {
+      const payload = await getPaginationInfo(admin, resource);
       return { success: true, payload };
     }
 
@@ -311,6 +317,20 @@ export default function MetafieldManage() {
   const [showInfoMeta, setshowInfoMeta] = useState(false);
   const lastProcessedRef = useRef<any>(null);
   const hasUpdatedLimitRef = useRef(false);
+
+  // Pagination states for Remove All
+  const [paginationInfo, setPaginationInfo] = useState<{
+    totalCount: number;
+    pages: { page: number; start: number; end: number; cursor: string | null }[];
+  } | null>(null);
+  const [loadingPagination, setLoadingPagination] = useState(false);
+  const [selectedBatch, setSelectedBatch] = useState<{
+    page: number;
+    start: number;
+    end: number;
+    cursor: string | null;
+  } | null>(null);
+  const [batchProcessedCount, setBatchProcessedCount] = useState(0);
 
   useBlocker(({ currentLocation, nextLocation }) => {
     return isDeleting && currentLocation.pathname !== nextLocation.pathname;
@@ -556,8 +576,8 @@ export default function MetafieldManage() {
       }).filter((r): r is CsvRow => r !== null);
 
 
-      if (rows.length > 5000) {
-        setAlert({ active: true, title: "Limit Exceeded", message: "Only 5000 records will add at a time", tone: 'critical' });
+      if (rows.length > 10) {
+        setAlert({ active: true, title: "Limit Exceeded", message: "Only 10 records will add at a time", tone: 'critical' });
         setWarning((prev) => ({ ...prev, active: false }));
         setCsvRows([]); setRawCsvData([]); setCsvData(0); return;
       }
@@ -639,8 +659,8 @@ export default function MetafieldManage() {
           }).filter((r: unknown): r is CsvRow => r !== null);
 
 
-          if (rows.length > 5000) {
-            setAlert({ active: true, title: "Limit Exceeded", message: "Only 5000 records will add at a time", tone: 'critical' });
+          if (rows.length > 10) {
+            setAlert({ active: true, title: "Limit Exceeded", message: "Only 10 records will add at a time", tone: 'critical' });
             setWarning((prev) => ({ ...prev, active: false }));
             setCsvRows([]); setRawCsvData([]); setCsvData(0); return;
           }
@@ -840,9 +860,18 @@ export default function MetafieldManage() {
         setAlert((prev) => ({ ...prev, active: false }));
         return;
       }
+
+      setModalOpen(true);
+      setLoadingPagination(true);
+      setPaginationInfo(null);
+      setSelectedBatch(null);
+
+      const formData = new FormData();
+      formData.append("mode", "getPaginationInfo");
+      formData.append("objectType", objectType);
+      fetcher.submit(formData, { method: "post" });
+      return;
     }
-
-
 
     if (["specific", "update"].includes(removeMode) && !csvRows.length) {
       setAlert({ active: true, title: "Missing CSV", message: `Upload a CSV file with ${specificField}'s (and values for update)!`, tone: 'critical' });
@@ -868,11 +897,15 @@ export default function MetafieldManage() {
 
     if (removeMode === "all") {
       setIsDeleting(true);
+      setBatchProcessedCount(0);
       const formData = new FormData();
       formData.append("mode", "removeMetafield");
       formData.append("objectType", objectType);
       formData.append("namespace", selectedMetafield?.namespace || "");
       formData.append("key", selectedMetafield?.key || "");
+      if (selectedBatch && selectedBatch.cursor) {
+        formData.append("cursor", selectedBatch.cursor);
+      }
       fetcher.submit(formData, { method: "post" });
     } else if (removeMode === "specific") {
       setIsDeleting(true);
@@ -898,7 +931,11 @@ export default function MetafieldManage() {
     setResourceCount(0);
     setHasSearched(false);
     setFileName(null);
-    setAlert({ ...alert, active: false })
+    setAlert({ ...alert, active: false });
+    setPaginationInfo(null);
+    setLoadingPagination(false);
+    setSelectedBatch(null);
+    setBatchProcessedCount(0);
   };
 
   const backToSelectedFeild = () => {
@@ -916,7 +953,11 @@ export default function MetafieldManage() {
     setResourceCount(0);
     setHasSearched(false);
     setFileName(null);
-    setAlert({ ...alert, active: false })
+    setAlert({ ...alert, active: false });
+    setPaginationInfo(null);
+    setLoadingPagination(false);
+    setSelectedBatch(null);
+    setBatchProcessedCount(0);
   };
 
   const handleClearCSV = () => {
@@ -951,6 +992,17 @@ export default function MetafieldManage() {
 
     if (fetcher.data?.successdb === undefined) {
       const data = fetcher?.data;
+
+      // Handle pagination info response
+      if (data?.success && data?.payload && 'pages' in data.payload) {
+        setPaginationInfo(data.payload);
+        setLoadingPagination(false);
+        if (data.payload.pages.length > 0) {
+          setSelectedBatch(data.payload.pages[0]);
+        }
+        return;
+      }
+
       if (data?.success && data?.payload?.metafields) {
         setMetafields(data.payload.metafields);
       }
@@ -1047,13 +1099,19 @@ export default function MetafieldManage() {
         setAccumulatedResults(updatedResults);
         setResults(updatedResults);
 
-        if (totalCount && totalCount > 0) {
-          const percent = Math.round((updatedResults.length / totalCount) * 100);
+        const newProcessedCount = batchProcessedCount + batch.length;
+        setBatchProcessedCount(newProcessedCount);
+
+        const batchSize = selectedBatch ? (selectedBatch.end - selectedBatch.start + 1) : 10;
+
+        if (batchSize && batchSize > 0) {
+          const percent = Math.min(100, Math.round((newProcessedCount / batchSize) * 100));
           setProgress(percent);
         } else {
           setProgress(10);
         }
-        if (hasMore && nextCursor && updatedResults.length < 5000) {
+
+        if (hasMore && nextCursor && newProcessedCount < batchSize) {
           const formData = new FormData();
           formData.append("mode", "removeMetafield");
           formData.append("objectType", objectType);
@@ -1087,7 +1145,23 @@ export default function MetafieldManage() {
       }
     }
 
-  }, [fetcher.state, fetcher.data]);
+  }, [
+    fetcher.state,
+    fetcher.data,
+    isDeleting,
+    removeMode,
+    currentIndex,
+    csvRows,
+    accumulatedResults,
+    listRemoveMode,
+    selectedMetafield,
+    objectType,
+    selectedBatch,
+    batchProcessedCount,
+    resourceCount,
+    isDbCreated,
+    isSubmitting
+  ]);
 
   useEffect(() => {
     if (!isDeleting) return;
@@ -1344,7 +1418,7 @@ export default function MetafieldManage() {
       ],
       battery_charge_capacity: [
         csvSafe('{"value":3000,"unit":"milliamp_hours"}'),
-        csvSafe('{"value":5000,"unit":"milliamp_hours"}')
+        csvSafe('{"value":10,"unit":"milliamp_hours"}')
       ],
       battery_energy_capacity: [
         csvSafe('{"value":50,"unit":"watt_hours"}'),
@@ -1424,7 +1498,7 @@ export default function MetafieldManage() {
       ],
       rotational_speed: [
         csvSafe('{"value":1000,"unit":"revolutions_per_minute"}'),
-        csvSafe('{"value":5000,"unit":"revolutions_per_minute"}')
+        csvSafe('{"value":10,"unit":"revolutions_per_minute"}')
       ],
       sound_level: [
         csvSafe('{"value":50,"unit":"decibels"}'),
@@ -2160,9 +2234,9 @@ export default function MetafieldManage() {
                     <ChoiceList
                       title="Operation Mode"
                       choices={(typeof selectedMetafield?.type === 'string' ? selectedMetafield.type : selectedMetafield?.type?.name) === 'file_reference' ? [
-                        { label: 'Global Deletion (Remove from starting 5000 items)', value: 'all' }] :
+                        { label: 'Global Deletion (Remove from starting 10 items)', value: 'all' }] :
                         [
-                          { label: 'Global Deletion (Remove from starting 5000 items)', value: 'all' },
+                          { label: 'Global Deletion (Remove from starting 10 items)', value: 'all' },
                           { label: 'Targeted Removal (Remove from CSV list)', value: 'specific' },
                           { label: 'Bulk Update (Update/Add via CSV)', value: 'update' }
                         ]}
@@ -2227,7 +2301,7 @@ export default function MetafieldManage() {
                               <DropZone onDrop={handleCsvInput} accept=".csv" allowMultiple={false} disabled={isDeleting}>
                                 <DropZone.FileUpload actionTitle="Add CSV File" />
                               </DropZone>
-                              <Text as="p" tone="subdued">Only 5000 records will add at a time</Text>
+                              <Text as="p" tone="subdued">Only 10 records will add at a time</Text>
                             </BlockStack>
                           ) : (
                             <Banner tone="success" onDismiss={handleClearCSV}>
@@ -2362,17 +2436,76 @@ export default function MetafieldManage() {
           content: removeMode === "update" ? "Update" : "Delete",
           onAction: handleConfirm,
           destructive: removeMode !== 'update',
+          disabled: removeMode === "all" && (loadingPagination || !paginationInfo || !selectedBatch),
         }}
         secondaryActions={[{ content: "Cancel", onAction: () => setModalOpen(false) }]}
       >
         <Modal.Section>
-          <Text as="p">
-            {removeMode === "all"
-              ? `This metafield will be deleted from starting 5000 ${specificField}'s.`
-              : removeMode === "update"
-                ? `This metafield will be updated/added for the selected ${specificField}'s in the CSV.`
-                : `This metafield will be deleted only for the selected ${specificField}'s in the CSV.`}
-          </Text>
+          {removeMode === "all" ? (
+            loadingPagination ? (
+              <BlockStack align="center" inlineAlign="center" gap="200">
+                <Spinner size="large" />
+                <Text as="p" tone="subdued">
+                  Loading total counts and pagination cursors...
+                </Text>
+              </BlockStack>
+            ) : paginationInfo ? (
+              <BlockStack gap="400">
+                <Text as="p">
+                  This metafield will be deleted across the selected 5,000-record batch.
+                </Text>
+                <Text as="p">
+                  Total {specificField}s: <Text as="span" fontWeight="bold">{paginationInfo.totalCount.toLocaleString()}</Text>
+                </Text>
+                <Text as="p">
+                  Select a batch:
+                </Text>
+
+                <Box background="bg-surface-secondary" borderRadius="200" padding="200">
+                  <ResourceList
+                    resourceName={{ singular: "batch", plural: "batches" }}
+                    items={paginationInfo.pages}
+                    renderItem={(item) => {
+                      const isSelected = selectedBatch?.page === item.page;
+                      return (
+                        <ResourceItem
+                          id={String(item.page)}
+                          onClick={() => setSelectedBatch(item)}
+                          verticalAlignment="center"
+                        >
+                          <InlineStack align="space-between">
+                            <BlockStack gap="100">
+                              <Text as="span" variant="bodyMd" fontWeight={isSelected ? "bold" : "regular"}>
+                                Page {item.page} (Records {item.start.toLocaleString()} - {item.end.toLocaleString()})
+                              </Text>
+                              <Text as="span" variant="bodySm" tone="subdued">
+                                {item.cursor ? `Starts after cursor: ${item.cursor.substring(0, 15)}...` : "Starts from the beginning"}
+                              </Text>
+                            </BlockStack>
+                            {isSelected && (
+                              <Badge tone="success">Selected</Badge>
+                            )}
+                          </InlineStack>
+                        </ResourceItem>
+                      );
+                    }}
+                  />
+                </Box>
+              </BlockStack>
+            ) : (
+              <Text as="p" tone="critical">
+                Failed to load pagination information. Please try again.
+              </Text>
+            )
+          ) : removeMode === "update" ? (
+            <Text as="p">
+              This metafield will be updated/added for the selected {specificField}'s in the CSV.
+            </Text>
+          ) : (
+            <Text as="p">
+              This metafield will be deleted only for the selected {specificField}'s in the CSV.
+            </Text>
+          )}
         </Modal.Section>
       </Modal>
       <MetafieldManageInstructionsModal

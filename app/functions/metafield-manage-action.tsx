@@ -1800,3 +1800,202 @@ export async function fetchResourceIdResourceReference(admin: any, objectType: s
 
   return result;
 }
+
+const paginationQueryMap: Record<string, string> = {
+  products: `
+    query ProductsPagination($after: String) {
+      products(first: 200, after: $after) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `,
+  productVariants: `
+    query ProductVariantsPagination($after: String) {
+      productVariants(first: 200, after: $after) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `,
+  collections: `
+    query CollectionsPagination($after: String) {
+      collections(first: 200, after: $after) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `,
+  customers: `
+    query CustomersPagination($after: String) {
+      customers(first: 200, after: $after, sortKey: CREATED_AT, reverse: true) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `,
+  orders: `
+    query OrdersPagination($after: String) {
+      orders(first: 200, after: $after, sortKey: CREATED_AT, reverse: true) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `,
+  companies: `
+    query CompaniesPagination($after: String) {
+      companies(first: 200, after: $after) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `,
+  companyLocations: `
+    query CompanyLocationsPagination($after: String) {
+      companyLocations(first: 200, after: $after) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `,
+  locations: `
+    query LocationsPagination($after: String) {
+      locations(first: 200, after: $after) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `,
+  pages: `
+    query PagesPagination($after: String) {
+      pages(first: 200, after: $after) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `,
+  blog: `
+    query BlogsPagination($after: String) {
+      blogs(first: 200, after: $after) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `,
+  articles: `
+    query ArticlesPagination($after: String) {
+      articles(first: 200, after: $after) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `,
+  markets: `
+    query MarketsPagination($after: String) {
+      markets(first: 200, after: $after) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `,
+};
+
+export async function getPaginationInfo(admin: any, resource: string) {
+  // 1. Get total resource count
+  const countObj = await fetchResourceCount(admin, resource as any);
+  const totalCount = countObj.count;
+
+  if (totalCount <= 0) {
+    return {
+      totalCount: 0,
+      pages: [],
+    };
+  }
+
+  const query = paginationQueryMap[resource];
+  if (!query) {
+    throw new Error(`Unsupported pagination resource: ${resource}`);
+  }
+
+  const pages = [];
+  const pageSize = 10;
+  const loopLimit = 200; // items per fetch
+  const fetchesPerPage = pageSize / loopLimit; // 25 fetches
+
+  // Page 1 always starts with null cursor
+  pages.push({
+    page: 1,
+    start: 1,
+    end: Math.min(pageSize, totalCount),
+    cursor: null,
+  });
+
+  let currentCursor: string | null = null;
+  let hasNextPage = true;
+
+  // Let's loop to find the boundaries
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  for (let p = 1; p < totalPages; p++) {
+    for (let f = 0; f < fetchesPerPage; f++) {
+      if (!hasNextPage) break;
+
+      const res: any = await admin.graphql(query, { variables: { after: currentCursor } });
+      const json = await res.json();
+      const connectionKey = resource === "blog" ? "blogs" : resource;
+      const connection = json?.data?.[connectionKey];
+      const pageInfo = connection?.pageInfo;
+
+      if (!pageInfo) {
+        hasNextPage = false;
+        break;
+      }
+
+      currentCursor = pageInfo.endCursor;
+      hasNextPage = pageInfo.hasNextPage;
+    }
+
+    if (currentCursor) {
+      const pageNum = p + 1;
+      const start = p * pageSize + 1;
+      const end = Math.min(pageNum * pageSize, totalCount);
+      pages.push({
+        page: pageNum,
+        start,
+        end,
+        cursor: currentCursor,
+      });
+    }
+
+    if (!hasNextPage) break;
+  }
+
+  return {
+    totalCount,
+    pages,
+  };
+}
