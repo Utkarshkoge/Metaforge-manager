@@ -13,6 +13,9 @@ console.log("Vercel Init Debug:", {
   hasAppUrl: !!process.env.SHOPIFY_APP_URL,
   hasScopes: !!process.env.SCOPES,
   hasDatabaseUrl: !!process.env.DATABASE_URL,
+  existingKeys: Object.keys(process.env).filter(
+    key => key.includes("SHOPIFY") || key.includes("SECRET") || key.includes("KEY")
+  ),
 });
 
 const shopify = shopifyApp({
