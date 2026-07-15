@@ -51,6 +51,7 @@ export default function LogsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [restoreTotal, setRestoreTotal] = useState(0);
   const [restoreCompleted, setRestoreCompleted] = useState(0);
+  const [restoreSuccessCount, setRestoreSuccessCount] = useState(0);
   const [globalId, setGlobalId] = useState<string | null>(null);
   const [restore, setRestore] = useState(true);
   const [logs, setLogs] = useState<Log[]>([]);
@@ -113,10 +114,14 @@ export default function LogsPage() {
 
     const run = async () => {
       try {
-        // 1️⃣ Always call timeout API first
-        await fetch("/api/timeout/db", { method: "POST" });
+        // 1️⃣ Fire timeout API in the background with a safety timeout, don't await it
+        const cleanupController = new AbortController();
+        const cleanupTimeoutId = setTimeout(() => cleanupController.abort(), 15000);
+        fetch("/api/timeout/db", { method: "POST", signal: cleanupController.signal })
+          .catch((e) => console.error("Background timeout failed or aborted:", e))
+          .finally(() => clearTimeout(cleanupTimeoutId));
 
-        // 2️⃣ Call check API only after timeout succeeds
+        // 2️⃣ Call check API immediately
         const { cursor, direction } = lastFetchParams;
         const url = cursor
           ? `/api/check/db?cursor=${cursor}&direction=${direction}`
@@ -161,27 +166,7 @@ export default function LogsPage() {
   }, [isRestoring]);
 
 
-  useEffect(() => {
-    const runRestore = async () => {
-      const shouldRunRestore = restoreCompleted >= restoreTotal && isRestoring;
-      if (!shouldRunRestore) return;
 
-      const formData = new FormData();
-      formData.append("rowId", globalId || "");
-
-      const response = await fetch("/api/update-restore/db", {
-        method: "POST",
-        body: formData,
-      });
-
-      const res = await response.json();
-      if (res.success) {
-        setRestore(true); // triggers fetcher.load
-      }
-    };
-
-    runRestore();
-  }, [restoreCompleted, restoreTotal]);
 
   // Handle fetch results safely
   useEffect(() => {
@@ -302,7 +287,6 @@ export default function LogsPage() {
       return;
     }
 
-    // ... (existing restore logic)
     const operation = log.operation;
     const objectType = log.objectType;
 
@@ -318,42 +302,89 @@ export default function LogsPage() {
 
     // Start restoring popup
     setRestoreCompleted(0);
+    setRestoreSuccessCount(0);
     setRestoreTotal(rows.length);
     setIsRestoring(true);
     setIsSubmitting(false);
-    // Perform restore sequentially
-    for (let i = 0; i < rows.length; i++) {
-      const v = rows[i];
 
-      let payload: any = { id: v.id, objectType, operation };
+    let successCount = 0;
 
-      if (operation === "Tags-removed") {
-        payload.tags = v.removedTags;
-      } else if (operation === "Tags-Added") {
-        payload.tags = v.tagList
-          ? v.tagList.split(",").map((t: string) => t.trim())
-          : [];
-      } else if (operation === "Metafield-removed") {
-        payload.namespace = v.namespace || v.data?.namespace;
-        payload.key = v.key || v.data?.key;
-        payload.type = v.type || v.data?.type;
-        payload.value = v.value || v.data?.value;
-      } else if (operation === "Metafield-updated") {
-        payload.namespace = v.namespace || v.data?.namespace;
-        payload.key = v.key || v.data?.key;
-        payload.type = v.type || v.data?.type;
-        payload.value = v.value || v.data?.value;
+    try {
+      // Perform restore sequentially
+      for (let i = 0; i < rows.length; i++) {
+        const v = rows[i];
+
+        let payload: any = { id: v.id, objectType, operation };
+
+        if (operation === "Tags-removed") {
+          payload.tags = v.removedTags;
+        } else if (operation === "Tags-Added") {
+          payload.tags = v.tagList
+            ? v.tagList.split(",").map((t: string) => t.trim())
+            : [];
+        } else if (operation === "Metafield-removed") {
+          payload.namespace = v.namespace || v.data?.namespace;
+          payload.key = v.key || v.data?.key;
+          payload.type = v.type || v.data?.type;
+          payload.value = v.value || v.data?.value;
+        } else if (operation === "Metafield-updated") {
+          payload.namespace = v.namespace || v.data?.namespace;
+          payload.key = v.key || v.data?.key;
+          payload.type = v.type || v.data?.type;
+          payload.value = v.value || v.data?.value;
+        }
+        const formData = new FormData();
+        formData.append("rows", JSON.stringify([payload]));
+
+        // Each revert call has a 25 seconds timeout to avoid hanging the UI loop
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 25000);
+
+        try {
+          const response = await fetch("/api/revert/db", {
+            method: "POST",
+            body: formData,
+            signal: controller.signal,
+          });
+          clearTimeout(timeoutId);
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const res = await response.json();
+          if (res && res.success) {
+            successCount++;
+            setRestoreSuccessCount(successCount);
+          } else {
+            console.error(`Revert failed for row ID ${v.id}:`, res?.errors);
+          }
+        } catch (err: any) {
+          clearTimeout(timeoutId);
+          console.error(`Error reverting row ID ${v.id}:`, err);
+        } finally {
+          setRestoreCompleted(i + 1);
+        }
       }
-      const formData = new FormData();
-      formData.append("rows", JSON.stringify([payload]));
+    } catch (loopErr) {
+      console.error("Critical error in restore loop:", loopErr);
+    } finally {
+      // Mark database log restore state to false once finished or crashed
+      try {
+        const formData = new FormData();
+        formData.append("rowId", globalId || log.id || "");
 
-      const res = await fetch("/api/revert/db", {
-        method: "POST",
-        body: formData,
-      }).then((r) => r.json());
+        const response = await fetch("/api/update-restore/db", {
+          method: "POST",
+          body: formData,
+        });
 
-      if (res.success) {
-        setRestoreCompleted((prev) => prev + 1);
+        const res = await response.json();
+        if (res.success) {
+          setRestore(true); // triggers fetcher.load
+        }
+      } catch (err) {
+        console.error("Failed to update restore state in database:", err);
       }
     }
   };
@@ -507,8 +538,8 @@ export default function LogsPage() {
                 />
                 <Text as="p" tone="subdued">
                   {restoreCompleted < restoreTotal
-                    ? `Restoring item ${restoreCompleted} of ${restoreTotal}`
-                    : `Successfully restored ${restoreTotal} items.`}
+                    ? `Restoring item ${restoreCompleted + 1} of ${restoreTotal}`
+                    : `Successfully restored ${restoreSuccessCount} of ${restoreTotal} items.`}
                 </Text>
               </BlockStack>
             )}

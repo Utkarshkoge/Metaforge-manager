@@ -85,10 +85,27 @@ export async function loader({ request }: LoaderFunctionArgs) {
       endCursor: null,
     };
 
-    const formatted = nodes.map((obj: any) => {
+    const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
+    const now = Date.now();
+    let hasExpired = false;
+
+    const formatted = [];
+    for (const obj of nodes) {
       const fieldMap = Object.fromEntries(
         (obj?.fields || []).map((f: any) => [f.key, f.value]),
       );
+
+      const timeVal = fieldMap.time || null;
+      if (timeVal) {
+        const createdTime = new Date(timeVal).getTime();
+        if (!isNaN(createdTime) && (now - createdTime) > TWO_DAYS_MS) {
+          hasExpired = true;
+          continue; // Skip expired
+        }
+      } else {
+        hasExpired = true;
+        continue; // Skip if no time field
+      }
 
       let parsedValue = [];
       try {
@@ -97,16 +114,21 @@ export async function loader({ request }: LoaderFunctionArgs) {
         parsedValue = [];
       }
 
-      return {
+      formatted.push({
         id: obj.id,
         userName: fieldMap.username || "unknown",
         operation: fieldMap.operation || "",
         objectType: fieldMap.objecttype || "",
         value: parsedValue,
         restore: fieldMap.restore === "true",
-        time: fieldMap.time || null,
-      };
-    });
+        time: timeVal,
+      });
+    }
+
+    if (hasExpired) {
+      pageInfo.hasNextPage = false;
+      pageInfo.endCursor = null;
+    }
 
     return {
       successdb: true,

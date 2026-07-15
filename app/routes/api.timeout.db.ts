@@ -17,7 +17,10 @@ export async function action({ request }: ActionFunctionArgs) {
     let deleted: string[] = [];
     let skipped: { id: string; reason: any }[] = [];
 
-    while (hasNextPage) {
+    let deletedCount = 0;
+    const MAX_DELETIONS = 50;
+
+    while (hasNextPage && deletedCount < MAX_DELETIONS) {
       const query = `
         query FetchMetaobjects($after: String) {
           metaobjects(
@@ -49,11 +52,11 @@ export async function action({ request }: ActionFunctionArgs) {
       const json: any = await res.json();
       const data: any = json?.data?.metaobjects;
 
-      if (!data) {
+      if (!data || !data.edges || data.edges.length === 0) {
         break;
       }
 
-      for (const edge of data?.edges || []) {
+      for (const edge of data.edges) {
         checked++;
         cursor = edge.cursor;
 
@@ -95,14 +98,24 @@ export async function action({ request }: ActionFunctionArgs) {
             skipped.push({ id: node.id, reason: errors });
           } else {
             deleted.push(node.id);
+            deletedCount++;
+            if (deletedCount >= MAX_DELETIONS) {
+              break;
+            }
           }
         } else {
           skipped.push({ id: node.id, reason: "Not expired" });
+          // Since the list is ordered oldest first, once we encounter a non-expired item,
+          // all subsequent items are also non-expired. We can stop immediately.
+          hasNextPage = false;
+          break;
         }
       }
 
-      hasNextPage = data.pageInfo.hasNextPage;
-      page++;
+      if (hasNextPage) {
+        hasNextPage = data.pageInfo.hasNextPage;
+        page++;
+      }
     }
     return {
       success: true,
