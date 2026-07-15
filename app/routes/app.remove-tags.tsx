@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import type { KeyboardEvent } from "react";
 import { useFetcher, useNavigate, useOutletContext, useBlocker } from "react-router";
 import { authenticate } from "../shopify.server";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
@@ -858,6 +859,15 @@ export default function TagManager() {
     (c) => c.tag.trim().length === 0 || c.tag.trim().length >= 2,
   );
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (!isActionDisabled && readyToFetch && fetchedItems.length === 0) {
+        startFetchTags();
+      }
+    }
+  };
+
   function goToHome() {
     if (!isRemoving) navigate("/app");
   }
@@ -1098,7 +1108,7 @@ export default function TagManager() {
                 <BlockStack gap="300">
                   {conditions.map((c, i) => (
                     <InlineStack key={i} gap="200" align="center">
-                      <div style={{ flex: 1 }}>
+                      <div style={{ flex: 1 }} onKeyDown={handleKeyDown}>
                         <TextField
                           label="Tag"
                           labelHidden
@@ -1452,8 +1462,8 @@ export default function TagManager() {
                                   : `${finalSpecificResults.length.toLocaleString()} / ${csvIds.length.toLocaleString()}`}
                               </strong>
                               {removalMode === "global"
-                                ? " tags removed"
-                                : " items processed"}
+                                ? ` ${objectType}s processed`
+                                : ` entries processed`}
                             </Text>
                           </InlineStack>
                         </Box>

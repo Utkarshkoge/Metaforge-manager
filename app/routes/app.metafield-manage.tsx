@@ -2498,7 +2498,7 @@ export default function MetafieldManage() {
                   This metafield will be deleted across the selected 5,000 records/pages.
                 </Text>
                 <Text as="p">
-                  Total {specificField}s: <Text as="span" fontWeight="bold">{paginationInfo.totalCount.toLocaleString()}</Text>
+                  Total {objectType}s: <Text as="span" fontWeight="bold">{paginationInfo.totalCount.toLocaleString()}</Text>
                 </Text>
                 <Text as="p">
                   Select a batch:
