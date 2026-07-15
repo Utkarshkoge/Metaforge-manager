@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "491e1fecd5d76cccff9b876c3650e701"
-application_url = "https://metaforge-manager-production.up.railway.app"
+application_url = "https://metaforge-manager.vercel.app/"
 embedded = true
 name = "test"
 
@@ -37,7 +37,9 @@ compliance_topics = [ "shop/redact" ]
 uri = "/webhooks/shop/redact"
 
 [auth]
-redirect_urls = [ "https://metaforge-manager-production.up.railway.app/api/auth" ]
+redirect_urls = [
+  "https://metaforge-manager.vercel.app/auth/callback"
+]
 
 [build]
 automatically_update_urls_on_dev = true
