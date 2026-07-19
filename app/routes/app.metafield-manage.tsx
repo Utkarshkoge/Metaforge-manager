@@ -96,7 +96,8 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     if (mode === "getPaginationInfo") {
-      const payload = await getPaginationInfo(admin, resource);
+      const plan = formData.get("plan") || "FREE";
+      const payload = await getPaginationInfo(admin, resource, String(plan));
       return { success: true, payload };
     }
 
@@ -512,6 +513,20 @@ export default function MetafieldManage() {
   };
 
   const handleCsvInput = useCallback(async (_dropFiles: File[], acceptedFiles: File[], _rejectedFiles: File[]) => {
+    if (remainingDays === 0) {
+      setAlert({
+        active: true,
+        title: "Plan Expired",
+        message: "Your plan has expired (0 days remaining). Please upgrade your subscription to continue.",
+        tone: "critical",
+      });
+      setWarning((prev) => ({ ...prev, active: false }));
+      setCsvRows([]);
+      setRawCsvData([]);
+      setCsvData(0);
+      return;
+    }
+
     const file = acceptedFiles[0];
     if (!file) {
       setCsvRows([]);
@@ -589,8 +604,9 @@ export default function MetafieldManage() {
       }).filter((r): r is CsvRow => r !== null);
 
 
-      if (rows.length > 5000) {
-        setAlert({ active: true, title: "Limit Exceeded", message: "Only 5000 records will add at a time", tone: 'critical' });
+      const maxCsvRows = plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 5000;
+      if (rows.length > maxCsvRows) {
+        setAlert({ active: true, title: "Limit Exceeded", message: `Your plan allows updating up to ${maxCsvRows} records at a time. Please upgrade your plan to add more.`, tone: 'critical' });
         setWarning((prev) => ({ ...prev, active: false }));
         setCsvRows([]); setRawCsvData([]); setCsvData(0); return;
       }
@@ -602,7 +618,7 @@ export default function MetafieldManage() {
         setWarning({
           active: true,
           title: "Limit Exceeded",
-          message: `You only have ${planData?.limits?.metaUpdateCsvLimit} records remaining according to your plan. Please update your plan to add more.`,
+          message: `You only have access to add ${planData?.limits?.metaUpdateCsvLimit} csv entries remaining according to your plan. Please update your plan to add more.`,
           tone: "warning",
         });
         setAlert((prev) => ({ ...prev, active: false }));
@@ -672,8 +688,9 @@ export default function MetafieldManage() {
           }).filter((r: unknown): r is CsvRow => r !== null);
 
 
-          if (rows.length > 5000) {
-            setAlert({ active: true, title: "Limit Exceeded", message: "Only 5000 records will add at a time", tone: 'critical' });
+          const maxCsvRows = plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 5000;
+          if (rows.length > maxCsvRows) {
+            setAlert({ active: true, title: "Limit Exceeded", message: `Your plan allows removing metafields for up to ${maxCsvRows} records at a time. Please upgrade your plan to add more.`, tone: 'critical' });
             setWarning((prev) => ({ ...prev, active: false }));
             setCsvRows([]); setRawCsvData([]); setCsvData(0); return;
           }
@@ -685,7 +702,7 @@ export default function MetafieldManage() {
             setWarning({
               active: true,
               title: "Limit Exceeded",
-              message: `You only have ${planData?.limits?.metaRemoveCsvLimit} records remaining according to your plan. Please update your plan to add more.`,
+              message: `You only have access to add ${planData?.limits?.metaRemoveCsvLimit} csv entries remaining according to your plan. Please update your plan to add more.`,
               tone: "warning",
             });
             setAlert((prev) => ({ ...prev, active: false }));
@@ -866,6 +883,17 @@ export default function MetafieldManage() {
   };
 
   const confirmDelete = () => {
+    if (remainingDays === 0) {
+      setAlert({
+        active: true,
+        title: "Plan Expired",
+        message: "Your plan has expired (0 days remaining). Please upgrade your subscription to continue.",
+        tone: "critical",
+      });
+      setWarning((prev) => ({ ...prev, active: false }));
+      return;
+    }
+
     if (!selectedMetafield) {
       setAlert({ active: true, title: "Selection Required", message: "Select a metafield!", tone: 'critical' });
       return;
@@ -899,6 +927,7 @@ export default function MetafieldManage() {
       const formData = new FormData();
       formData.append("mode", "getPaginationInfo");
       formData.append("objectType", objectType);
+      formData.append("plan", plan);
       isFetchingPaginationInfoRef.current = true;
       fetcher.submit(formData, { method: "post" });
       return;
@@ -929,7 +958,8 @@ export default function MetafieldManage() {
     if (removeMode === "all") {
       setIsDeleting(true);
       setBatchProcessedCount(0);
-      const batchSize = selectedBatch ? (selectedBatch.end - selectedBatch.start + 1) : 5000;
+      const maxMetafieldItems = plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 5000;
+      const batchSize = selectedBatch ? (selectedBatch.end - selectedBatch.start + 1) : maxMetafieldItems;
       const initialLimit = Math.min(200, batchSize);
       const formData = new FormData();
       formData.append("mode", "removeMetafield");
@@ -1141,7 +1171,8 @@ export default function MetafieldManage() {
         const newProcessedCount = batchProcessedCount + batch.length;
         setBatchProcessedCount(newProcessedCount);
 
-        const batchSize = selectedBatch ? (selectedBatch.end - selectedBatch.start + 1) : 5000;
+        const maxMetafieldItems = plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 5000;
+        const batchSize = selectedBatch ? (selectedBatch.end - selectedBatch.start + 1) : maxMetafieldItems;
 
         if (batchSize && batchSize > 0) {
           const percent = Math.min(100, Math.round((newProcessedCount / batchSize) * 100));
@@ -1985,7 +2016,7 @@ export default function MetafieldManage() {
                         fontWeight="bold"
                         tone={remainingDays <= 5 ? "critical" : undefined}
                       >
-                        {remainingDays} {remainingDays === 1 ? "Day" : "Days"}
+                        {remainingDays} {remainingDays === 0 ? "Day" : "Days"}
                       </Text>
                       <Text
                         variant="bodyXs"
@@ -2277,9 +2308,9 @@ export default function MetafieldManage() {
                     <ChoiceList
                       title="Operation Mode"
                       choices={(typeof selectedMetafield?.type === 'string' ? selectedMetafield.type : selectedMetafield?.type?.name) === 'file_reference' ? [
-                        { label: 'Global Deletion (from 5000 records at a time)', value: 'all' }] :
+                        { label: `Global Deletion (from ${plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 5000} records at a time)`, value: 'all' }] :
                         [
-                          { label: 'Global Deletion (from 5000 records at a time)', value: 'all' },
+                          { label: `Global Deletion (from ${plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 5000} records at a time)`, value: 'all' },
                           { label: 'Targeted Removal (from CSV)', value: 'specific' },
                           { label: 'Bulk Update (Update/Add via CSV)', value: 'update' }
                         ]}
@@ -2344,7 +2375,7 @@ export default function MetafieldManage() {
                               <DropZone onDrop={handleCsvInput} accept=".csv" allowMultiple={false} disabled={isDeleting}>
                                 <DropZone.FileUpload actionTitle="Add CSV File" />
                               </DropZone>
-                              <Text as="p" tone="subdued">Only 5000 records will add at a time</Text>
+                              <Text as="p" tone="subdued">Only {plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 5000} records will be processed at a time</Text>
                             </BlockStack>
                           ) : (
                             <Banner tone="success" onDismiss={handleClearCSV}>

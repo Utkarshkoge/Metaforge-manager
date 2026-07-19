@@ -42,15 +42,6 @@ model ActiveSubscription {
   currentPeriodEnd       DateTime
 }
 
-model SubscriptionHistory {
-  id              String   @id @default(uuid())
-  shopDomain      String
-  status          SubscriptionStatus
-  plan            Plan
-  subscriptionId  String
-  createdAt       DateTime @default(now())
-}
-
 enum Plan {
   FREE
   BASIC
@@ -69,16 +60,16 @@ model FreePlanLimits {
   shopDomain         String   @unique
 
   // TAG LIMITS
-  tagGlobal          Int      @default(5)
+  tagGlobal          Int      @default(2)
 
   // METAFIELD LIMITS
-  metaGlobal         Int      @default(5)
+  metaGlobal         Int      @default(2)
 
   // CSV LIMITS
-  metaRemoveCsvLimit           Int      @default(250)
-  metaUpdateCsvLimit           Int      @default(250)
-  tagAddCsvLimit               Int      @default(250)
-  tagRemoveCsvLimit            Int      @default(250)
+  metaRemoveCsvLimit           Int      @default(200)
+  metaUpdateCsvLimit           Int      @default(200)
+  tagAddCsvLimit               Int      @default(200)
+  tagRemoveCsvLimit            Int      @default(200)
   
   firstUsedAt        DateTime @default(now())
 }
@@ -88,16 +79,16 @@ model BasicPlanLimits {
   shopDomain         String   @unique
 
   // TAG LIMITS
-  tagGlobal          Int      @default(25)
+  tagGlobal          Int      @default(20)
 
   // METAFIELD LIMITS
-  metaGlobal         Int      @default(25)
+  metaGlobal         Int      @default(20)
 
   // CSV LIMITS
-  metaRemoveCsvLimit           Int      @default(1500)
-  metaUpdateCsvLimit           Int      @default(1500)
-  tagAddCsvLimit               Int      @default(1500)
-  tagRemoveCsvLimit            Int      @default(1500)
+  metaRemoveCsvLimit           Int      @default(3000)
+  metaUpdateCsvLimit           Int      @default(3000)
+  tagAddCsvLimit               Int      @default(3000)
+  tagRemoveCsvLimit            Int      @default(3000)
 
   firstUsedAt        DateTime @default(now())
 }

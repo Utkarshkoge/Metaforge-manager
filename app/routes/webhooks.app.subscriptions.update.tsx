@@ -97,31 +97,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         },
     });
 
-    const eventStatus = payload?.app_subscription?.status === "ACTIVE" ? "UPGRADED" : "CANCELLED"
-    const plan = payload?.app_subscription?.name === "Basic" ? "BASIC" : "ADVANCED"
-    const subscriptionId = payload?.app_subscription?.admin_graphql_api_id
-
-
-    if (payload?.app_subscription?.status !== "ACTIVE") {
-        const freePlan = await prisma.freePlanLimits.findUnique({
-            where: { shopDomain: shop },
-        });
-        if (freePlan) {
-            const oneMonthAgo = new Date();
-            oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-            if (freePlan.firstUsedAt < oneMonthAgo) {
-                await prisma.$transaction([
-                    prisma.freePlanLimits.delete({
-                        where: { shopDomain: shop },
-                    }),
-                    prisma.freePlanLimits.create({
-                        data: { shopDomain: shop },
-                    }),
-                ]);
-            }
-        }
-    }
-
     if (finalPlan === "ADVANCED") {
         const basicPlan = await prisma.basicPlanLimits.findUnique({
             where: { shopDomain: shop },
@@ -132,15 +107,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
             });
         }
     }
-
-    await prisma.subscriptionHistory.create({
-        data: {
-            shopDomain: shop,
-            plan: plan,
-            subscriptionId: subscriptionId,
-            status: eventStatus,
-        },
-    });
 
     return new Response("OK");
 };

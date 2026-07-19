@@ -445,6 +445,17 @@ export default function SimpleTagManager() {
   }, [progress, isRunning, planData, plan, results, tags, objectType]);
 
   const handleCsvInput = useCallback((_dropFiles: File[], acceptedFiles: File[], _rejectedFiles: File[]) => {
+    if (remainingDays === 0) {
+      setAlert({
+        active: true,
+        title: "Plan Expired",
+        message: "Your plan has expired (0 days remaining). Please upgrade your subscription to continue.",
+        tone: "critical",
+      });
+      setWarning((prev) => ({ ...prev, active: false }));
+      return;
+    }
+
     const file = acceptedFiles[0];
     if (!file) return;
 
@@ -486,11 +497,12 @@ export default function SimpleTagManager() {
 
 
 
-        if (rows.length > 5000) {
+        const maxCsvRows = plan === "FREE" ? 50 : plan === "BASIC" ? 100 : 5000;
+        if (rows.length > maxCsvRows) {
           setAlert({
             active: true,
             title: "Limit Exceeded",
-            message: "Only 5000 records will add at a time",
+            message: `Your plan allows adding up to ${maxCsvRows} records at a time. Please upgrade your plan to add more.`,
             tone: 'critical'
           })
           setWarning(prev => ({ ...prev, active: false }));
@@ -504,7 +516,7 @@ export default function SimpleTagManager() {
           setWarning({
             active: true,
             title: "Limit Exceeded",
-            message: `You only have ${planData?.limits?.tagAddCsvLimit} records remaining according to your plan. Please update your plan to add more.`,
+            message: `You only have access to add ${planData?.limits?.tagAddCsvLimit} csv entries remaining according to your plan. Please update your plan to add more.`,
             tone: "warning",
           });
           setAlert((prev) => ({ ...prev, active: false }));
@@ -558,6 +570,19 @@ export default function SimpleTagManager() {
       setWarning(prev => ({ ...prev, active: false }));
       return;
     }
+
+    const maxTags = plan === "FREE" ? 2 : plan === "BASIC" ? 10 : 20;
+    if (tags.length >= maxTags) {
+      setAlert({
+        active: true,
+        title: "Tag Limit Exceeded",
+        message: `Your plan allows adding up to ${maxTags} tags at a time. Please upgrade your plan to add more.`,
+        tone: "critical",
+      });
+      setWarning(prev => ({ ...prev, active: false }));
+      return;
+    }
+
     setTags((current) => [...current, trimmed]);
     setTagInput("");
     setAlert((prev) => ({ ...prev, active: false }));
@@ -966,7 +991,7 @@ export default function SimpleTagManager() {
                         {file.name} — {csvData.length} records loaded. <Button variant="plain" onClick={() => { setFile(null); setCsvData([]); }}>Remove</Button>
                       </Text>
                     )}
-                    <Text as="p" tone="subdued">Only 5000 records will add at a time</Text>
+                    <Text as="p" tone="subdued">Only {plan === "FREE" ? 50 : plan === "BASIC" ? 100 : 5000} records will be processed at a time</Text>
 
                     <Button
                       variant="primary"

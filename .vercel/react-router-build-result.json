@@ -1,0 +1,696 @@
+{
+  "buildManifest": {
+    "serverBundles": {
+      "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0": {
+        "id": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+        "file": "build/server/nodejs_eyJydW50aW1lIjoibm9kZWpzIn0/index.js",
+        "config": {
+          "runtime": "nodejs"
+        }
+      }
+    },
+    "routeIdToServerBundleId": {
+      "routes/webhooks.app.subscriptions.update": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/webhooks.customers.data_request": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.checkPopup.subscription": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.closePopup.subscription": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/webhooks.app.scopes_update": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/webhooks.customers.redact": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/webhooks.app.uninstalled": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.update-restore.db": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/webhooks.shop.redact": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.metaCreate.db": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.update.plan": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.timeout.db": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.revert.db": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/documentation": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.check.db": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.add.db": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/auth.login": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/privacy": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/_index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/auth.$": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/app.billing.subscribe": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/app.metafield-manage": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/app.export-data": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/app.remove-tags": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/app.add-tags": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/app.history": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/app._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/app.faq": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/faq": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
+    },
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "app/root.tsx",
+        "path": "",
+        "config": {}
+      },
+      "routes/webhooks.app.subscriptions.update": {
+        "id": "routes/webhooks.app.subscriptions.update",
+        "parentId": "root",
+        "file": "app/routes/webhooks.app.subscriptions.update.tsx",
+        "path": "webhooks/app/subscriptions/update",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/webhooks.customers.data_request": {
+        "id": "routes/webhooks.customers.data_request",
+        "parentId": "root",
+        "file": "app/routes/webhooks.customers.data_request.tsx",
+        "path": "webhooks/customers/data_request",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.checkPopup.subscription": {
+        "id": "routes/api.checkPopup.subscription",
+        "parentId": "root",
+        "file": "app/routes/api.checkPopup.subscription.ts",
+        "path": "api/checkPopup/subscription",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.closePopup.subscription": {
+        "id": "routes/api.closePopup.subscription",
+        "parentId": "root",
+        "file": "app/routes/api.closePopup.subscription.ts",
+        "path": "api/closePopup/subscription",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/webhooks.app.scopes_update": {
+        "id": "routes/webhooks.app.scopes_update",
+        "parentId": "root",
+        "file": "app/routes/webhooks.app.scopes_update.tsx",
+        "path": "webhooks/app/scopes_update",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/webhooks.customers.redact": {
+        "id": "routes/webhooks.customers.redact",
+        "parentId": "root",
+        "file": "app/routes/webhooks.customers.redact.tsx",
+        "path": "webhooks/customers/redact",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/webhooks.app.uninstalled": {
+        "id": "routes/webhooks.app.uninstalled",
+        "parentId": "root",
+        "file": "app/routes/webhooks.app.uninstalled.tsx",
+        "path": "webhooks/app/uninstalled",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.update-restore.db": {
+        "id": "routes/api.update-restore.db",
+        "parentId": "root",
+        "file": "app/routes/api.update-restore.db.ts",
+        "path": "api/update-restore/db",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/webhooks.shop.redact": {
+        "id": "routes/webhooks.shop.redact",
+        "parentId": "root",
+        "file": "app/routes/webhooks.shop.redact.tsx",
+        "path": "webhooks/shop/redact",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.metaCreate.db": {
+        "id": "routes/api.metaCreate.db",
+        "parentId": "root",
+        "file": "app/routes/api.metaCreate.db.ts",
+        "path": "api/metaCreate/db",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.update.plan": {
+        "id": "routes/api.update.plan",
+        "parentId": "root",
+        "file": "app/routes/api.update.plan.ts",
+        "path": "api/update/plan",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.timeout.db": {
+        "id": "routes/api.timeout.db",
+        "parentId": "root",
+        "file": "app/routes/api.timeout.db.ts",
+        "path": "api/timeout/db",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.revert.db": {
+        "id": "routes/api.revert.db",
+        "parentId": "root",
+        "file": "app/routes/api.revert.db.ts",
+        "path": "api/revert/db",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/documentation": {
+        "id": "routes/documentation",
+        "parentId": "root",
+        "file": "app/routes/documentation.tsx",
+        "path": "documentation",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.check.db": {
+        "id": "routes/api.check.db",
+        "parentId": "root",
+        "file": "app/routes/api.check.db.ts",
+        "path": "api/check/db",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.add.db": {
+        "id": "routes/api.add.db",
+        "parentId": "root",
+        "file": "app/routes/api.add.db.ts",
+        "path": "api/add/db",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/auth.login": {
+        "id": "routes/auth.login",
+        "parentId": "root",
+        "file": "app/routes/auth.login/route.tsx",
+        "path": "auth/login",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/privacy": {
+        "id": "routes/privacy",
+        "parentId": "root",
+        "file": "app/routes/privacy.tsx",
+        "path": "privacy",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/_index": {
+        "id": "routes/_index",
+        "parentId": "root",
+        "file": "app/routes/_index/route.tsx",
+        "index": true,
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/auth.$": {
+        "id": "routes/auth.$",
+        "parentId": "root",
+        "file": "app/routes/auth.$.tsx",
+        "path": "auth/*",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/app": {
+        "id": "routes/app",
+        "parentId": "root",
+        "file": "app/routes/app.tsx",
+        "path": "app",
+        "config": {}
+      },
+      "routes/app.billing.subscribe": {
+        "id": "routes/app.billing.subscribe",
+        "parentId": "routes/app",
+        "file": "app/routes/app.billing.subscribe.tsx",
+        "path": "billing/subscribe",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/app.metafield-manage": {
+        "id": "routes/app.metafield-manage",
+        "parentId": "routes/app",
+        "file": "app/routes/app.metafield-manage.tsx",
+        "path": "metafield-manage",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/app.export-data": {
+        "id": "routes/app.export-data",
+        "parentId": "routes/app",
+        "file": "app/routes/app.export-data.tsx",
+        "path": "export-data",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/app.remove-tags": {
+        "id": "routes/app.remove-tags",
+        "parentId": "routes/app",
+        "file": "app/routes/app.remove-tags.tsx",
+        "path": "remove-tags",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/app.add-tags": {
+        "id": "routes/app.add-tags",
+        "parentId": "routes/app",
+        "file": "app/routes/app.add-tags.tsx",
+        "path": "add-tags",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/app.history": {
+        "id": "routes/app.history",
+        "parentId": "routes/app",
+        "file": "app/routes/app.history.tsx",
+        "path": "history",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/app._index": {
+        "id": "routes/app._index",
+        "parentId": "routes/app",
+        "file": "app/routes/app._index.tsx",
+        "index": true,
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/app.faq": {
+        "id": "routes/app.faq",
+        "parentId": "routes/app",
+        "file": "app/routes/app.faq.tsx",
+        "path": "faq",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/faq": {
+        "id": "routes/faq",
+        "parentId": "root",
+        "file": "app/routes/faq.tsx",
+        "path": "faq",
+        "config": {
+          "runtime": "nodejs"
+        }
+      }
+    }
+  },
+  "reactRouterConfig": {
+    "appDirectory": "/home/gwl/copy-laptop/cli app/testing app localy/Metaforge manager phase-2/app",
+    "basename": "/",
+    "buildDirectory": "/home/gwl/copy-laptop/cli app/testing app localy/Metaforge manager phase-2/build",
+    "future": {
+      "unstable_optimizeDeps": false,
+      "v8_passThroughRequests": false,
+      "v8_trailingSlashAwareDataRequests": false,
+      "unstable_previewServerPrerendering": false,
+      "v8_middleware": false,
+      "v8_splitRouteModules": false,
+      "v8_viteEnvironmentApi": false
+    },
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "root.tsx",
+        "path": ""
+      },
+      "routes/webhooks.app.subscriptions.update": {
+        "id": "routes/webhooks.app.subscriptions.update",
+        "parentId": "root",
+        "file": "routes/webhooks.app.subscriptions.update.tsx",
+        "path": "webhooks/app/subscriptions/update"
+      },
+      "routes/webhooks.customers.data_request": {
+        "id": "routes/webhooks.customers.data_request",
+        "parentId": "root",
+        "file": "routes/webhooks.customers.data_request.tsx",
+        "path": "webhooks/customers/data_request"
+      },
+      "routes/api.checkPopup.subscription": {
+        "id": "routes/api.checkPopup.subscription",
+        "parentId": "root",
+        "file": "routes/api.checkPopup.subscription.ts",
+        "path": "api/checkPopup/subscription"
+      },
+      "routes/api.closePopup.subscription": {
+        "id": "routes/api.closePopup.subscription",
+        "parentId": "root",
+        "file": "routes/api.closePopup.subscription.ts",
+        "path": "api/closePopup/subscription"
+      },
+      "routes/webhooks.app.scopes_update": {
+        "id": "routes/webhooks.app.scopes_update",
+        "parentId": "root",
+        "file": "routes/webhooks.app.scopes_update.tsx",
+        "path": "webhooks/app/scopes_update"
+      },
+      "routes/webhooks.customers.redact": {
+        "id": "routes/webhooks.customers.redact",
+        "parentId": "root",
+        "file": "routes/webhooks.customers.redact.tsx",
+        "path": "webhooks/customers/redact"
+      },
+      "routes/webhooks.app.uninstalled": {
+        "id": "routes/webhooks.app.uninstalled",
+        "parentId": "root",
+        "file": "routes/webhooks.app.uninstalled.tsx",
+        "path": "webhooks/app/uninstalled"
+      },
+      "routes/api.update-restore.db": {
+        "id": "routes/api.update-restore.db",
+        "parentId": "root",
+        "file": "routes/api.update-restore.db.ts",
+        "path": "api/update-restore/db"
+      },
+      "routes/webhooks.shop.redact": {
+        "id": "routes/webhooks.shop.redact",
+        "parentId": "root",
+        "file": "routes/webhooks.shop.redact.tsx",
+        "path": "webhooks/shop/redact"
+      },
+      "routes/api.metaCreate.db": {
+        "id": "routes/api.metaCreate.db",
+        "parentId": "root",
+        "file": "routes/api.metaCreate.db.ts",
+        "path": "api/metaCreate/db"
+      },
+      "routes/api.update.plan": {
+        "id": "routes/api.update.plan",
+        "parentId": "root",
+        "file": "routes/api.update.plan.ts",
+        "path": "api/update/plan"
+      },
+      "routes/api.timeout.db": {
+        "id": "routes/api.timeout.db",
+        "parentId": "root",
+        "file": "routes/api.timeout.db.ts",
+        "path": "api/timeout/db"
+      },
+      "routes/api.revert.db": {
+        "id": "routes/api.revert.db",
+        "parentId": "root",
+        "file": "routes/api.revert.db.ts",
+        "path": "api/revert/db"
+      },
+      "routes/documentation": {
+        "id": "routes/documentation",
+        "parentId": "root",
+        "file": "routes/documentation.tsx",
+        "path": "documentation"
+      },
+      "routes/api.check.db": {
+        "id": "routes/api.check.db",
+        "parentId": "root",
+        "file": "routes/api.check.db.ts",
+        "path": "api/check/db"
+      },
+      "routes/api.add.db": {
+        "id": "routes/api.add.db",
+        "parentId": "root",
+        "file": "routes/api.add.db.ts",
+        "path": "api/add/db"
+      },
+      "routes/auth.login": {
+        "id": "routes/auth.login",
+        "parentId": "root",
+        "file": "routes/auth.login/route.tsx",
+        "path": "auth/login"
+      },
+      "routes/privacy": {
+        "id": "routes/privacy",
+        "parentId": "root",
+        "file": "routes/privacy.tsx",
+        "path": "privacy"
+      },
+      "routes/_index": {
+        "id": "routes/_index",
+        "parentId": "root",
+        "file": "routes/_index/route.tsx",
+        "index": true
+      },
+      "routes/auth.$": {
+        "id": "routes/auth.$",
+        "parentId": "root",
+        "file": "routes/auth.$.tsx",
+        "path": "auth/*"
+      },
+      "routes/app": {
+        "id": "routes/app",
+        "parentId": "root",
+        "file": "routes/app.tsx",
+        "path": "app"
+      },
+      "routes/app.billing.subscribe": {
+        "id": "routes/app.billing.subscribe",
+        "parentId": "routes/app",
+        "file": "routes/app.billing.subscribe.tsx",
+        "path": "billing/subscribe"
+      },
+      "routes/app.metafield-manage": {
+        "id": "routes/app.metafield-manage",
+        "parentId": "routes/app",
+        "file": "routes/app.metafield-manage.tsx",
+        "path": "metafield-manage"
+      },
+      "routes/app.export-data": {
+        "id": "routes/app.export-data",
+        "parentId": "routes/app",
+        "file": "routes/app.export-data.tsx",
+        "path": "export-data"
+      },
+      "routes/app.remove-tags": {
+        "id": "routes/app.remove-tags",
+        "parentId": "routes/app",
+        "file": "routes/app.remove-tags.tsx",
+        "path": "remove-tags"
+      },
+      "routes/app.add-tags": {
+        "id": "routes/app.add-tags",
+        "parentId": "routes/app",
+        "file": "routes/app.add-tags.tsx",
+        "path": "add-tags"
+      },
+      "routes/app.history": {
+        "id": "routes/app.history",
+        "parentId": "routes/app",
+        "file": "routes/app.history.tsx",
+        "path": "history"
+      },
+      "routes/app._index": {
+        "id": "routes/app._index",
+        "parentId": "routes/app",
+        "file": "routes/app._index.tsx",
+        "index": true
+      },
+      "routes/app.faq": {
+        "id": "routes/app.faq",
+        "parentId": "routes/app",
+        "file": "routes/app.faq.tsx",
+        "path": "faq"
+      },
+      "routes/faq": {
+        "id": "routes/faq",
+        "parentId": "root",
+        "file": "routes/faq.tsx",
+        "path": "faq"
+      }
+    },
+    "routeDiscovery": {
+      "mode": "lazy",
+      "manifestPath": "/__manifest"
+    },
+    "serverBuildFile": "index.js",
+    "serverModuleFormat": "esm",
+    "ssr": true,
+    "subResourceIntegrity": false,
+    "allowedActionOrigins": false,
+    "unstable_routeConfig": [
+      {
+        "id": "root",
+        "path": "",
+        "file": "root.tsx",
+        "children": [
+          {
+            "id": "routes/webhooks.app.subscriptions.update",
+            "file": "routes/webhooks.app.subscriptions.update.tsx",
+            "path": "webhooks/app/subscriptions/update"
+          },
+          {
+            "id": "routes/webhooks.customers.data_request",
+            "file": "routes/webhooks.customers.data_request.tsx",
+            "path": "webhooks/customers/data_request"
+          },
+          {
+            "id": "routes/api.checkPopup.subscription",
+            "file": "routes/api.checkPopup.subscription.ts",
+            "path": "api/checkPopup/subscription"
+          },
+          {
+            "id": "routes/api.closePopup.subscription",
+            "file": "routes/api.closePopup.subscription.ts",
+            "path": "api/closePopup/subscription"
+          },
+          {
+            "id": "routes/webhooks.app.scopes_update",
+            "file": "routes/webhooks.app.scopes_update.tsx",
+            "path": "webhooks/app/scopes_update"
+          },
+          {
+            "id": "routes/webhooks.customers.redact",
+            "file": "routes/webhooks.customers.redact.tsx",
+            "path": "webhooks/customers/redact"
+          },
+          {
+            "id": "routes/webhooks.app.uninstalled",
+            "file": "routes/webhooks.app.uninstalled.tsx",
+            "path": "webhooks/app/uninstalled"
+          },
+          {
+            "id": "routes/api.update-restore.db",
+            "file": "routes/api.update-restore.db.ts",
+            "path": "api/update-restore/db"
+          },
+          {
+            "id": "routes/webhooks.shop.redact",
+            "file": "routes/webhooks.shop.redact.tsx",
+            "path": "webhooks/shop/redact"
+          },
+          {
+            "id": "routes/api.metaCreate.db",
+            "file": "routes/api.metaCreate.db.ts",
+            "path": "api/metaCreate/db"
+          },
+          {
+            "id": "routes/api.update.plan",
+            "file": "routes/api.update.plan.ts",
+            "path": "api/update/plan"
+          },
+          {
+            "id": "routes/api.timeout.db",
+            "file": "routes/api.timeout.db.ts",
+            "path": "api/timeout/db"
+          },
+          {
+            "id": "routes/api.revert.db",
+            "file": "routes/api.revert.db.ts",
+            "path": "api/revert/db"
+          },
+          {
+            "id": "routes/documentation",
+            "file": "routes/documentation.tsx",
+            "path": "documentation"
+          },
+          {
+            "id": "routes/api.check.db",
+            "file": "routes/api.check.db.ts",
+            "path": "api/check/db"
+          },
+          {
+            "id": "routes/api.add.db",
+            "file": "routes/api.add.db.ts",
+            "path": "api/add/db"
+          },
+          {
+            "id": "routes/auth.login",
+            "file": "routes/auth.login/route.tsx",
+            "path": "auth/login"
+          },
+          {
+            "id": "routes/privacy",
+            "file": "routes/privacy.tsx",
+            "path": "privacy"
+          },
+          {
+            "id": "routes/_index",
+            "file": "routes/_index/route.tsx",
+            "index": true
+          },
+          {
+            "id": "routes/auth.$",
+            "file": "routes/auth.$.tsx",
+            "path": "auth/*"
+          },
+          {
+            "id": "routes/app",
+            "file": "routes/app.tsx",
+            "path": "app",
+            "children": [
+              {
+                "id": "routes/app.billing.subscribe",
+                "file": "routes/app.billing.subscribe.tsx",
+                "path": "billing/subscribe"
+              },
+              {
+                "id": "routes/app.metafield-manage",
+                "file": "routes/app.metafield-manage.tsx",
+                "path": "metafield-manage"
+              },
+              {
+                "id": "routes/app.export-data",
+                "file": "routes/app.export-data.tsx",
+                "path": "export-data"
+              },
+              {
+                "id": "routes/app.remove-tags",
+                "file": "routes/app.remove-tags.tsx",
+                "path": "remove-tags"
+              },
+              {
+                "id": "routes/app.add-tags",
+                "file": "routes/app.add-tags.tsx",
+                "path": "add-tags"
+              },
+              {
+                "id": "routes/app.history",
+                "file": "routes/app.history.tsx",
+                "path": "history"
+              },
+              {
+                "id": "routes/app._index",
+                "file": "routes/app._index.tsx",
+                "index": true
+              },
+              {
+                "id": "routes/app.faq",
+                "file": "routes/app.faq.tsx",
+                "path": "faq"
+              }
+            ]
+          },
+          {
+            "id": "routes/faq",
+            "file": "routes/faq.tsx",
+            "path": "faq"
+          }
+        ]
+      }
+    ]
+  },
+  "viteConfig": {
+    "build": {
+      "assetsDir": "assets"
+    }
+  }
+}

@@ -421,7 +421,8 @@ export default function TagManager() {
       // Global Remove Mode
       if (data.mode === "remove-global") {
         const currentProcessed = globalResult.results.length + (data.results?.length || 0);
-        const limitReached = currentProcessed >= 5000;
+        const maxGlobalItems = plan === "FREE" ? 50 : plan === "BASIC" ? 100 : 5000;
+        const limitReached = currentProcessed >= maxGlobalItems;
 
         setGlobalResult((prev: any) => {
           const merged = [...prev.results, ...(data.results || [])];
@@ -554,6 +555,18 @@ export default function TagManager() {
 
   const handleCsvInput = useCallback(
     (_dropFiles: File[], acceptedFiles: File[], _rejectedFiles: File[]) => {
+      if (remainingDays === 0) {
+        setAlert({
+          active: true,
+          title: "Plan Expired",
+          message: "Your plan has expired (0 days remaining). Please upgrade your subscription to continue.",
+          tone: "critical",
+        });
+        setWarning((prev) => ({ ...prev, active: false }));
+        handleClearCSV();
+        return;
+      }
+
       const file = acceptedFiles[0];
       if (!file) {
         handleClearCSV();
@@ -595,11 +608,12 @@ export default function TagManager() {
             .filter(Boolean);
 
 
-          if (values.length > 5000) {
+          const maxCsvRows = plan === "FREE" ? 50 : plan === "BASIC" ? 100 : 5000;
+          if (values.length > maxCsvRows) {
             setAlert({
               active: true,
               title: "Limit Exceeded",
-              message: "Only 5000 records will add at a time",
+              message: `Your plan allows removing tags from up to ${maxCsvRows} records at a time. Please upgrade your plan to add more.`,
               tone: "critical",
             });
             setWarning((prev) => ({ ...prev, active: false }));
@@ -614,7 +628,7 @@ export default function TagManager() {
             setWarning({
               active: true,
               title: "Limit Exceeded",
-              message: `You only have ${planData?.limits?.tagRemoveCsvLimit} records remaining according to your plan. Please update your plan to add more.`,
+              message: `You only have access to add ${planData?.limits?.tagRemoveCsvLimit} csv entries remaining according to your plan. Please update your plan to add more.`,
               tone: "warning",
             });
             setAlert((prev) => ({ ...prev, active: false }));
@@ -653,13 +667,6 @@ export default function TagManager() {
     },
     [specificField, objectType, planData, plan],
   );
-
-
-  function getShopifyObjectTypeFromGid(gid: string) {
-    if (typeof gid !== "string") return null;
-    const match = gid.match(/^gid:\/\/shopify\/([^/]+)\/\d+$/);
-    return match ? match[1].toLowerCase() : null;
-  }
 
   const downloadResultCSV = () => {
     let result: any[] = [];
@@ -741,6 +748,18 @@ export default function TagManager() {
         });
         setAlert((prev) => ({ ...prev, active: false }));
         return; // ⛔ stop execution, no submit
+      }
+
+      if (remainingDays === 0) {
+        setAlert({
+          active: true,
+          title: "Plan Expired",
+          message: "Your plan has expired (0 days remaining). Please upgrade your subscription to continue.",
+          tone: "critical",
+        });
+        setWarning((prev) => ({ ...prev, active: false }));
+        handleClearCSV();
+        return;
       }
 
       setIsRemoving(true);
@@ -1012,7 +1031,7 @@ export default function TagManager() {
                         fontWeight="bold"
                         tone={remainingDays <= 5 ? "critical" : undefined}
                       >
-                        {remainingDays} {remainingDays === 1 ? "Day" : "Days"}
+                        {remainingDays} {remainingDays === 0 ? "Day" : "Days"}
                       </Text>
                       <Text
                         variant="bodyXs"
@@ -1275,13 +1294,26 @@ export default function TagManager() {
                                   size="slim"
                                   pressed={isSelected}
                                   variant={isSelected ? "primary" : "secondary"}
-                                  onClick={() =>
-                                    setSelectedTags((prev) =>
-                                      prev.includes(tag)
-                                        ? prev.filter((t) => t !== tag)
-                                        : [...prev, tag],
-                                    )
-                                  }
+                                  onClick={() => {
+                                    const maxTags = plan === "FREE" ? 2 : plan === "BASIC" ? 10 : 20;
+                                    setSelectedTags((prev) => {
+                                      if (prev.includes(tag)) {
+                                        return prev.filter((t) => t !== tag);
+                                      } else {
+                                        if (prev.length >= maxTags) {
+                                          setAlert({
+                                            active: true,
+                                            title: "Tag Limit Exceeded",
+                                            message: `Your plan allows selecting up to ${maxTags} tags at a time. Please upgrade to select more.`,
+                                            tone: "critical",
+                                          });
+                                          setWarning((prevWarning) => ({ ...prevWarning, active: false }));
+                                          return prev;
+                                        }
+                                        return [...prev, tag];
+                                      }
+                                    });
+                                  }}
                                 >
                                   {tag}
                                 </Button>
@@ -1308,7 +1340,7 @@ export default function TagManager() {
                             title=""
                             choices={[
                               {
-                                label: `Global Removal (From 5000 ${objectType}s at a time)`,
+                                label: `Global Removal (From ${plan === "FREE" ? 50 : plan === "BASIC" ? 100 : 5000} ${objectType}s at a time)`,
                                 value: "global",
                               },
                               {
@@ -1361,7 +1393,7 @@ export default function TagManager() {
                                     {fileName} — {csvIds.length} records.
                                   </Text>
                                 )}
-                                <Text as="p" tone="subdued">Only 5000 records will add at a time</Text>
+                                <Text as="p" tone="subdued">Only {plan === "FREE" ? 50 : plan === "BASIC" ? 100 : 5000} records will be processed at a time</Text>
                               </BlockStack>
 
                             </Box>

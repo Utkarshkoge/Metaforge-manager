@@ -10,7 +10,7 @@ import prisma from "../db.server";
 
 export function getRemainingDaysCalendar(
   startDate: Date,
-  totalDays = 30,
+  totalDays = 7,
 ): number {
   const start = new Date(startDate);
   start.setHours(0, 0, 0, 0);
@@ -216,21 +216,16 @@ export async function checkAndResetSubscription(shopDomain: string, prisma: any)
   const oneMonthAgo = new Date();
   oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
-  /* ---------------- FREE PLAN ---------------- */
-  const freePlan = await prisma.freePlanLimits.findUnique({
+  // Check active subscription end date
+  const activeSub = await prisma.activeSubscription.findUnique({
     where: { shopDomain },
   });
 
-  if (freePlan) {
-    if (freePlan.firstUsedAt < oneMonthAgo) {
-      await prisma.$transaction([
-        prisma.freePlanLimits.delete({
-          where: { shopDomain },
-        }),
-        prisma.freePlanLimits.create({
-          data: { shopDomain },
-        }),
-      ]);
+  if (activeSub && activeSub.currentPeriodEnd) {
+    if (new Date(activeSub.currentPeriodEnd) < new Date()) {
+      await prisma.activeSubscription.deleteMany({
+        where: { shopDomain: shopDomain }
+      });
     }
   }
 
@@ -239,7 +234,7 @@ export async function checkAndResetSubscription(shopDomain: string, prisma: any)
     where: { shopDomain },
   });
 
-  if (basicPlan) {
+  if (basicPlan && basicPlan.firstUsedAt) {
     if (basicPlan.firstUsedAt < oneMonthAgo) {
       await prisma.basicPlanLimits.delete({
         where: { shopDomain },

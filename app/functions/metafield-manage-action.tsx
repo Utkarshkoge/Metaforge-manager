@@ -2000,7 +2000,7 @@ const paginationQueryMap: Record<string, string> = {
   `,
 };
 
-export async function getPaginationInfo(admin: any, resource: string) {
+export async function getPaginationInfo(admin: any, resource: string, plan: string = "FREE") {
   // 1. Get total resource count
   const countObj = await fetchResourceCount(admin, resource as any);
   const totalCount = countObj.count;
@@ -2012,15 +2012,17 @@ export async function getPaginationInfo(admin: any, resource: string) {
     };
   }
 
-  const query = paginationQueryMap[resource];
-  if (!query) {
+  const rawQuery = paginationQueryMap[resource];
+  if (!rawQuery) {
     throw new Error(`Unsupported pagination resource: ${resource}`);
   }
 
+  const pageSize = plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 5000;
+  const loopLimit = plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 200;
+  const query = rawQuery.replace("first: 200", `first: ${loopLimit}`);
+
   const pages = [];
-  const pageSize = 5000;
-  const loopLimit = 200; // items per fetch
-  const fetchesPerPage = pageSize / loopLimit; // 25 fetches
+  const fetchesPerPage = Math.ceil(pageSize / loopLimit);
 
   // Page 1 always starts with null cursor
   pages.push({

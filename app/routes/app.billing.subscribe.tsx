@@ -272,35 +272,29 @@ export default function BillingPage() {
                                 <Card>
                                     <BlockStack gap="400">
                                         <BlockStack gap="200">
-                                            <InlineStack align="space-between">
-                                                <Text as="h2" variant="headingLg">Free</Text>
+                                            <InlineStack align="space-between" gap="200">
+                                                <Text as="h2" variant="headingLg">Starting 7 Days Free Plan</Text>
                                                 {currentPlan === "FREE" && <Badge tone="success">Active</Badge>}
                                             </InlineStack>
-                                            <Text as="p" variant="bodyLg" fontWeight="bold">$0 <Text as="span" variant="bodySm" tone="subdued">/ month</Text></Text>
                                         </BlockStack>
 
                                         <Divider />
 
                                         <BlockStack gap="200">
-                                            <Text as="p" variant="bodyMd" fontWeight="medium">Monthly Limits:</Text>
                                             <BlockStack gap="150">
-                                                <FeatureItem text="5 Global Tag Actions" />
-                                                <FeatureItem text="5 Global Metafield Actions" />
-                                                <FeatureItem text="250 CSV Rows per action" />
+                                                <FeatureItem text="2 Global Tag Removal Actions" detail="50 items/run, max 2 tags" />
+                                                <FeatureItem text="2 Global Metafield Removal Actions" detail="100 items/run" />
+                                                <FeatureItem text="200 CSV Entries" />
                                                 <FeatureItem text="Standard Support" />
                                             </BlockStack>
                                         </BlockStack>
 
-                                        <Box paddingTop="400">
-                                            {currentPlan === "FREE" && (
-                                                <Button
-                                                    fullWidth
-                                                    variant="secondary"
-                                                    disabled
-                                                >
-                                                    Current Plan
-                                                </Button>
-                                            )}
+                                        <Divider />
+
+                                        <Box paddingTop="100">
+                                            <Text as="p" variant="bodyXs" tone="subdued">
+                                                Upgrade to a premium plan after your starting 7-day trial or once free limits are reached.
+                                            </Text>
                                         </Box>
                                     </BlockStack>
                                 </Card>
@@ -317,7 +311,7 @@ export default function BillingPage() {
                                 <Card>
                                     <BlockStack gap="400">
                                         <BlockStack gap="200">
-                                            <InlineStack align="space-between">
+                                            <InlineStack align="space-between" gap="200">
                                                 <Text as="h2" variant="headingLg">Basic</Text>
                                                 {currentPlan === "BASIC" && <Badge tone="success">Active</Badge>}
                                             </InlineStack>
@@ -327,11 +321,21 @@ export default function BillingPage() {
                                         <Divider />
 
                                         <BlockStack gap="200">
-                                            <Text as="p" variant="bodyMd" fontWeight="medium">Increased Monthly Limits:</Text>
+                                            <Text as="p" variant="bodyMd" fontWeight="medium">Monthly Limits:</Text>
                                             <BlockStack gap="150">
-                                                <FeatureItem text="25 Global Tag Actions" />
-                                                <FeatureItem text="25 Global Metafield Actions" />
-                                                <FeatureItem text="1,500 CSV Rows per action" />
+                                                <FeatureItem
+                                                    text="20 Global Tag Removal Actions"
+                                                    detail="100 items/run action, max 10 tags"
+                                                />
+
+                                                <FeatureItem
+                                                    text="20 Global Metafield Removal Actions"
+                                                    detail="250 items/run action"
+                                                />
+
+                                                <FeatureItem
+                                                    text="3,000 CSV Entries"
+                                                />
                                                 <FeatureItem text="Standard Support" />
                                             </BlockStack>
                                         </BlockStack>
@@ -407,7 +411,7 @@ export default function BillingPage() {
                                 }}>
                                     <BlockStack gap="400">
                                         <BlockStack gap="200">
-                                            <InlineStack align="space-between">
+                                            <InlineStack align="space-between" gap="200">
                                                 <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#ffffff", margin: 0 }}>Advanced</h2>
                                                 <InlineStack gap="100">
                                                     {currentPlan === "ADVANCED" && <Badge tone="success">Active</Badge>}
@@ -422,10 +426,9 @@ export default function BillingPage() {
                                         <BlockStack gap="200">
                                             <p style={{ fontSize: "14px", fontWeight: "500", color: "#90f590", margin: 0 }}>Everything Unlimited:</p>
                                             <BlockStack gap="150">
-                                                <DarkFeatureItem text="Unlimited Tag Actions" />
-                                                <DarkFeatureItem text="Unlimited Metafield Edits" />
-                                                <DarkFeatureItem text="Unlimited Global Actions" />
-                                                <DarkFeatureItem text="Full CSV Processing" />
+                                                <DarkFeatureItem text="Unlimited Tag Removal" detail="5,000 items/run, max 20 tags" />
+                                                <DarkFeatureItem text="Unlimited Metafield Removal" detail="5,000 items/run" />
+                                                <DarkFeatureItem text="Unlimited CSV Operations" detail="5,000 entries/run" />
                                                 <DarkFeatureItem text="Priority Support" />
                                             </BlockStack>
                                         </BlockStack>
@@ -597,20 +600,34 @@ export default function BillingPage() {
     );
 }
 
-function FeatureItem({ text }: { text: string }) {
+function FeatureItem({ text, detail }: { text: string; detail?: string }) {
     return (
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span style={{ color: "#10b981", fontWeight: "bold" }}>✓</span>
-            <Text as="span" variant="bodyMd">{text}</Text>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
+            <span style={{ color: "#10b981", fontWeight: "bold", fontSize: "14px", lineHeight: "20px" }}>✓</span>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+                <Text as="span" variant="bodyMd" fontWeight="medium">{text}</Text>
+                {detail && (
+                    <Text as="span" variant="bodySm" tone="subdued">
+                        {detail}
+                    </Text>
+                )}
+            </div>
         </div>
     );
 }
 
-function DarkFeatureItem({ text }: { text: string }) {
+function DarkFeatureItem({ text, detail }: { text: string; detail?: string }) {
     return (
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span style={{ color: "#10b981", fontWeight: "bold" }}>✓</span>
-            <span style={{ color: "#f1f5f9", fontSize: "14px" }}>{text}</span>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
+            <span style={{ color: "#10b981", fontWeight: "bold", fontSize: "14px", lineHeight: "20px" }}>✓</span>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+                <span style={{ color: "#f1f5f9", fontSize: "14px", fontWeight: "500" }}>{text}</span>
+                {detail && (
+                    <span style={{ color: "#101011ff", fontSize: "12px" }}>
+                        {detail}
+                    </span>
+                )}
+            </div>
         </div>
     );
 }
