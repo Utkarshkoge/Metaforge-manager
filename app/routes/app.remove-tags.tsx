@@ -608,7 +608,7 @@ export default function TagManager() {
             .filter(Boolean);
 
 
-          const maxCsvRows = plan === "FREE" ? 50 : plan === "BASIC" ? 100 : 5000;
+          const maxCsvRows = plan === "FREE" ? 200 : plan === "BASIC" ? 3000 : 5000;
           if (values.length > maxCsvRows) {
             setAlert({
               active: true,
@@ -628,7 +628,7 @@ export default function TagManager() {
             setWarning({
               active: true,
               title: "Limit Exceeded",
-              message: `You only have access to add ${planData?.limits?.tagRemoveCsvLimit} csv entries remaining according to your plan. Please update your plan to add more.`,
+              message: `You only have access to add ${planData?.limits?.tagRemoveCsvLimit} csv ${objectType} remaining according to your plan. Please update your plan to add more.`,
               tone: "warning",
             });
             setAlert((prev) => ({ ...prev, active: false }));
@@ -1393,7 +1393,7 @@ export default function TagManager() {
                                     {fileName} — {csvIds.length} records.
                                   </Text>
                                 )}
-                                <Text as="p" tone="subdued">Only {plan === "FREE" ? 50 : plan === "BASIC" ? 100 : 5000} records will be processed at a time</Text>
+                                <Text as="p" tone="subdued">Only {plan === "FREE" ? 200 : plan === "BASIC" ? 3000 : 5000} records will be processed at a time</Text>
                               </BlockStack>
 
                             </Box>
@@ -1665,7 +1665,13 @@ export default function TagManager() {
               )
             )}
             <Text as="p">
-              Are you sure you want to remove {selectedTags.length === 1 ? "1 tag" : `${selectedTags.length} tags`} from up to 5,000 {objectType} entries where these tags are present? If more matching entries are available, repeat this operation again.
+              Are you sure you want to remove {selectedTags.length === 1 ? "1 tag" : `${selectedTags.length} tags`} from up to {
+                plan === "FREE"
+                  ? "50"
+                  : plan === "BASIC"
+                    ? "100"
+                    : "5,000"
+              } {objectType}s where these tags are present? If more matching entries are available, repeat this operation again.
             </Text>
           </BlockStack>
         </Modal.Section>
@@ -1673,6 +1679,7 @@ export default function TagManager() {
       <RemoveTagsInstructionsModal
         open={instructionsOpen}
         onClose={() => setInstructionsOpen(false)}
+        plan={plan}
       />
     </Page>
   );

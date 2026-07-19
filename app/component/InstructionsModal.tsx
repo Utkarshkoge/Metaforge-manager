@@ -3,6 +3,8 @@ import { Modal, Text, BlockStack, List } from "@shopify/polaris";
 interface Props {
   open: boolean;
   onClose: () => void;
+  plan: string;
+
 }
 
 export function AddTagsInstructionsModal({ open, onClose }: Props) {
@@ -108,7 +110,7 @@ export function AddTagsInstructionsModal({ open, onClose }: Props) {
   );
 }
 
-export function RemoveTagsInstructionsModal({ open, onClose }: Props) {
+export function RemoveTagsInstructionsModal({ open, onClose, plan }: Props) {
   return (
     <Modal
       open={open}
@@ -178,7 +180,13 @@ export function RemoveTagsInstructionsModal({ open, onClose }: Props) {
                 <Text as="span" fontWeight="semibold">
                   Global Remove
                 </Text>{" "}
-                to remove tags from up to 5,000 resources at once.
+                to remove tags from up to {
+                  plan === "FREE"
+                    ? "50"
+                    : plan === "BASIC"
+                      ? "100"
+                      : "5,000"
+                } resources at once.
               </Text>
             </List.Item>
 
@@ -235,7 +243,7 @@ export function RemoveTagsInstructionsModal({ open, onClose }: Props) {
   );
 }
 
-export function MetafieldManageInstructionsModal({ open, onClose }: Props) {
+export function MetafieldManageInstructionsModal({ open, onClose, plan }: Props) {
   return (
     <Modal
       open={open}
@@ -297,7 +305,13 @@ export function MetafieldManageInstructionsModal({ open, onClose }: Props) {
                 <Text as="span" fontWeight="semibold">
                   Global Remove
                 </Text>{" "}
-                will remove metafields from up to 5,000 resources at once.
+                will remove metafields from up to {
+                  plan === "FREE"
+                    ? "100"
+                    : plan === "BASIC"
+                      ? "250"
+                      : "5,000"
+                } resources at once.
               </Text>
             </List.Item>
 

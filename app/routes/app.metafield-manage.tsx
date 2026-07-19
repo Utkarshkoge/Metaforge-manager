@@ -604,7 +604,7 @@ export default function MetafieldManage() {
       }).filter((r): r is CsvRow => r !== null);
 
 
-      const maxCsvRows = plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 5000;
+      const maxCsvRows = plan === "FREE" ? 200 : plan === "BASIC" ? 3000 : 5000;
       if (rows.length > maxCsvRows) {
         setAlert({ active: true, title: "Limit Exceeded", message: `Your plan allows updating up to ${maxCsvRows} records at a time. Please upgrade your plan to add more.`, tone: 'critical' });
         setWarning((prev) => ({ ...prev, active: false }));
@@ -688,7 +688,7 @@ export default function MetafieldManage() {
           }).filter((r: unknown): r is CsvRow => r !== null);
 
 
-          const maxCsvRows = plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 5000;
+          const maxCsvRows = plan === "FREE" ? 200 : plan === "BASIC" ? 3000 : 5000;
           if (rows.length > maxCsvRows) {
             setAlert({ active: true, title: "Limit Exceeded", message: `Your plan allows removing metafields for up to ${maxCsvRows} records at a time. Please upgrade your plan to add more.`, tone: 'critical' });
             setWarning((prev) => ({ ...prev, active: false }));
@@ -2526,7 +2526,13 @@ export default function MetafieldManage() {
             ) : paginationInfo ? (
               <BlockStack gap="400">
                 <Text as="p">
-                  This metafield will be deleted across the selected 5,000 records/pages.
+                  This metafield will be deleted across the selected  {
+                    plan === "FREE"
+                      ? "100"
+                      : plan === "BASIC"
+                        ? "250"
+                        : "5,000"
+                  } records/pages.
                 </Text>
                 <Text as="p">
                   Total {objectType}s: <Text as="span" fontWeight="bold">{paginationInfo.totalCount.toLocaleString()}</Text>

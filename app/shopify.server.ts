@@ -7,16 +7,7 @@ import {
 } from "@shopify/shopify-app-react-router/server";
 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "./db.server";
-console.log("Vercel Init Debug:", {
-  hasApiKey: !!process.env.SHOPIFY_API_KEY,
-  hasApiSecret: !!process.env.SHOPIFY_API_SECRET,
-  hasAppUrl: !!process.env.SHOPIFY_APP_URL,
-  hasScopes: !!process.env.SCOPES,
-  hasDatabaseUrl: !!process.env.DATABASE_URL,
-  existingKeys: Object.keys(process.env).filter(
-    key => key.includes("SHOPIFY") || key.includes("SECRET") || key.includes("KEY")
-  ),
-});
+
 
 const shopify = shopifyApp({
   apiKey: process.env.SHOPIFY_API_KEY,
