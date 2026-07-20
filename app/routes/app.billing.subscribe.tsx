@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { LoaderFunctionArgs, ActionFunctionArgs, useNavigate, useLoaderData, useFetcher } from "react-router";
 import { useEffect, useState } from "react";
 import {
@@ -170,7 +169,7 @@ export async function action({ request }: ActionFunctionArgs) {
                     variables: {
                         name: plan.name,
                         returnUrl,
-                        test: process.env.SUBSCRIPTION === "true",
+                        test: true,
                         amount: plan.price,
                         currency: "USD",
                     },
