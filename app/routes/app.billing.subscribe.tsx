@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { LoaderFunctionArgs, ActionFunctionArgs, useNavigate, useLoaderData, useFetcher } from "react-router";
 import { useEffect, useState } from "react";
 import {
