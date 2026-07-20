@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
+import { LoaderFunctionArgs, ActionFunctionArgs, useNavigate } from "react-router";
 import { useLoaderData, useFetcher } from "react-router";
 import { useEffect, useState } from "react";
 import {
@@ -206,6 +206,7 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function BillingPage() {
     const { currentPlan } = useLoaderData<typeof loader>();
     const fetcher = useFetcher<typeof action>();
+    const navigate = useNavigate();
 
     // Cancellation Modal States
     const [cancelModalOpen, setCancelModalOpen] = useState(false);
@@ -257,8 +258,13 @@ export default function BillingPage() {
         }
     }, [fetcher.data]);
 
+    function goToHome() {
+        navigate("/app");
+    }
+
     return (
-        <Page title="Subscription Plans" subtitle="Choose the best plan for your shop's growth.">
+        <Page title="Subscription Plans" subtitle="Choose the best plan for your shop's growth." backAction={{ content: "Home", onAction: goToHome }}
+        >
             <Layout>
                 <Layout.Section>
                     <Grid>

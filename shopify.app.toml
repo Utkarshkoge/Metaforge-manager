@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "491e1fecd5d76cccff9b876c3650e701"
-application_url = "https://example.app/"
+application_url = "https://metaforge-manager.vercel.app/"
 embedded = true
 name = "test"
 
@@ -38,7 +38,7 @@ uri = "/webhooks/shop/redact"
 
 [auth]
 redirect_urls = [
-  "https://example.app/auth/callback"
+  "https://metaforge-manager.vercel.app/auth/callback"
 ]
 
 [build]
