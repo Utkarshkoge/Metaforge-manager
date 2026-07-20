@@ -17,6 +17,7 @@ import {
     Modal,
     Banner
 } from "@shopify/polaris";
+import { HomeIcon } from "@shopify/polaris-icons";
 import { authenticate } from "../shopify.server";
 import prisma from "../db.server";
 import { RouteErrorBoundary } from "app/component/RouteErrorBoundary";
@@ -257,13 +258,37 @@ export default function BillingPage() {
         }
     }, [fetcher.data]);
 
-    function goToHome() {
-        navigate("/app");
-    }
-
     return (
-        <Page title="Subscription Plans" subtitle="Choose the best plan for your shop's growth." backAction={{ content: "Home", onAction: goToHome }}
-        >
+        <Page>
+            <div className="flex flex-col space-y-0.5 mb-5 rounded-sm">
+                {/* Header Row */}
+                <div className="flex items-center space-x-2">
+                    {/* Home Icon Button */}
+                    <button
+                        onClick={() => navigate("/app")}
+                        className="flex items-center cursor-pointer justify-center text-[#303030] hover:opacity-70 transition-opacity focus:outline-none"
+                        aria-label="Go to Home"
+                    >
+                        <Icon source={HomeIcon} />
+                    </button>
+
+                    {/* Vertical Divider */}
+                    <span
+                        className="h-5 w-px bg-[#D2D2D2]"
+                        aria-hidden="true"
+                    />
+
+                    {/* Title */}
+                    <div className="text-xl font-bold leading-tight">
+                        Subscription Plans
+                    </div>
+                </div>
+
+                {/* Subtitle - Aligned to start under the Title text */}
+                <Text as="p" variant="bodySm" tone="subdued">
+                    Choose the best plan for your shop's growth.
+                </Text>
+            </div>
             <Layout>
                 <Layout.Section>
                     <Grid>
