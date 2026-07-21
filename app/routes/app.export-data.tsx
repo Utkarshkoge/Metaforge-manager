@@ -1,7 +1,7 @@
-import { Page, Card, Layout, Select, Button, BlockStack, Text, InlineStack, Modal, Box } from "@shopify/polaris";
+import { Page, Card, Layout, Select, Button, BlockStack, Text, InlineStack, Modal, Box, Badge } from "@shopify/polaris";
 import { useState, useEffect } from "react";
-import { ActionFunctionArgs, LoaderFunctionArgs, useFetcher, useNavigate } from "react-router";
-import { HomeIcon } from "@shopify/polaris-icons";
+import { ActionFunctionArgs, LoaderFunctionArgs, useFetcher, useNavigate, useOutletContext } from "react-router";
+import { HomeIcon, ClockIcon, CreditCardIcon } from "@shopify/polaris-icons";
 import { authenticate } from "../shopify.server"; // adjust 
 import { EXPORT_RESOURCES } from "../graphql/exportQueries";
 import { useLoaderData } from "react-router";
@@ -96,10 +96,19 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 };
 
+type AppOutletContext = {
+  planData: any;
+};
+
 export default function ExportData() {
   const fetcher = useFetcher();
   const navigate = useNavigate();
   const { metaobjectTypes } = useLoaderData<typeof loader>();
+  const { planData } = useOutletContext<AppOutletContext>();
+
+  let plan = planData?.plan || "FREE";
+  let remainingDays = planData?.remainingDays;
+  const isPlanExpired = plan === "FREE" && remainingDays === 0;
 
   const [resource, setResource] = useState("product");
   const [includeTags, setIncludeTags] = useState(true);
@@ -303,9 +312,137 @@ export default function ExportData() {
           Create CSV backups of your store resources before performing bulk updates.        </Text>
       </div>
 
-      {/* Content */}
-      <Layout>
-        <Layout.Section>
+      <BlockStack gap="200">
+        <Box
+          paddingBlock="300"
+          paddingInline="400"
+          background="bg-surface"
+          borderRadius="200"
+        >
+          <InlineStack align="space-between" blockAlign="center">
+            <InlineStack gap="500">
+              {/* Current Plan */}
+              <BlockStack gap="200">
+                <Text
+                  variant="bodyXs"
+                  tone="subdued"
+                  fontWeight="bold"
+                  as={"dd"}
+                >
+                  CURRENT PLAN
+                </Text>
+                <Badge tone={plan === "ADVANCED" ? "success" : "info"}>
+                  {plan}
+                </Badge>
+              </BlockStack>
+
+              {plan === "ADVANCED" && (
+                /* Advanced Status */
+                <BlockStack gap="200">
+                  <Text
+                    variant="bodyXs"
+                    tone="subdued"
+                    fontWeight="bold"
+                    as={"dd"}
+                  >
+                    STATUS
+                  </Text>
+                  <Text
+                    variant="bodyMd"
+                    tone="success"
+                    fontWeight="bold"
+                    as={"dd"}
+                  >
+                    Unlimited Access Enabled
+                  </Text>
+                </BlockStack>
+              )}
+            </InlineStack>
+
+            <InlineStack gap="600" blockAlign="center">
+              {remainingDays !== undefined && (
+                <Box
+                  paddingInlineEnd="400"
+                  borderInlineEndWidth={
+                    planData?.plan !== "ADVANCED" ? "025" : "0"
+                  }
+                  borderColor="border-secondary"
+                >
+                  <InlineStack gap="300" blockAlign="center">
+                    <Box
+                      padding="200"
+                      background={
+                        remainingDays <= 5
+                          ? "bg-surface-critical"
+                          : "bg-surface-secondary"
+                      }
+                      borderRadius="200"
+                    >
+                      <Icon
+                        source={ClockIcon}
+                        tone={remainingDays <= 5 ? "critical" : "base"}
+                      />
+                    </Box>
+                    <BlockStack gap="100">
+                      {remainingDays === 0 ? (
+                        <>
+                          <Text
+                            variant="headingSm"
+                            as="p"
+                            fontWeight="bold"
+                            tone="critical"
+                          >
+                            Plan Expired
+                          </Text>
+                          <Text
+                            variant="bodyXs"
+                            tone="critical"
+                            fontWeight="bold"
+                            as={"dd"}
+                          >
+                            UPGRADE NOW TO USE
+                          </Text>
+                        </>
+                      ) : (
+                        <>
+                          <Text
+                            variant="headingLg"
+                            as="p"
+                            fontWeight="bold"
+                            tone={remainingDays <= 5 ? "critical" : undefined}
+                          >
+                            {remainingDays} {remainingDays === 1 ? "Day" : "Days"}
+                          </Text>
+                          <Text
+                            variant="bodyXs"
+                            tone="subdued"
+                            fontWeight="medium"
+                            as={"dd"}
+                          >
+                            REMAINING
+                          </Text>
+                        </>
+                      )}
+                    </BlockStack>
+                  </InlineStack>
+                </Box>
+              )}
+              {planData?.plan !== "ADVANCED" && (
+                <Button
+                  variant="primary"
+                  icon={CreditCardIcon}
+                  onClick={() => navigate("/app/billing/subscribe")}
+                >
+                  Upgrade Plan
+                </Button>
+              )}
+            </InlineStack>
+          </InlineStack>
+        </Box>
+
+        {/* Content */}
+        <Layout>
+          <Layout.Section>
           <Card>
             <BlockStack gap="400">
               <Text as="h2" variant="headingMd">
@@ -378,14 +515,26 @@ export default function ExportData() {
                 </Box>
               )}
 
-              <Button
-                variant="primary"
-                loading={isExporting}
-                onClick={() => setModalOpen(true)}
-                disabled={isExporting}
-              >
-                {isExporting ? "Exporting…" : "Export CSV"}
-              </Button>
+              {isPlanExpired ? (
+                <InlineStack gap="300">
+                  <Button disabled>Export CSV</Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => navigate("/app/billing/subscribe")}
+                  >
+                    Upgrade your plan to use export
+                  </Button>
+                </InlineStack>
+              ) : (
+                <Button
+                  variant="primary"
+                  loading={isExporting}
+                  onClick={() => setModalOpen(true)}
+                  disabled={isExporting}
+                >
+                  {isExporting ? "Exporting…" : "Export CSV"}
+                </Button>
+              )}
             </BlockStack>
           </Card>
         </Layout.Section>
@@ -428,6 +577,7 @@ export default function ExportData() {
           </Text>
         </Modal.Section>
       </Modal>
+      </BlockStack>
     </Page>
   );
 }

@@ -1025,22 +1025,45 @@ export default function TagManager() {
                       />
                     </Box>
                     <BlockStack gap="100">
-                      <Text
-                        variant="headingLg"
-                        as="p"
-                        fontWeight="bold"
-                        tone={remainingDays <= 5 ? "critical" : undefined}
-                      >
-                        {remainingDays} {remainingDays === 0 ? "Day" : "Days"}
-                      </Text>
-                      <Text
-                        variant="bodyXs"
-                        tone="subdued"
-                        fontWeight="medium"
-                        as={"dd"}
-                      >
-                        REMAINING
-                      </Text>
+                      {remainingDays === 0 ? (
+                        <>
+                          <Text
+                            variant="headingSm"
+                            as="p"
+                            fontWeight="bold"
+                            tone="critical"
+                          >
+                            Plan Expired
+                          </Text>
+                          <Text
+                            variant="bodyXs"
+                            tone="critical"
+                            fontWeight="bold"
+                            as={"dd"}
+                          >
+                            UPGRADE NOW TO USE
+                          </Text>
+                        </>
+                      ) : (
+                        <>
+                          <Text
+                            variant="headingLg"
+                            as="p"
+                            fontWeight="bold"
+                            tone={remainingDays <= 5 ? "critical" : undefined}
+                          >
+                            {remainingDays} {remainingDays === 1 ? "Day" : "Days"}
+                          </Text>
+                          <Text
+                            variant="bodyXs"
+                            tone="subdued"
+                            fontWeight="medium"
+                            as={"dd"}
+                          >
+                            REMAINING
+                          </Text>
+                        </>
+                      )}
                     </BlockStack>
                   </InlineStack>
                 </Box>

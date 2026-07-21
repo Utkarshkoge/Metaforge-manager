@@ -136,9 +136,44 @@ const TagMetafieldManagerFAQ: React.FC = () => {
                         </ul>
                     </section>
 
+                    {/* Section 7 */}
+                    <section style={styles.section}>
+                        <h2 style={styles.h2}>7. What are the subscription plans?</h2>
+                        <p style={styles.p}>
+                            We offer three tiers of subscription plans:
+                        </p>
+
+                        <h3 style={styles.h3}>Starting 7 Days Free Plan</h3>
+                        <ul style={styles.ul}>
+                            <li style={styles.li}>2 Global Tag Removal Actions (50 items/run, max 2 tags)</li>
+                            <li style={styles.li}>2 Global Metafield Removal Actions (100 items/run)</li>
+                            <li style={styles.li}>200 CSV Entries per operation</li>
+                            <li style={styles.li}>Export All Resources</li>
+                            <li style={styles.li}>Standard Support</li>
+                        </ul>
+
+                        <h3 style={styles.h3}>Basic Plan ($5 / month)</h3>
+                        <ul style={styles.ul}>
+                            <li style={styles.li}>20 Global Tag Removal Actions (100 items/run, max 10 tags)</li>
+                            <li style={styles.li}>20 Global Metafield Removal Actions (250 items/run)</li>
+                            <li style={styles.li}>3,000 CSV Entries per operation</li>
+                            <li style={styles.li}>Export All Resources</li>
+                            <li style={styles.li}>Standard Support</li>
+                        </ul>
+
+                        <h3 style={styles.h3}>Advanced Plan ($10 / month)</h3>
+                        <ul style={styles.ul}>
+                            <li style={styles.li}>Unlimited Tag Removal (5,000 items/run, max 20 tags)</li>
+                            <li style={styles.li}>Unlimited Metafield Removal (5,000 items/run)</li>
+                            <li style={styles.li}>Unlimited CSV Operations (5,000 entries/run)</li>
+                            <li style={styles.li}>Export All Resources</li>
+                            <li style={styles.li}>Priority Support</li>
+                        </ul>
+                    </section>
+
                     {/* Contact Us Section */}
                     <section style={styles.section}>
-                        <h2 style={styles.h2}>7. Contact Us</h2>
+                        <h2 style={styles.h2}>8. Contact Us</h2>
 
                         <p style={styles.p}>
                             If you have any questions, feedback, or require assistance with MetaForge Manager,

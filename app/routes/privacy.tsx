@@ -127,9 +127,40 @@ const TagMetafieldManagerPrivacy: React.FC = () => {
 
                     {/* Section 8 */}
                     <section style={styles.section}>
-                        <h2 style={styles.h2}>8. Billing</h2>
+                        <h2 style={styles.h2}>8. Billing &amp; Subscriptions</h2>
                         <p style={styles.p}>
-                            MetaForge Manager is currently free to use. The App does not contain hidden subscription plans, recurring charges, usage-based fee sheets, or locked paid functionalities.
+                            MetaForge Manager offers tiered subscription plans to meet different usage requirements. We clearly display pricing and limits within the App. All billing and recurring charges are securely handled directly by Shopify's billing system.
+                        </p>
+
+                        <h3 style={styles.h3}>Starting 7 Days Free Plan</h3>
+                        <ul style={styles.ul}>
+                            <li style={styles.li}>2 Global Tag Removal Actions (50 items/run, max 2 tags)</li>
+                            <li style={styles.li}>2 Global Metafield Removal Actions (100 items/run)</li>
+                            <li style={styles.li}>200 CSV Entries per operation</li>
+                            <li style={styles.li}>Export All Resources</li>
+                            <li style={styles.li}>Standard Support</li>
+                        </ul>
+
+                        <h3 style={styles.h3}>Basic Plan ($5 / month)</h3>
+                        <ul style={styles.ul}>
+                            <li style={styles.li}>20 Global Tag Removal Actions (100 items/run, max 10 tags)</li>
+                            <li style={styles.li}>20 Global Metafield Removal Actions (250 items/run)</li>
+                            <li style={styles.li}>3,000 CSV Entries per operation</li>
+                            <li style={styles.li}>Export All Resources</li>
+                            <li style={styles.li}>Standard Support</li>
+                        </ul>
+
+                        <h3 style={styles.h3}>Advanced Plan ($10 / month)</h3>
+                        <ul style={styles.ul}>
+                            <li style={styles.li}>Unlimited Tag Removal (5,000 items/run, max 20 tags)</li>
+                            <li style={styles.li}>Unlimited Metafield Removal (5,000 items/run)</li>
+                            <li style={styles.li}>Unlimited CSV Operations (5,000 entries/run)</li>
+                            <li style={styles.li}>Export All Resources</li>
+                            <li style={styles.li}>Priority Support</li>
+                        </ul>
+
+                        <p style={styles.p}>
+                            <strong style={styles.strong}>Free Plan Access Tracking:</strong> We securely save your shop domain to monitor and manage the starting 7-days free plan access. This ensures that the free trial usage is accurately tracked per store and prevents multiple free trial activations for the same store even if the app is reinstalled.
                         </p>
                     </section>
 
@@ -238,6 +269,13 @@ const styles: Record<string, React.CSSProperties> = {
         lineHeight: '1.875rem',
         color: '#1a1c1d',
         margin: '2rem 0 1rem 0',
+    },
+    h3: {
+        fontSize: '1.05rem',
+        fontWeight: 600,
+        lineHeight: '1.5rem',
+        color: '#202223',
+        margin: '1.5rem 0 0.5rem 0',
     },
     p: {
         fontSize: '1rem',

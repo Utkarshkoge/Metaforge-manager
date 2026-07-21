@@ -150,9 +150,44 @@ const TagMetafieldManagerDocumentation: React.FC = () => {
                         </p>
                     </section>
 
+                    {/* Section 8: Subscription Plans */}
+                    <section style={styles.section}>
+                        <h2 style={styles.h2}>8. Subscription Plans</h2>
+                        <p style={styles.p}>
+                            MetaForge Manager offers flexible subscription plans to suit your store's growth and data management needs:
+                        </p>
+
+                        <h3 style={styles.h3}>Starting 7 Days Free Plan</h3>
+                        <ul style={styles.ul}>
+                            <li style={styles.li}>2 Global Tag Removal Actions (50 items/run, max 2 tags)</li>
+                            <li style={styles.li}>2 Global Metafield Removal Actions (100 items/run)</li>
+                            <li style={styles.li}>200 CSV Entries per operation</li>
+                            <li style={styles.li}>Export All Resources</li>
+                            <li style={styles.li}>Standard Support</li>
+                        </ul>
+
+                        <h3 style={styles.h3}>Basic Plan ($5 / month)</h3>
+                        <ul style={styles.ul}>
+                            <li style={styles.li}>20 Global Tag Removal Actions (100 items/run, max 10 tags)</li>
+                            <li style={styles.li}>20 Global Metafield Removal Actions (250 items/run)</li>
+                            <li style={styles.li}>3,000 CSV Entries per operation</li>
+                            <li style={styles.li}>Export All Resources</li>
+                            <li style={styles.li}>Standard Support</li>
+                        </ul>
+
+                        <h3 style={styles.h3}>Advanced Plan ($10 / month)</h3>
+                        <ul style={styles.ul}>
+                            <li style={styles.li}>Unlimited Tag Removal (5,000 items/run, max 20 tags)</li>
+                            <li style={styles.li}>Unlimited Metafield Removal (5,000 items/run)</li>
+                            <li style={styles.li}>Unlimited CSV Operations (5,000 entries/run)</li>
+                            <li style={styles.li}>Export All Resources</li>
+                            <li style={styles.li}>Priority Support</li>
+                        </ul>
+                    </section>
+
                     {/* Conclusion / Contact Card */}
                     <section style={styles.section}>
-                        <h2 style={styles.h2}>8. Conclusion &amp; Support</h2>
+                        <h2 style={styles.h2}>9. Conclusion &amp; Support</h2>
                         <p style={styles.p}>
                             MetaForge Manager provides a powerful, fast, and secure environment for bulk data optimization, backstopped by a flexible history system.
                         </p>

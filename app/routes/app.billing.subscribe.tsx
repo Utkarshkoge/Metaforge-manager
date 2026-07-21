@@ -315,6 +315,7 @@ export default function BillingPage() {
                                                 <FeatureItem text="2 Global Tag Removal Actions" detail="50 items/run, max 2 tags" />
                                                 <FeatureItem text="2 Global Metafield Removal Actions" detail="100 items/run" />
                                                 <FeatureItem text="200 CSV Entries" />
+                                                <FeatureItem text="Export All Resources" />
                                                 <FeatureItem text="Standard Support" />
                                             </BlockStack>
                                         </BlockStack>
@@ -366,6 +367,7 @@ export default function BillingPage() {
                                                 <FeatureItem
                                                     text="3,000 CSV Entries"
                                                 />
+                                                <FeatureItem text="Export All Resources" />
                                                 <FeatureItem text="Standard Support" />
                                             </BlockStack>
                                         </BlockStack>
@@ -459,6 +461,7 @@ export default function BillingPage() {
                                                 <DarkFeatureItem text="Unlimited Tag Removal" detail="5,000 items/run, max 20 tags" />
                                                 <DarkFeatureItem text="Unlimited Metafield Removal" detail="5,000 items/run" />
                                                 <DarkFeatureItem text="Unlimited CSV Operations" detail="5,000 entries/run" />
+                                                <DarkFeatureItem text="Export All Resources" />
                                                 <DarkFeatureItem text="Priority Support" />
                                             </BlockStack>
                                         </BlockStack>
