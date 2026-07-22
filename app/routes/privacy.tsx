@@ -1,7 +1,7 @@
 import React from 'react';
 import { MetaFunction } from 'react-router';
 const APP_NAME = "MetaForge Manager";
-const COMPANY_NAME = "Galaxy Web Links";
+const COMPANY_NAME = "Galaxy WebLinks";
 
 export const meta: MetaFunction = () => [
     { title: `Privacy Policy | ${APP_NAME}` },
@@ -22,7 +22,7 @@ const TagMetafieldManagerPrivacy: React.FC = () => {
                         <h1 style={styles.pageTitle}>Privacy Policy</h1>
 
                         <p style={{ ...styles.leadParagraph, marginTop: '0.5rem', color: '#6d7175' }}>
-                            This Privacy Policy explains how Galaxy Web Links ("we", "us", or "our") collects, uses, and protects information when merchants use the <strong style={styles.strong}>MetaForge Manager</strong> application ("App").
+                            This Privacy Policy explains how Galaxy WebLinks ("we", "us", or "our") collects, uses, and protects information when merchants use the <strong style={styles.strong}>MetaForge Manager</strong> application ("App").
                         </p>
                     </header>
 
@@ -188,7 +188,7 @@ const TagMetafieldManagerPrivacy: React.FC = () => {
                             </p>
 
                             <p style={styles.contactItem}>
-                                <strong style={styles.strongLabel}>Company:</strong> Galaxy Web Links
+                                <strong style={styles.strongLabel}>Company:</strong> Galaxy WebLinks
                             </p>
                             <p style={styles.contactItem}>
                                 <strong style={styles.strongLabel}>Email:</strong>{" "}
@@ -217,7 +217,7 @@ const TagMetafieldManagerPrivacy: React.FC = () => {
 
                     {/* Footer section */}
                     <footer style={styles.footer}>
-                        <p style={styles.footerText}>© 2026 Galaxy Web Links. All rights reserved.</p>
+                        <p style={styles.footerText}>© 2026 Galaxy WebLinks. All rights reserved.</p>
                     </footer>
                 </article>
             </main>

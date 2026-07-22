@@ -1,6 +1,6 @@
 import React from 'react';
 const APP_NAME = "MetaForge Manager";
-const COMPANY_NAME = "Galaxy Web Links";
+const COMPANY_NAME = "Galaxy WebLinks";
 import { MetaFunction } from 'react-router';
 
 
@@ -194,7 +194,7 @@ const TagMetafieldManagerDocumentation: React.FC = () => {
 
                         <div style={styles.contactCard}>
                             <p style={styles.contactItem}>
-                                <strong style={styles.strongLabel}>App Ecosystem:</strong> MetaForge Manager (Shopify Embedded App)
+                                <strong style={styles.strongLabel}>App Ecosystem:</strong> MetaForge Manager
                             </p>
                             <p style={styles.contactItem}>
                                 <strong style={styles.strongLabel}>Developed By:</strong> Galaxy WebLinks
@@ -226,7 +226,7 @@ const TagMetafieldManagerDocumentation: React.FC = () => {
 
                     {/* Footer Section */}
                     <footer style={styles.footer}>
-                        <p style={styles.footerText}>© {new Date().getFullYear()} Galaxy Web Links. All rights reserved.</p>
+                        <p style={styles.footerText}>© {new Date().getFullYear()} Galaxy WebLinks. All rights reserved.</p>
                     </footer>
                 </article>
             </main>
