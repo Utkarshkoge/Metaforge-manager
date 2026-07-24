@@ -312,7 +312,7 @@ export default function BillingPage() {
 
                                         <BlockStack gap="200">
                                             <BlockStack gap="150">
-                                                <FeatureItem text="2 Global Tag Removal Actions" detail="50 items/run, max 2 tags" />
+                                                <FeatureItem text="2 Global Tag Removal Actions" detail="40 items/run, max 2 tags" />
                                                 <FeatureItem text="2 Global Metafield Removal Actions" detail="100 items/run" />
                                                 <FeatureItem text="200 CSV Entries" />
                                                 <FeatureItem text="Export All Resources" />
@@ -322,7 +322,7 @@ export default function BillingPage() {
 
                                         <Divider />
 
-                                        <Box paddingTop="100">
+                                        <Box paddingBlockStart="100">
                                             <Text as="p" variant="bodyXs" tone="subdued">
                                                 Upgrade to a premium plan after your starting 7-day trial or once free limits are reached.
                                             </Text>
@@ -372,7 +372,7 @@ export default function BillingPage() {
                                             </BlockStack>
                                         </BlockStack>
 
-                                        <Box paddingTop="400">
+                                        <Box paddingBlockStart="400">
                                             {currentPlan === "BASIC" ? (
                                                 <BlockStack gap="200">
                                                     <Button
@@ -382,7 +382,7 @@ export default function BillingPage() {
                                                     >
                                                         Current Plan
                                                     </Button>
-                                                    <Box paddingTop="100">
+                                                    <Box paddingBlockStart="100">
                                                         <button
                                                             onClick={() => setCancelModalOpen(true)}
                                                             style={{
@@ -404,13 +404,12 @@ export default function BillingPage() {
                                                 </BlockStack>
                                             ) : (
                                                 <Button
-                                                    variant={currentPlan === "BASIC" ? "secondary" : "primary"}
+                                                    variant="primary"
                                                     fullWidth
-                                                    disabled={currentPlan === "BASIC"}
                                                     onClick={() => handleSubscribeClick("BASIC")}
                                                     loading={fetcher.state === "submitting" && fetcher.formData?.get("plan") === "BASIC"}
                                                 >
-                                                    {currentPlan === "BASIC" ? "Current Plan" : currentPlan === "ADVANCED" ? "Downgrade to Basic" : "Upgrade to Basic"}
+                                                    {currentPlan === "ADVANCED" ? "Downgrade to Basic" : "Upgrade to Basic"}
                                                 </Button>
                                             )}
                                         </Box>
@@ -466,7 +465,7 @@ export default function BillingPage() {
                                             </BlockStack>
                                         </BlockStack>
 
-                                        <Box paddingTop="400">
+                                        <Box paddingBlockStart="400">
                                             {currentPlan === "ADVANCED" ? (
                                                 <BlockStack gap="200">
                                                     <Button
@@ -476,7 +475,7 @@ export default function BillingPage() {
                                                     >
                                                         Current Plan
                                                     </Button>
-                                                    <Box paddingTop="100">
+                                                    <Box paddingBlockStart="100">
                                                         <button
                                                             onClick={() => setCancelModalOpen(true)}
                                                             style={{
@@ -498,13 +497,12 @@ export default function BillingPage() {
                                                 </BlockStack>
                                             ) : (
                                                 <Button
-                                                    variant={currentPlan === "ADVANCED" ? "secondary" : "primary"}
+                                                    variant="primary"
                                                     fullWidth
-                                                    disabled={currentPlan === "ADVANCED"}
                                                     onClick={() => handleSubscribeClick("ADVANCED")}
                                                     loading={fetcher.state === "submitting" && fetcher.formData?.get("plan") === "ADVANCED"}
                                                 >
-                                                    {currentPlan === "ADVANCED" ? "Current Plan" : "Upgrade to Advanced"}
+                                                    Upgrade to Advanced
                                                 </Button>
                                             )}
                                         </Box>

@@ -10,5 +10,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     await db.session.deleteMany({ where: { shop } });
   }
 
+  // Shopify handles the billing cancellation automatically, but we should clear it locally
+  // to prevent stale state if the user reinstalls within 48 hours before shop/redact fires.
+  try {
+    await db.activeSubscription.deleteMany({ where: { shopDomain: shop } });
+  } catch (err) {
+    console.error("Error clearing subscription on uninstall", err);
+  }
+
   return new Response();
 };

@@ -6,7 +6,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   
   console.log(`--- Webhook: ${topic} ---`);
   console.log(`Shop: ${shop}`);
-  console.log("Payload:", JSON.stringify(payload, null, 2));
+  
+  // NOTE: This application does not store any customer Personally Identifiable Information (PII)
+  // in its database (such as names, emails, addresses, or phone numbers).
+  // Therefore, a 200 OK response signifies compliance with this data request.
 
   return new Response();
 };

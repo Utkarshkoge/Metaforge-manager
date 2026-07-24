@@ -2611,6 +2611,7 @@ export default function MetafieldManage() {
       <MetafieldManageInstructionsModal
         open={instructionsOpen}
         onClose={() => setInstructionsOpen(false)}
+        plan={plan}
       />
     </Page>
   );

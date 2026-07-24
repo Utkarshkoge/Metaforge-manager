@@ -1219,6 +1219,7 @@ export default function SimpleTagManager() {
       <AddTagsInstructionsModal
         open={instructionsOpen}
         onClose={() => setInstructionsOpen(false)}
+        plan={plan}
       />
     </Page>
   );

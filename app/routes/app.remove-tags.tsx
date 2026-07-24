@@ -421,7 +421,7 @@ export default function TagManager() {
       // Global Remove Mode
       if (data.mode === "remove-global") {
         const currentProcessed = globalResult.results.length + (data.results?.length || 0);
-        const maxGlobalItems = plan === "FREE" ? 50 : plan === "BASIC" ? 100 : 5000;
+        const maxGlobalItems = plan === "FREE" ? 40 : plan === "BASIC" ? 100 : 5000;
         const limitReached = currentProcessed >= maxGlobalItems;
 
         setGlobalResult((prev: any) => {
@@ -1363,7 +1363,7 @@ export default function TagManager() {
                             title=""
                             choices={[
                               {
-                                label: `Global Removal (From ${plan === "FREE" ? 50 : plan === "BASIC" ? 100 : 5000} ${objectType}s at a time)`,
+                                label: `Global Removal (From ${plan === "FREE" ? 40 : plan === "BASIC" ? 100 : 5000} ${objectType}s at a time)`,
                                 value: "global",
                               },
                               {
@@ -1690,7 +1690,7 @@ export default function TagManager() {
             <Text as="p">
               Are you sure you want to remove {selectedTags.length === 1 ? "1 tag" : `${selectedTags.length} tags`} from up to {
                 plan === "FREE"
-                  ? "50"
+                  ? "40"
                   : plan === "BASIC"
                     ? "100"
                     : "5,000"
