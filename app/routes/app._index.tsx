@@ -330,7 +330,7 @@ export default function HomePage() {
               </Text>
 
               <Text variant="headingMd" as="h2" alignment="center">
-                Plan Upgraded
+                {planData?.plan || "Basic"} Plan Activated
               </Text>
 
               <Text variant="bodyMd" tone="subdued" alignment="center" as="p">
