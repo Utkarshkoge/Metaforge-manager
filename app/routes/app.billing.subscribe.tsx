@@ -130,35 +130,6 @@ export async function action({ request }: ActionFunctionArgs) {
                 throw new Response("Invalid plan", { status: 400 });
             }
 
-            // Check active subscriptions from Shopify first to cancel any previous plan
-            const checkResponse = await admin.graphql(GET_RECURRING_APPLICATION_CHARGES);
-
-            const checkData = await checkResponse.json();
-            const activeSubscriptions = checkData.data?.currentAppInstallation?.activeSubscriptions || [];
-            const activeSubscription = activeSubscriptions.find((sub: any) => sub.status === "ACTIVE" || sub.status === "ACCEPTED");
-
-            // Cancel previous plan on Shopify first if it's a different plan
-            if (activeSubscription && activeSubscription.name.toUpperCase() !== planKey) {
-                const cancelResponse = await admin.graphql(
-                    CANCEL_SUBSCRIPTION,
-                    {
-                        variables: {
-                            id: activeSubscription.id,
-                            prorate: true,
-                        },
-                    }
-                );
-                const cancelData = await cancelResponse.json();
-                const cancelResult = cancelData.data?.appSubscriptionCancel;
-                if (cancelResult?.userErrors?.length) {
-                    throw new Response(
-                        cancelResult.userErrors.map((e: any) => e.message).join(", "),
-                        { status: 400 }
-                    );
-                }
-
-            }
-
             const returnUrl =
                 `${process.env.SHOPIFY_APP_URL}/app` +
                 `?shop=${shop}&host=${encodeURIComponent(host)}`;
