@@ -73,7 +73,6 @@ model FreePlanLimits {
   
   basic        Int      @default(3)
   advanced     Int      @default(7)
-
 }
 
 model BasicPlanLimits {

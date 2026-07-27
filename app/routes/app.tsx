@@ -43,12 +43,12 @@ async function syncFreeTrialDays(shopDomain: string, actualPlan: string, isFreeT
 
     if (isFreeTrial) {
       if (actualPlan === "BASIC") {
-        if (limits.basic !== trialDaysLeft) {
+        if (limits.basic !== trialDaysLeft && limits.basic > trialDaysLeft) {
           updateData.basic = trialDaysLeft;
           needsUpdate = true;
         }
       } else if (actualPlan === "ADVANCED") {
-        if (limits.advanced !== trialDaysLeft) {
+        if (limits.advanced !== trialDaysLeft && limits.advanced > trialDaysLeft) {
           updateData.advanced = trialDaysLeft;
           needsUpdate = true;
         }
