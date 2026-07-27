@@ -135,6 +135,10 @@ export default function ExportData() {
   }, [resource, metaobjectTypes]);
 
   const handleExport = () => {
+    if (plan === "FREE") {
+      shopify.toast.show("You don't have any plan subscribed yet. Please subscribe to a plan to access this feature.", { isError: true });
+      return;
+    }
     const newExportId = Date.now().toString();
     setCurrentExportId(newExportId);
     setIsExporting(true);
@@ -331,8 +335,8 @@ export default function ExportData() {
                 >
                   CURRENT PLAN
                 </Text>
-                <Badge tone={plan === "ADVANCED" ? "success" : "info"}>
-                  {plan}
+                <Badge tone={plan === "FREE" ? "critical" : plan === "ADVANCED" ? "success" : "info"}>
+                  {plan === "FREE" ? "No Plan" : plan}
                 </Badge>
               </BlockStack>
 
@@ -360,7 +364,7 @@ export default function ExportData() {
             </InlineStack>
 
             <InlineStack gap="600" blockAlign="center">
-              {remainingDays !== undefined && (
+              {remainingDays !== undefined && plan !== "FREE" && (
                 <Box
                   paddingInlineEnd="400"
                   borderInlineEndWidth={
@@ -443,140 +447,140 @@ export default function ExportData() {
         {/* Content */}
         <Layout>
           <Layout.Section>
-          <Card>
-            <BlockStack gap="400">
-              <Text as="h2" variant="headingMd">
-                Select Data to Export
-              </Text>
+            <Card>
+              <BlockStack gap="400">
+                <Text as="h2" variant="headingMd">
+                  Select Data to Export
+                </Text>
 
-              <Select
-                label="Resource"
-                options={[
-                  { label: "Products", value: "product" },
-                  { label: "Product Variant", value: "product_variant" },
-                  { label: "Collections", value: "collection" },
-                  { label: "Customers", value: "customer" },
-                  { label: "Orders", value: "order" },
-                  { label: "Company", value: "company" },
-                  { label: "Company Location", value: "company_location" },
-                  { label: "Location", value: "location" },
-                  { label: "Pages", value: "page" },
-                  { label: "Blog", value: "blog" },
-                  { label: "Blog Post", value: "blog_post" },
-                  { label: "Market", value: "market" },
-                  { label: "Metaobject", value: "metaobject" },
-                ]}
-                value={resource}
-                onChange={setResource}
-                disabled={isExporting}
-              />
-
-              {resource === "metaobject" && (
                 <Select
-                  label="Metaobject Type"
-                  options={metaobjectTypes}
-                  value={metaobjectType}
-                  onChange={setMetaobjectType}
-                  disabled={isExporting}
-                />
-              )}
-
-              {["product", "customer", "order", "blog_post"].includes(resource) && (
-                <Select
-                  label="Include Tags"
+                  label="Resource"
                   options={[
-                    { label: "Yes", value: "true" },
-                    { label: "No", value: "false" },
+                    { label: "Products", value: "product" },
+                    { label: "Product Variant", value: "product_variant" },
+                    { label: "Collections", value: "collection" },
+                    { label: "Customers", value: "customer" },
+                    { label: "Orders", value: "order" },
+                    { label: "Company", value: "company" },
+                    { label: "Company Location", value: "company_location" },
+                    { label: "Location", value: "location" },
+                    { label: "Pages", value: "page" },
+                    { label: "Blog", value: "blog" },
+                    { label: "Blog Post", value: "blog_post" },
+                    { label: "Market", value: "market" },
+                    { label: "Metaobject", value: "metaobject" },
                   ]}
-                  value={String(includeTags)}
-                  onChange={(v) => setIncludeTags(v === "true")}
+                  value={resource}
+                  onChange={setResource}
                   disabled={isExporting}
                 />
-              )}
 
-              {resource !== "metaobject" && (
-                <Select
-                  label="Include Metafields"
-                  options={[
-                    { label: "Yes", value: "true" },
-                    { label: "No", value: "false" },
-                  ]}
-                  value={String(includeMetafields)}
-                  onChange={(v) => setIncludeMetafields(v === "true")}
-                  disabled={isExporting}
-                />
-              )}
+                {resource === "metaobject" && (
+                  <Select
+                    label="Metaobject Type"
+                    options={metaobjectTypes}
+                    value={metaobjectType}
+                    onChange={setMetaobjectType}
+                    disabled={isExporting}
+                  />
+                )}
 
-              {isExporting && (
-                <Box padding="300" background="bg-surface-secondary" borderRadius="200">
-                  <Text as="strong">
-                    Exporting… {progressCount} records fetched so far.
-                  </Text>
-                </Box>
-              )}
+                {["product", "customer", "order", "blog_post"].includes(resource) && (
+                  <Select
+                    label="Include Tags"
+                    options={[
+                      { label: "Yes", value: "true" },
+                      { label: "No", value: "false" },
+                    ]}
+                    value={String(includeTags)}
+                    onChange={(v) => setIncludeTags(v === "true")}
+                    disabled={isExporting}
+                  />
+                )}
 
-              {isPlanExpired ? (
-                <InlineStack gap="300">
-                  <Button disabled>Export CSV</Button>
+                {resource !== "metaobject" && (
+                  <Select
+                    label="Include Metafields"
+                    options={[
+                      { label: "Yes", value: "true" },
+                      { label: "No", value: "false" },
+                    ]}
+                    value={String(includeMetafields)}
+                    onChange={(v) => setIncludeMetafields(v === "true")}
+                    disabled={isExporting}
+                  />
+                )}
+
+                {isExporting && (
+                  <Box padding="300" background="bg-surface-secondary" borderRadius="200">
+                    <Text as="strong">
+                      Exporting… {progressCount} records fetched so far.
+                    </Text>
+                  </Box>
+                )}
+
+                {isPlanExpired ? (
+                  <InlineStack gap="300">
+                    <Button disabled>Export CSV</Button>
+                    <Button
+                      variant="primary"
+                      onClick={() => navigate("/app/billing/subscribe")}
+                    >
+                      Upgrade your plan to use export
+                    </Button>
+                  </InlineStack>
+                ) : (
                   <Button
                     variant="primary"
-                    onClick={() => navigate("/app/billing/subscribe")}
+                    loading={isExporting}
+                    onClick={() => setModalOpen(true)}
+                    disabled={isExporting}
                   >
-                    Upgrade your plan to use export
+                    {isExporting ? "Exporting…" : "Export CSV"}
                   </Button>
-                </InlineStack>
-              ) : (
-                <Button
-                  variant="primary"
-                  loading={isExporting}
-                  onClick={() => setModalOpen(true)}
-                  disabled={isExporting}
-                >
-                  {isExporting ? "Exporting…" : "Export CSV"}
-                </Button>
-              )}
-            </BlockStack>
-          </Card>
-        </Layout.Section>
-      </Layout>
+                )}
+              </BlockStack>
+            </Card>
+          </Layout.Section>
+        </Layout>
 
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title="Confirm Export"
-        primaryAction={{
-          content: "Yes, Export",
-          onAction: () => {
-            setModalOpen(false);
-            handleExport();
-          },
-        }}
-        secondaryActions={[
-          { content: "Cancel", onAction: () => setModalOpen(false) },
-        ]}
-      >
-        <Modal.Section>
-          <Text as="p">
-            {
-              `Are you sure you want to export ${resource}'s ${includeTags &&
-                ["product", "order", "customer", "blog_post"].includes(
-                  resource?.toLowerCase()
-                ) &&
-                includeMetafields
-                ? "with tags and metafields"
-                : includeTags &&
+        <Modal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          title="Confirm Export"
+          primaryAction={{
+            content: "Yes, Export",
+            onAction: () => {
+              setModalOpen(false);
+              handleExport();
+            },
+          }}
+          secondaryActions={[
+            { content: "Cancel", onAction: () => setModalOpen(false) },
+          ]}
+        >
+          <Modal.Section>
+            <Text as="p">
+              {
+                `Are you sure you want to export ${resource}'s ${includeTags &&
                   ["product", "order", "customer", "blog_post"].includes(
                     resource?.toLowerCase()
-                  )
-                  ? "with tags"
-                  : includeMetafields
-                    ? "with metafields"
-                    : ""
-              }?`
-            }
-          </Text>
-        </Modal.Section>
-      </Modal>
+                  ) &&
+                  includeMetafields
+                  ? "with tags and metafields"
+                  : includeTags &&
+                    ["product", "order", "customer", "blog_post"].includes(
+                      resource?.toLowerCase()
+                    )
+                    ? "with tags"
+                    : includeMetafields
+                      ? "with metafields"
+                      : ""
+                }?`
+              }
+            </Text>
+          </Modal.Section>
+        </Modal>
       </BlockStack>
     </Page>
   );

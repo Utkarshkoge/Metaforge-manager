@@ -32,11 +32,13 @@ export const CREATE_SUBSCRIPTION = `#graphql
     $test: Boolean!
     $amount: Decimal!
     $currency: CurrencyCode!
+    $trialDays: Int
   ) {
     appSubscriptionCreate(
       name: $name
       returnUrl: $returnUrl
       test: $test
+      trialDays: $trialDays
       lineItems: [{
         plan: {
           appRecurringPricingDetails: {

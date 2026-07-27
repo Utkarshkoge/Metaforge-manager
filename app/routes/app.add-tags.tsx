@@ -445,6 +445,16 @@ export default function SimpleTagManager() {
   }, [progress, isRunning, planData, plan, results, tags, objectType]);
 
   const handleCsvInput = useCallback((_dropFiles: File[], acceptedFiles: File[], _rejectedFiles: File[]) => {
+    if (plan === "FREE") {
+      setAlert({
+        active: true,
+        title: "No Active Plan",
+        message: "You don't have any plan subscribed yet. Please subscribe to a plan to access this feature.",
+        tone: "critical",
+      });
+      setWarning((prev) => ({ ...prev, active: false }));
+      return;
+    }
     if (remainingDays === 0) {
       setAlert({
         active: true,
@@ -546,6 +556,16 @@ export default function SimpleTagManager() {
   }, [specificField, objectType, planData, plan]);
 
   const handleTagAdd = useCallback(() => {
+    if (plan === "FREE") {
+      setAlert({
+        active: true,
+        title: "No Active Plan",
+        message: "You don't have any plan subscribed yet. Please subscribe to a plan to access this feature.",
+        tone: "critical",
+      });
+      setWarning((prev) => ({ ...prev, active: false }));
+      return;
+    }
     const trimmed = tagInput.trim();
 
     if (trimmed.length < 2) {
@@ -751,37 +771,12 @@ export default function SimpleTagManager() {
                 >
                   CURRENT PLAN
                 </Text>
-                <Badge tone={plan === "ADVANCED" ? "success" : "info"}>
-                  {plan}
+                <Badge tone={plan === "FREE" ? "critical" : plan === "ADVANCED" ? "success" : "info"}>
+                  {plan === "FREE" ? "No Plan" : plan}
                 </Badge>
               </BlockStack>
 
-              {plan !== "ADVANCED" ? (
-                <>
-                  {/* CSV Limit */}
-                  <BlockStack gap="200">
-                    <Text
-                      variant="bodyXs"
-                      tone="subdued"
-                      fontWeight="bold"
-                      as={"dd"}
-                    >
-                      CSV LIMIT
-                    </Text>
-                    <Text variant="bodyMd" fontWeight="bold" as={"dd"}>
-                      {
-                        plan === "ADVANCED"
-                          ? "Unlimited"
-                          : (plan === "BASIC" || plan === "FREE")
-                            ? (planData?.limits?.tagAddCsvLimit === Infinity
-                              ? ""
-                              : planData?.limits?.tagAddCsvLimit)
-                            : 0
-                      }
-                    </Text>
-                  </BlockStack>
-                </>
-              ) : (
+              {plan === "ADVANCED" ? (
                 /* Advanced Status */
                 <BlockStack gap="200">
                   <Text
@@ -801,11 +796,30 @@ export default function SimpleTagManager() {
                     Unlimited Access Enabled
                   </Text>
                 </BlockStack>
-              )}
+              ) : plan !== "FREE" ? (
+                <>
+                  {/* CSV Limit */}
+                  <BlockStack gap="200">
+                    <Text
+                      variant="bodyXs"
+                      tone="subdued"
+                      fontWeight="bold"
+                      as={"dd"}
+                    >
+                      CSV LIMIT
+                    </Text>
+                    <Text variant="bodyMd" fontWeight="bold" as={"dd"}>
+                      {planData?.limits?.tagAddCsvLimit === Infinity
+                        ? ""
+                        : planData?.limits?.tagAddCsvLimit}
+                    </Text>
+                  </BlockStack>
+                </>
+              ) : null}
             </InlineStack>
 
             <InlineStack gap="600" blockAlign="center">
-              {remainingDays !== undefined && (
+              {remainingDays !== undefined && plan !== "FREE" && (
                 <Box
                   paddingInlineEnd="400"
                   borderInlineEndWidth={

@@ -49,7 +49,8 @@ CREATE TABLE "FreePlanLimits" (
     "metaUpdateCsvLimit" INTEGER NOT NULL DEFAULT 200,
     "tagAddCsvLimit" INTEGER NOT NULL DEFAULT 200,
     "tagRemoveCsvLimit" INTEGER NOT NULL DEFAULT 200,
-    "firstUsedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "basic" INTEGER NOT NULL DEFAULT 3,
+    "advanced" INTEGER NOT NULL DEFAULT 7,
 
     CONSTRAINT "FreePlanLimits_pkey" PRIMARY KEY ("id")
 );

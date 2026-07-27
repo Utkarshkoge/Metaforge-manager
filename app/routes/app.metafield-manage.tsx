@@ -513,6 +513,19 @@ export default function MetafieldManage() {
   };
 
   const handleCsvInput = useCallback(async (_dropFiles: File[], acceptedFiles: File[], _rejectedFiles: File[]) => {
+    if (plan === "FREE") {
+      setAlert({
+        active: true,
+        title: "No Active Plan",
+        message: "You don't have any plan subscribed yet. Please subscribe to a plan to access this feature.",
+        tone: "critical",
+      });
+      setWarning((prev) => ({ ...prev, active: false }));
+      setCsvRows([]);
+      setRawCsvData([]);
+      setCsvData(0);
+      return;
+    }
     if (remainingDays === 0) {
       setAlert({
         active: true,
@@ -947,6 +960,16 @@ export default function MetafieldManage() {
 
 
   const handleConfirm = () => {
+    if (plan === "FREE") {
+      setAlert({
+        active: true,
+        title: "No Active Plan",
+        message: "You don't have any plan subscribed yet. Please subscribe to a plan to access this feature.",
+        tone: "critical",
+      });
+      setModalOpen(false);
+      return;
+    }
     setModalOpen(false);
     setProgress(0);
     setAccumulatedResults([]);
@@ -1883,110 +1906,48 @@ export default function MetafieldManage() {
                 >
                   CURRENT PLAN
                 </Text>
-                <Badge tone={plan === "ADVANCED" ? "success" : "info"}>
-                  {plan}
+                <Badge tone={plan === "FREE" ? "critical" : plan === "ADVANCED" ? "success" : "info"}>
+                  {plan === "FREE" ? "No Plan" : plan}
                 </Badge>
               </BlockStack>
 
-              {plan !== "ADVANCED" ? (
+              {plan === "ADVANCED" ? (
+                /* Advanced Status */
+                <BlockStack gap="200">
+                  <Text variant="bodyXs" tone="subdued" fontWeight="bold" as={"dd"}>STATUS</Text>
+                  <Text variant="bodyMd" tone="success" fontWeight="bold" as={"dd"}>Unlimited Access Enabled</Text>
+                </BlockStack>
+              ) : plan !== "FREE" ? (
                 <>
                   {/* Global Ops */}
                   <BlockStack gap="200">
-                    <Text
-                      variant="bodyXs"
-                      tone="subdued"
-                      fontWeight="bold"
-                      as={"dd"}
-                    >
-                      GLOBAL OPS
-                    </Text>
+                    <Text variant="bodyXs" tone="subdued" fontWeight="bold" as={"dd"}>GLOBAL OPS</Text>
                     <Text variant="bodyMd" fontWeight="bold" as={"dd"}>
-                      {
-                        plan === "ADVANCED"
-                          ? "Unlimited"
-                          : (plan === "BASIC" || plan === "FREE")
-                            ? (planData?.limits?.metaGlobal === Infinity
-                              ? ""
-                              : planData?.limits?.metaGlobal)
-                            : 0
-                      }
-
+                      {planData?.limits?.metaGlobal === Infinity ? "" : planData?.limits?.metaGlobal}
                     </Text>
                   </BlockStack>
 
-
-
                   {/* Update CSV Limit */}
                   <BlockStack gap="200">
-                    <Text
-                      variant="bodyXs"
-                      tone="subdued"
-                      fontWeight="bold"
-                      as={"dd"}
-                    >
-                      UPDATE CSV
-                    </Text>
+                    <Text variant="bodyXs" tone="subdued" fontWeight="bold" as={"dd"}>UPDATE CSV</Text>
                     <Text variant="bodyMd" fontWeight="bold" as={"dd"}>
-                      {
-                        plan === "ADVANCED"
-                          ? "Unlimited"
-                          : (plan === "BASIC" || plan === "FREE")
-                            ? (planData?.limits?.metaUpdateCsvLimit === Infinity
-                              ? ""
-                              : planData?.limits?.metaUpdateCsvLimit)
-                            : 0
-                      }
+                      {planData?.limits?.metaUpdateCsvLimit === Infinity ? "" : planData?.limits?.metaUpdateCsvLimit}
                     </Text>
                   </BlockStack>
 
                   {/* Remove CSV Limit */}
                   <BlockStack gap="200">
-                    <Text
-                      variant="bodyXs"
-                      tone="subdued"
-                      fontWeight="bold"
-                      as={"dd"}
-                    >
-                      REMOVE CSV
-                    </Text>
+                    <Text variant="bodyXs" tone="subdued" fontWeight="bold" as={"dd"}>REMOVE CSV</Text>
                     <Text variant="bodyMd" fontWeight="bold" as={"dd"}>
-                      {
-                        plan === "ADVANCED"
-                          ? "Unlimited"
-                          : (plan === "BASIC" || plan === "FREE")
-                            ? (planData?.limits?.metaRemoveCsvLimit === Infinity
-                              ? ""
-                              : planData?.limits?.metaRemoveCsvLimit)
-                            : 0
-                      }
+                      {planData?.limits?.metaRemoveCsvLimit === Infinity ? "" : planData?.limits?.metaRemoveCsvLimit}
                     </Text>
                   </BlockStack>
                 </>
-              ) : (
-                /* Advanced Status */
-                <BlockStack gap="200">
-                  <Text
-                    variant="bodyXs"
-                    tone="subdued"
-                    fontWeight="bold"
-                    as={"dd"}
-                  >
-                    STATUS
-                  </Text>
-                  <Text
-                    variant="bodyMd"
-                    tone="success"
-                    fontWeight="bold"
-                    as={"dd"}
-                  >
-                    Unlimited Access Enabled
-                  </Text>
-                </BlockStack>
-              )}
+              ) : null}
             </InlineStack>
 
             <InlineStack gap="600" blockAlign="center">
-              {remainingDays !== undefined && (
+              {remainingDays !== undefined && plan !== "FREE" && (
                 <Box
                   paddingInlineEnd="400"
                   borderInlineEndWidth={

@@ -273,6 +273,16 @@ export default function TagManager() {
   }
 
   function startFetchTags() {
+    if (plan === "FREE") {
+      setAlert({
+        active: true,
+        title: "No Active Plan",
+        message: "You don't have any plan subscribed yet. Please subscribe to a plan to access this feature.",
+        tone: "critical",
+      });
+      setWarning((prev) => ({ ...prev, active: false }));
+      return;
+    }
     setAllFetchedTags([]);
     setFetchedItems([]);
     setNoTagsFound(false);
@@ -555,6 +565,17 @@ export default function TagManager() {
 
   const handleCsvInput = useCallback(
     (_dropFiles: File[], acceptedFiles: File[], _rejectedFiles: File[]) => {
+      if (plan === "FREE") {
+        setAlert({
+          active: true,
+          title: "No Active Plan",
+          message: "You don't have any plan subscribed yet. Please subscribe to a plan to access this feature.",
+          tone: "critical",
+        });
+        setWarning((prev) => ({ ...prev, active: false }));
+        handleClearCSV();
+        return;
+      }
       if (remainingDays === 0) {
         setAlert({
           active: true,
@@ -923,85 +944,40 @@ export default function TagManager() {
                 >
                   CURRENT PLAN
                 </Text>
-                <Badge tone={plan === "ADVANCED" ? "success" : "info"}>
-                  {plan}
+                <Badge tone={plan === "FREE" ? "critical" : plan === "ADVANCED" ? "success" : "info"}>
+                  {plan === "FREE" ? "No Plan" : plan}
                 </Badge>
               </BlockStack>
 
-              {plan !== "ADVANCED" ? (
+              {plan === "ADVANCED" ? (
+                /* Advanced Status */
+                <BlockStack gap="200">
+                  <Text variant="bodyXs" tone="subdued" fontWeight="bold" as={"dd"}>STATUS</Text>
+                  <Text variant="bodyMd" tone="success" fontWeight="bold" as={"dd"}>Unlimited Access Enabled</Text>
+                </BlockStack>
+              ) : plan !== "FREE" ? (
                 <>
                   {/* CSV Limit */}
                   <BlockStack gap="200">
-                    <Text
-                      variant="bodyXs"
-                      tone="subdued"
-                      fontWeight="bold"
-                      as={"dd"}
-                    >
-                      CSV LIMIT
-                    </Text>
+                    <Text variant="bodyXs" tone="subdued" fontWeight="bold" as={"dd"}>CSV LIMIT</Text>
                     <Text variant="bodyMd" fontWeight="bold" as={"dd"}>
-                      {
-                        plan === "ADVANCED"
-                          ? "Unlimited"
-                          : (plan === "BASIC" || plan === "FREE")
-                            ? (planData?.limits?.tagRemoveCsvLimit === Infinity
-                              ? ""
-                              : planData?.limits?.tagRemoveCsvLimit)
-                            : 0
-                      }
-
+                      {planData?.limits?.tagRemoveCsvLimit === Infinity ? "" : planData?.limits?.tagRemoveCsvLimit}
                     </Text>
                   </BlockStack>
 
                   {/* Global Ops */}
                   <BlockStack gap="200">
-                    <Text
-                      variant="bodyXs"
-                      tone="subdued"
-                      fontWeight="bold"
-                      as={"dd"}
-                    >
-                      GLOBAL OPS
-                    </Text>
+                    <Text variant="bodyXs" tone="subdued" fontWeight="bold" as={"dd"}>GLOBAL OPS</Text>
                     <Text variant="bodyMd" fontWeight="bold" as={"dd"}>
-                      {
-                        plan === "ADVANCED"
-                          ? "Unlimited"
-                          : (plan === "BASIC" || plan === "FREE")
-                            ? (planData?.limits?.tagGlobal === Infinity
-                              ? ""
-                              : planData?.limits?.tagGlobal)
-                            : 0
-                      }
+                      {planData?.limits?.tagGlobal === Infinity ? "" : planData?.limits?.tagGlobal}
                     </Text>
                   </BlockStack>
                 </>
-              ) : (
-                /* Advanced Status */
-                <BlockStack gap="200">
-                  <Text
-                    variant="bodyXs"
-                    tone="subdued"
-                    fontWeight="bold"
-                    as={"dd"}
-                  >
-                    STATUS
-                  </Text>
-                  <Text
-                    variant="bodyMd"
-                    tone="success"
-                    fontWeight="bold"
-                    as={"dd"}
-                  >
-                    Unlimited Access Enabled
-                  </Text>
-                </BlockStack>
-              )}
+              ) : null}
             </InlineStack>
 
             <InlineStack gap="600" blockAlign="center">
-              {remainingDays !== undefined && (
+              {remainingDays !== undefined && plan !== "FREE" && (
                 <Box
                   paddingInlineEnd="400"
                   borderInlineEndWidth={

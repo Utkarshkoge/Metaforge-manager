@@ -8,22 +8,71 @@ import "@shopify/polaris/build/esm/styles.css";
 import translations from "@shopify/polaris/locales/en.json";
 import prisma from "../db.server";
 
-export function getRemainingDaysCalendar(
-  startDate: Date,
-  totalDays = 7,
-): number {
-  const start = new Date(startDate);
-  start.setHours(0, 0, 0, 0);
+async function syncFreeTrialDays(shopDomain: string, actualPlan: string, isFreeTrial: boolean, trialDaysLeft: number) {
+  try {
+    const limits = await prisma.freePlanLimits.findUnique({
+      where: { shopDomain }
+    });
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+    if (!limits) {
+      const data = {
+        shopDomain,
+        basic: 3,
+        advanced: 7
+      };
+      const updateData: any = {};
+      if (isFreeTrial) {
+        if (actualPlan === "BASIC") {
+          data.basic = trialDaysLeft;
+          updateData.basic = trialDaysLeft;
+        } else if (actualPlan === "ADVANCED") {
+          data.advanced = trialDaysLeft;
+          updateData.advanced = trialDaysLeft;
+        }
+      }
+      await prisma.freePlanLimits.upsert({
+        where: { shopDomain },
+        create: data,
+        update: updateData
+      });
+      return;
+    }
 
-  const elapsedMs = today.getTime() - start.getTime();
-  const elapsedDays = Math.floor(elapsedMs / (1000 * 60 * 60 * 24));
+    let needsUpdate = false;
+    let updateData: any = {};
 
-  const remaining = totalDays - elapsedDays;
+    if (isFreeTrial) {
+      if (actualPlan === "BASIC") {
+        if (limits.basic !== trialDaysLeft) {
+          updateData.basic = trialDaysLeft;
+          needsUpdate = true;
+        }
+      } else if (actualPlan === "ADVANCED") {
+        if (limits.advanced !== trialDaysLeft) {
+          updateData.advanced = trialDaysLeft;
+          needsUpdate = true;
+        }
+      }
+    } else {
+      if (limits.basic !== 0 && actualPlan === "BASIC") {
+        updateData.basic = 0;
+        needsUpdate = true;
+      }
+      if (limits.advanced !== 0 && actualPlan === "ADVANCED") {
+        updateData.advanced = 0;
+        needsUpdate = true;
+      }
+    }
 
-  return Math.max(0, remaining);
+    if (needsUpdate) {
+      await prisma.freePlanLimits.update({
+        where: { shopDomain },
+        data: updateData
+      });
+    }
+  } catch (error) {
+    console.error("Error syncing free trial days:", error);
+  }
 }
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -40,7 +89,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
     let active = null;
     let dbFailed = false;
-    let plan = "FREE";
+    let actualPlan = "FREE";
+    let displayPlan = "FREE";
     let time: Date | null = null;
     let remainingDays: number | null = null;
     let limits: any = null;
@@ -55,43 +105,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     }
 
     if (active && !dbFailed) {
-      plan = active.plan ?? "FREE";
+      actualPlan = active.plan ?? "FREE";
       time = active.currentPeriodEnd;
-    }
-
-    try {
-      if (plan === "FREE") {
-        limits =
-          (await prisma.freePlanLimits.findUnique({ where: { shopDomain } })) ??
-          (await prisma.freePlanLimits.create({ data: { shopDomain } }));
-      } else if (plan === "BASIC") {
-        limits =
-          (await prisma.basicPlanLimits.findUnique({ where: { shopDomain } })) ??
-          (await prisma.basicPlanLimits.create({ data: { shopDomain } }));
-      } else if (plan === "ADVANCED") {
-        limits = Infinity;
-      }
-    } catch (dbLimitError) {
-      console.error("DB failed to read/create limits", dbLimitError);
-      dbFailed = true;
-    }
-
-    // Calculate remaining days from DB if successful
-    if (plan !== "FREE" && active?.currentPeriodEnd) {
-      const periodEnd = new Date(active.currentPeriodEnd);
-      const today = new Date();
-      const diffTime = periodEnd.getTime() - today.getTime();
-      const calculatedDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      remainingDays = Math.max(0, calculatedDays);
     } else {
-      const firstUsedAt = limits?.firstUsedAt;
-      if (firstUsedAt) {
-        remainingDays = getRemainingDaysCalendar(new Date(firstUsedAt));
-      }
-    }
-
-    // Fallback to Shopify Subscription API if DB failed or active plan not present in DB
-    if (!active || dbFailed) {
+      // Fallback to Shopify Subscription API if DB failed or active plan not present in DB
       try {
         const response = await admin.graphql(
           `#graphql
@@ -114,44 +131,79 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         );
 
         if (activeSubFromApi) {
-          plan = activeSubFromApi.name === "Basic" ? "BASIC" : activeSubFromApi.name === "Advanced" ? "ADVANCED" : "FREE";
+          actualPlan = activeSubFromApi.name === "Basic" ? "BASIC" : activeSubFromApi.name === "Advanced" ? "ADVANCED" : "FREE";
+          time = activeSubFromApi.currentPeriodEnd ? new Date(activeSubFromApi.currentPeriodEnd) : null;
 
-          if (activeSubFromApi.currentPeriodEnd && plan !== 'FREE') {
-            const periodEnd = new Date(activeSubFromApi.currentPeriodEnd);
-            const today = new Date();
-            const diffTime = periodEnd.getTime() - today.getTime();
-            const calculatedDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            remainingDays = Math.max(0, calculatedDays);
-          }
-
-          if (plan !== 'FREE') {
+          if (actualPlan !== 'FREE') {
             try {
               await prisma.activeSubscription.upsert({
                 where: { shopDomain },
                 update: {
-                  plan: plan as any,
+                  plan: actualPlan as any,
                   subscriptionId: activeSubFromApi.id ?? "",
                   popupShown: false,
-                  currentPeriodEnd: activeSubFromApi.currentPeriodEnd ? new Date(activeSubFromApi.currentPeriodEnd) : new Date(0),
+                  currentPeriodEnd: time ?? new Date(0),
                 },
                 create: {
                   shopDomain,
-                  plan: plan as any,
+                  plan: actualPlan as any,
                   subscriptionId: activeSubFromApi.id ?? "",
                   popupShown: false,
-                  currentPeriodEnd: activeSubFromApi.currentPeriodEnd ? new Date(activeSubFromApi.currentPeriodEnd) : new Date(0),
+                  currentPeriodEnd: time ?? new Date(0),
                 },
               });
             } catch (dbUpsertError) {
               console.error("Failed to upsert activeSubscription from API fallback", dbUpsertError);
             }
           }
-
         }
-
       } catch (apiError) {
         console.error("Error querying active subscriptions via API:", apiError);
       }
+    }
+
+    // Calculate remaining days if plan is active
+    if (actualPlan !== "FREE" && time) {
+      const periodEnd = new Date(time);
+      const today = new Date();
+      const diffTime = periodEnd.getTime() - today.getTime();
+      const calculatedDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      remainingDays = Math.max(0, calculatedDays);
+    }
+
+    // Determine plan name and limits to fetch based on remaining days (trial status)
+    let limitsPlanToFetch = actualPlan;
+    if (remainingDays !== null && remainingDays > 30) {
+      displayPlan = "Free Trial Days";
+      limitsPlanToFetch = "FREE";
+      remainingDays = remainingDays - 30;
+    } else {
+      displayPlan = actualPlan;
+    }
+
+    // Sync Free Trial Days to DB if applicable
+    if (shopDomain) {
+      const isFreeTrial = displayPlan === "Free Trial Days";
+      const trialDaysLeft = remainingDays || 0;
+      await syncFreeTrialDays(shopDomain, actualPlan, isFreeTrial, trialDaysLeft);
+    }
+
+    // Fetch Limits
+    try {
+      if (limitsPlanToFetch === "FREE") {
+        limits =
+          (await prisma.freePlanLimits.findUnique({ where: { shopDomain } })) ??
+          (await prisma.freePlanLimits.create({ data: { shopDomain } }));
+      } else if (limitsPlanToFetch === "BASIC") {
+        limits =
+          (await prisma.basicPlanLimits.findUnique({ where: { shopDomain } })) ??
+          (await prisma.basicPlanLimits.create({ data: { shopDomain } }));
+      } else if (limitsPlanToFetch === "ADVANCED") {
+        limits = Infinity;
+      }
+    } catch (dbLimitError) {
+      console.error("DB failed to read/create limits", dbLimitError);
+      dbFailed = true;
     }
 
     if (!limits || dbFailed) {
@@ -168,7 +220,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return {
       apiKey: process.env.SHOPIFY_API_KEY!,
       planData: {
-        plan,
+        plan: displayPlan,
         limits,
         remainingDays,
       },

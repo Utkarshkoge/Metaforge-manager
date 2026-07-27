@@ -21,6 +21,7 @@ import { HomeIcon } from "@shopify/polaris-icons";
 import { authenticate } from "../shopify.server";
 import prisma from "../db.server";
 import { RouteErrorBoundary } from "app/component/RouteErrorBoundary";
+
 import {
     GET_RECURRING_APPLICATION_CHARGES,
     CANCEL_SUBSCRIPTION,
@@ -53,12 +54,21 @@ export async function loader({ request }: LoaderFunctionArgs) {
             },
         });
 
+        const limits = await prisma.freePlanLimits.findUnique({
+            where: { shopDomain },
+            select: { basic: true, advanced: true }
+        }) || { basic: 3, advanced: 7 };
+
         // Default to FREE if no active subscription
         const currentPlan = active?.plan ?? "FREE";
 
         return {
             currentPlan,
             subscriptionId: active?.subscriptionId ?? null,
+            trialDays: {
+                BASIC: limits.basic,
+                ADVANCED: limits.advanced
+            }
         };
     } catch (error) {
         console.error("Error in billing subscribe loader:", error);
@@ -105,6 +115,9 @@ export async function action({ request }: ActionFunctionArgs) {
                 }
             }
 
+            const activeSubRecord = await prisma.activeSubscription.findUnique({ where: { shopDomain: shop } });
+            const planToCancel = activeSubRecord?.plan;
+
             // Remove shop from ActiveSubscription if present
             await prisma.activeSubscription.deleteMany({
                 where: { shopDomain: shop }
@@ -114,6 +127,18 @@ export async function action({ request }: ActionFunctionArgs) {
             await prisma.basicPlanLimits.deleteMany({
                 where: { shopDomain: shop }
             });
+
+            if (planToCancel === "BASIC") {
+                await prisma.freePlanLimits.updateMany({
+                    where: { shopDomain: shop },
+                    data: { basic: 0 }
+                });
+            } else if (planToCancel === "ADVANCED") {
+                await prisma.freePlanLimits.updateMany({
+                    where: { shopDomain: shop },
+                    data: { advanced: 0 }
+                });
+            }
 
             return { success: true };
         } else {
@@ -125,6 +150,7 @@ export async function action({ request }: ActionFunctionArgs) {
             }
 
             const planKey = formData.get("plan") as PlanKey;
+            const skipTrial = formData.get("skipTrial") === "true";
             const plan = PLANS[planKey];
             if (!plan) {
                 throw new Response("Invalid plan", { status: 400 });
@@ -134,17 +160,29 @@ export async function action({ request }: ActionFunctionArgs) {
                 `${process.env.SHOPIFY_APP_URL}/app` +
                 `?shop=${shop}&host=${encodeURIComponent(host)}`;
 
+            const limits = await prisma.freePlanLimits.findUnique({ where: { shopDomain: shop } });
+
+            let trialDays = 0;
+
+            if (!skipTrial) {
+                if (planKey === "BASIC") trialDays = limits?.basic || 3;
+                if (planKey === "ADVANCED") trialDays = limits?.advanced || 7;
+            }
+
+            const variables: any = {
+                name: plan.name,
+                returnUrl,
+                test: true,
+                amount: plan.price,
+                currency: "USD",
+            };
+            if (trialDays > 0) {
+                variables.trialDays = trialDays;
+            }
+
             const graphqlResponse = await admin.graphql(
                 CREATE_SUBSCRIPTION,
-                {
-                    variables: {
-                        name: plan.name,
-                        returnUrl,
-                        test: true,
-                        amount: plan.price,
-                        currency: "USD",
-                    },
-                }
+                { variables }
             );
 
             const data = await graphqlResponse.json();
@@ -175,7 +213,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function BillingPage() {
-    const { currentPlan } = useLoaderData<typeof loader>();
+    const { currentPlan, trialDays } = useLoaderData<typeof loader>();
     const fetcher = useFetcher<typeof action>();
     const navigate = useNavigate();
 
@@ -187,16 +225,18 @@ export default function BillingPage() {
     // Subscription Confirmation Modal States
     const [subscribeModalOpen, setSubscribeModalOpen] = useState(false);
     const [pendingPlan, setPendingPlan] = useState<PlanKey | null>(null);
+    const [pendingSkipTrial, setPendingSkipTrial] = useState(false);
 
-    const handleSubscribeClick = (plan: PlanKey) => {
+    const handleSubscribeClick = (plan: PlanKey, skipTrial: boolean = false) => {
         setPendingPlan(plan);
+        setPendingSkipTrial(skipTrial);
         setSubscribeModalOpen(true);
     };
 
     const handleSubscribeConfirm = () => {
         if (pendingPlan) {
             fetcher.submit(
-                { plan: pendingPlan, actionType: "SUBSCRIBE" },
+                { plan: pendingPlan, actionType: "SUBSCRIBE", skipTrial: pendingSkipTrial ? "true" : "false" },
                 {
                     method: "post",
                     action: "/app/billing/subscribe",
@@ -274,8 +314,7 @@ export default function BillingPage() {
                                     <BlockStack gap="400">
                                         <BlockStack gap="200">
                                             <InlineStack align="space-between" gap="200">
-                                                <Text as="h2" variant="headingLg">Starting 7 Days Free Plan</Text>
-                                                {currentPlan === "FREE" && <Badge tone="success">Active</Badge>}
+                                                <Text as="h2" variant="headingLg">Trial Day Limits.</Text>
                                             </InlineStack>
                                         </BlockStack>
 
@@ -287,17 +326,8 @@ export default function BillingPage() {
                                                 <FeatureItem text="2 Global Metafield Removal Actions" detail="100 items/run" />
                                                 <FeatureItem text="200 CSV Entries" />
                                                 <FeatureItem text="Export All Resources" />
-                                                <FeatureItem text="Standard Support" />
                                             </BlockStack>
                                         </BlockStack>
-
-                                        <Divider />
-
-                                        <Box paddingBlockStart="100">
-                                            <Text as="p" variant="bodyXs" tone="subdued">
-                                                Upgrade to a premium plan after your starting 7-day trial or once free limits are reached.
-                                            </Text>
-                                        </Box>
                                     </BlockStack>
                                 </Card>
                             </div>
@@ -315,7 +345,10 @@ export default function BillingPage() {
                                         <BlockStack gap="200">
                                             <InlineStack align="space-between" gap="200">
                                                 <Text as="h2" variant="headingLg">Basic</Text>
-                                                {currentPlan === "BASIC" && <Badge tone="success">Active</Badge>}
+                                                <InlineStack gap="100">
+                                                    {currentPlan === "BASIC" && <Badge tone="success">Active</Badge>}
+                                                    {currentPlan === "BASIC" && trialDays.BASIC > 0 && <Badge tone="info">Trial - {trialDays.BASIC} days left</Badge>}
+                                                </InlineStack>
                                             </InlineStack>
                                             <Text as="p" variant="bodyLg" fontWeight="bold">$5 <Text as="span" variant="bodySm" tone="subdued">/ month</Text></Text>
                                         </BlockStack>
@@ -369,19 +402,45 @@ export default function BillingPage() {
                                                                 fontWeight: "500"
                                                             }}
                                                         >
-                                                            Cancel subscription
+                                                            {trialDays.BASIC > 0 ? "Cancel Trial" : "Cancel subscription"}
                                                         </button>
                                                     </Box>
                                                 </BlockStack>
                                             ) : (
-                                                <Button
-                                                    variant="primary"
-                                                    fullWidth
-                                                    onClick={() => handleSubscribeClick("BASIC")}
-                                                    loading={fetcher.state === "submitting" && fetcher.formData?.get("plan") === "BASIC"}
-                                                >
-                                                    {currentPlan === "ADVANCED" ? "Downgrade to Basic" : "Upgrade to Basic"}
-                                                </Button>
+                                                trialDays.BASIC > 0 ? (
+                                                    <BlockStack gap="200">
+                                                        <Button
+                                                            variant="primary"
+                                                            fullWidth
+                                                            onClick={() => handleSubscribeClick("BASIC", false)}
+                                                            loading={fetcher.state === "submitting" && fetcher.formData?.get("plan") === "BASIC" && fetcher.formData?.get("skipTrial") === "false"}
+                                                        >
+                                                            Subscribe with {trialDays.BASIC}-day trial
+                                                        </Button>
+                                                        <Button
+                                                            variant="secondary"
+                                                            fullWidth
+                                                            onClick={() => handleSubscribeClick("BASIC", true)}
+                                                            loading={fetcher.state === "submitting" && fetcher.formData?.get("plan") === "BASIC" && fetcher.formData?.get("skipTrial") === "true"}
+                                                        >
+                                                            {currentPlan === "ADVANCED" ? "Downgrade without trial" : "Subscribe without trial"}
+                                                        </Button>
+                                                    </BlockStack>
+                                                ) : (
+                                                    <BlockStack gap="200">
+                                                        <Button
+                                                            variant="primary"
+                                                            fullWidth
+                                                            onClick={() => handleSubscribeClick("BASIC", false)}
+                                                            loading={fetcher.state === "submitting" && fetcher.formData?.get("plan") === "BASIC"}
+                                                        >
+                                                            {currentPlan === "ADVANCED" ? "Downgrade to Basic" : "Upgrade to Basic"}
+                                                        </Button>
+                                                        <Text as="p" variant="bodySm" tone="subdued" alignment="center">
+                                                            You already have used the free trial for this plan.
+                                                        </Text>
+                                                    </BlockStack>
+                                                )
                                             )}
                                         </Box>
                                     </BlockStack>
@@ -417,6 +476,7 @@ export default function BillingPage() {
                                                 <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#ffffff", margin: 0 }}>Advanced</h2>
                                                 <InlineStack gap="100">
                                                     {currentPlan === "ADVANCED" && <Badge tone="success">Active</Badge>}
+                                                    {currentPlan === "ADVANCED" && trialDays.ADVANCED > 0 && <Badge tone="info">Trial - {trialDays.ADVANCED} days left</Badge>}
                                                     <Badge tone="attention">Best Value</Badge>
                                                 </InlineStack>
                                             </InlineStack>
@@ -462,19 +522,45 @@ export default function BillingPage() {
                                                                 fontWeight: "500"
                                                             }}
                                                         >
-                                                            Cancel subscription
+                                                            {trialDays.ADVANCED > 0 ? "Cancel Trial" : "Cancel subscription"}
                                                         </button>
                                                     </Box>
                                                 </BlockStack>
                                             ) : (
-                                                <Button
-                                                    variant="primary"
-                                                    fullWidth
-                                                    onClick={() => handleSubscribeClick("ADVANCED")}
-                                                    loading={fetcher.state === "submitting" && fetcher.formData?.get("plan") === "ADVANCED"}
-                                                >
-                                                    Upgrade to Advanced
-                                                </Button>
+                                                trialDays.ADVANCED > 0 ? (
+                                                    <BlockStack gap="200">
+                                                        <Button
+                                                            variant="primary"
+                                                            fullWidth
+                                                            onClick={() => handleSubscribeClick("ADVANCED", false)}
+                                                            loading={fetcher.state === "submitting" && fetcher.formData?.get("plan") === "ADVANCED" && fetcher.formData?.get("skipTrial") === "false"}
+                                                        >
+                                                            Subscribe with {trialDays.ADVANCED}-day trial
+                                                        </Button>
+                                                        <Button
+                                                            variant="secondary"
+                                                            fullWidth
+                                                            onClick={() => handleSubscribeClick("ADVANCED", true)}
+                                                            loading={fetcher.state === "submitting" && fetcher.formData?.get("plan") === "ADVANCED" && fetcher.formData?.get("skipTrial") === "true"}
+                                                        >
+                                                            Subscribe without trial
+                                                        </Button>
+                                                    </BlockStack>
+                                                ) : (
+                                                    <BlockStack gap="200">
+                                                        <Button
+                                                            variant="primary"
+                                                            fullWidth
+                                                            onClick={() => handleSubscribeClick("ADVANCED", false)}
+                                                            loading={fetcher.state === "submitting" && fetcher.formData?.get("plan") === "ADVANCED"}
+                                                        >
+                                                            Upgrade to Advanced
+                                                        </Button>
+                                                        <div style={{ textAlign: "center", fontSize: "12px", color: "#1c1d1dff" }}>
+                                                            You already have used the free trial for this plan.
+                                                        </div>
+                                                    </BlockStack>
+                                                )
                                             )}
                                         </Box>
                                     </BlockStack>
@@ -494,7 +580,13 @@ export default function BillingPage() {
                         setCancelSuccess(false);
                     }
                 }}
-                title={cancelSuccess ? "Subscription Cancelled" : "Cancel subscription and downgrade?"}
+                title={
+                    cancelSuccess
+                        ? "Subscription Cancelled"
+                        : ((currentPlan === "BASIC" && trialDays.BASIC > 0) || (currentPlan === "ADVANCED" && trialDays.ADVANCED > 0))
+                            ? "Cancel active trial days?"
+                            : "Cancel subscription and downgrade?"
+                }
                 primaryAction={cancelSuccess ? {
                     content: 'Close',
                     onAction: () => {
@@ -525,30 +617,50 @@ export default function BillingPage() {
                             </Banner>
                         </BlockStack>
                     ) : (
-                        <BlockStack gap="400">
-                            <Text as="p" tone="critical" fontWeight="semibold">
-                                Are you sure you want to cancel your subscription and downgrade to the FREE plan?
-                            </Text>
-                            <BlockStack gap="200">
-                                <Text as="p" variant="bodyMd" fontWeight="medium">
-                                    Please review the following details before proceeding:
-                                </Text>
-                                <List type="bullet">
-                                    <List.Item>
-                                        You’ll immediately lose access to all {currentPlan === "ADVANCED" ? "ADVANCED" : "BASIC"} features provided by this app.
-                                    </List.Item>
-                                    <List.Item>
-                                        Shopify will stop future charges for this subscription. Any billing adjustments (such as credits or refunds) are handled automatically by Shopify’s billing system.
-                                    </List.Item>
-                                    <List.Item>
-                                        You can upgrade again at any time by re-activating the paid plan in this app.
-                                    </List.Item>
-                                    <List.Item>
-                                        Your existing data and settings will remain in your account, but paid features will be disabled.
-                                    </List.Item>
-                                </List>
+                        ((currentPlan === "BASIC" && trialDays.BASIC > 0) || (currentPlan === "ADVANCED" && trialDays.ADVANCED > 0)) ? (
+                            <BlockStack gap="400">
+                                <BlockStack gap="200">
+                                    <Text as="p" variant="bodyMd" fontWeight="medium">
+                                        Your trial is currently active, and you haven't been charged yet.                                    </Text>
+                                    <List type="bullet">
+                                        <List.Item>
+                                            You can cancel the current plan and subscribe to a plan without a trial.
+                                        </List.Item>
+                                        <List.Item>
+                                            <strong>After cancelling, you will not be able to use these trial days again for this plan.</strong>
+                                        </List.Item>
+                                    </List>
+                                </BlockStack>
                             </BlockStack>
-                        </BlockStack>
+                        ) : (
+                            <BlockStack gap="400">
+                                <Text as="p" tone="critical" fontWeight="semibold">
+                                    Are you sure you want to cancel your subscription and downgrade to the FREE plan?
+                                </Text>
+                                <BlockStack gap="200">
+                                    <Text as="p" variant="bodyMd" fontWeight="medium">
+                                        Please review the following details before proceeding:
+                                    </Text>
+                                    <List type="bullet">
+                                        <List.Item>
+                                            You’ll immediately lose access to all {currentPlan === "ADVANCED" ? "ADVANCED" : "BASIC"} features provided by this app.
+                                        </List.Item>
+                                        <List.Item>
+                                            <strong>You will lose any remaining trial period for this plan, and you cannot use this trial period again.</strong>
+                                        </List.Item>
+                                        <List.Item>
+                                            Shopify will stop future charges for this subscription. Any billing adjustments (such as credits or refunds) are handled automatically by Shopify’s billing system.
+                                        </List.Item>
+                                        <List.Item>
+                                            You can upgrade again at any time by re-activating the paid plan in this app.
+                                        </List.Item>
+                                        <List.Item>
+                                            Your existing data and settings will remain in your account, but paid features will be disabled.
+                                        </List.Item>
+                                    </List>
+                                </BlockStack>
+                            </BlockStack>
+                        )
                     )}
                 </Modal.Section>
             </Modal>
@@ -572,8 +684,12 @@ export default function BillingPage() {
             >
                 <Modal.Section>
                     <BlockStack gap="400">
-                        <Text as="p">
-                            Are you sure you want to subscribe to the <strong>{pendingPlan ? PLANS[pendingPlan].name : ""} Plan</strong> for <strong>${pendingPlan ? PLANS[pendingPlan].price : ""}/month</strong>?                        </Text>
+                        <BlockStack gap="200">
+                            <Text as="p">
+                                Are you sure you want to subscribe to the <strong>{pendingPlan ? PLANS[pendingPlan].name : ""} Plan</strong> for <strong>${pendingPlan ? PLANS[pendingPlan].price : ""}/month</strong>?
+                            </Text>
+
+                        </BlockStack>
                         {currentPlan !== "FREE" && (
                             <BlockStack gap="300">
                                 <Banner tone="warning">
@@ -581,17 +697,23 @@ export default function BillingPage() {
                                         You are currently subscribed to the <strong>{currentPlan}</strong> plan. Continuing will automatically switch your subscription to the <strong>{pendingPlan ? PLANS[pendingPlan].name : ""}</strong> plan.
                                     </Text>
                                 </Banner>
-
-                                <List type="bullet">
-                                    <List.Item>
-                                        Shopify will automatically handle any applicable billing adjustments.
-                                    </List.Item>
-                                    <List.Item>
-                                        Your existing data and settings will remain unchanged.
-                                    </List.Item>
-                                </List>
                             </BlockStack>
                         )}
+                        <BlockStack gap="300">
+                            <List type="bullet">
+                                {!pendingSkipTrial && pendingPlan && trialDays[pendingPlan] > 0 && (
+                                    <List.Item>
+                                        This subscription includes a <strong>{trialDays[pendingPlan]}-day free trial</strong>. You will not be charged until the trial period ends.
+                                    </List.Item>
+                                )}
+                                <List.Item>
+                                    Shopify will automatically handle any applicable billing adjustments.
+                                </List.Item>
+                                <List.Item>
+                                    Your existing data and settings will remain unchanged.
+                                </List.Item>
+                            </List>
+                        </BlockStack>
                         <Text as="p" variant="bodyMd">
                             You will be redirected to Shopify's secure billing page to approve this charge.
                         </Text>

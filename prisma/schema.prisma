@@ -71,7 +71,9 @@ model FreePlanLimits {
   tagAddCsvLimit               Int      @default(200)
   tagRemoveCsvLimit            Int      @default(200)
   
-  firstUsedAt        DateTime @default(now())
+  basic        Int      @default(3)
+  advanced     Int      @default(7)
+
 }
 
 model BasicPlanLimits {

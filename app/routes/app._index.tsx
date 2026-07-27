@@ -349,7 +349,9 @@ export default function HomePage() {
                 <Text variant="headingMd" as="h2">
                   Current Subscription
                 </Text>
-                <Badge tone="attention">{planData?.plan}</Badge>
+                <Badge tone={planData?.plan === "FREE" ? "critical" : planData?.plan === "ADVANCED" ? "success" : "attention"}>
+                  {planData?.plan === "FREE" ? "No Plan" : planData?.plan}
+                </Badge>
               </InlineStack>
               <Text tone="subdued" as="p">
                 Your plan controls how many actions you can perform.
@@ -358,7 +360,7 @@ export default function HomePage() {
 
             {/* Right: Icon + Time and Button */}
             <InlineStack gap="600" blockAlign="center">
-              {remainingDays !== undefined && (
+              {remainingDays !== undefined && planData?.plan !== "FREE" && (
                 <Box
                   paddingInlineEnd="400"
                   borderInlineEndWidth={
