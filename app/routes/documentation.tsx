@@ -157,16 +157,16 @@ const TagMetafieldManagerDocumentation: React.FC = () => {
                             MetaForge Manager offers flexible subscription plans to suit your store's growth and data management needs:
                         </p>
 
-                        <h3 style={styles.h3}>Starting 7 Days Free Plan</h3>
+                        <h3 style={styles.h3}>Trial Day Limits.</h3>
                         <ul style={styles.ul}>
-                            <li style={styles.li}>2 Global Tag Removal Actions (50 items/run, max 2 tags)</li>
+                            <li style={styles.li}>2 Global Tag Removal Actions (40 items/run, max 2 tags)</li>
                             <li style={styles.li}>2 Global Metafield Removal Actions (100 items/run)</li>
                             <li style={styles.li}>200 CSV Entries per operation</li>
                             <li style={styles.li}>Export All Resources</li>
-                            <li style={styles.li}>Standard Support</li>
                         </ul>
 
                         <h3 style={styles.h3}>Basic Plan ($5 / month)</h3>
+                        <p style={styles.p}>Includes a <strong>3-day free trial</strong>.</p>
                         <ul style={styles.ul}>
                             <li style={styles.li}>20 Global Tag Removal Actions (100 items/run, max 10 tags)</li>
                             <li style={styles.li}>20 Global Metafield Removal Actions (250 items/run)</li>
@@ -176,6 +176,7 @@ const TagMetafieldManagerDocumentation: React.FC = () => {
                         </ul>
 
                         <h3 style={styles.h3}>Advanced Plan ($10 / month)</h3>
+                        <p style={styles.p}>Includes a <strong>7-day free trial</strong>.</p>
                         <ul style={styles.ul}>
                             <li style={styles.li}>Unlimited Tag Removal (5,000 items/run, max 20 tags)</li>
                             <li style={styles.li}>Unlimited Metafield Removal (5,000 items/run)</li>
@@ -183,6 +184,14 @@ const TagMetafieldManagerDocumentation: React.FC = () => {
                             <li style={styles.li}>Export All Resources</li>
                             <li style={styles.li}>Priority Support</li>
                         </ul>
+
+                        <h3 style={styles.h3}>Trial Days</h3>
+                        <p style={styles.p}>
+                            We provide a risk-free trial period for our paid plans.
+                        </p>
+                        <p style={styles.p}>
+                            <strong>Important Note:</strong> If you cancel your subscription during a trial, any remaining trial days for that specific plan will be forfeited. If you upgrade or subscribe again later, or choose to "Subscribe without trial", billing will commence immediately without a new trial period.
+                        </p>
                     </section>
 
                     {/* Conclusion / Contact Card */}

@@ -132,16 +132,16 @@ const TagMetafieldManagerPrivacy: React.FC = () => {
                             MetaForge Manager offers tiered subscription plans to meet different usage requirements. We clearly display pricing and limits within the App. All billing and recurring charges are securely handled directly by Shopify's billing system.
                         </p>
 
-                        <h3 style={styles.h3}>Starting 7 Days Free Plan</h3>
+                        <h3 style={styles.h3}>Trial Day Limits.</h3>
                         <ul style={styles.ul}>
-                            <li style={styles.li}>2 Global Tag Removal Actions (50 items/run, max 2 tags)</li>
+                            <li style={styles.li}>2 Global Tag Removal Actions (40 items/run, max 2 tags)</li>
                             <li style={styles.li}>2 Global Metafield Removal Actions (100 items/run)</li>
                             <li style={styles.li}>200 CSV Entries per operation</li>
                             <li style={styles.li}>Export All Resources</li>
-                            <li style={styles.li}>Standard Support</li>
                         </ul>
 
                         <h3 style={styles.h3}>Basic Plan ($5 / month)</h3>
+                        <p style={styles.p}>Includes a <strong>3-day free trial</strong>.</p>
                         <ul style={styles.ul}>
                             <li style={styles.li}>20 Global Tag Removal Actions (100 items/run, max 10 tags)</li>
                             <li style={styles.li}>20 Global Metafield Removal Actions (250 items/run)</li>
@@ -151,6 +151,7 @@ const TagMetafieldManagerPrivacy: React.FC = () => {
                         </ul>
 
                         <h3 style={styles.h3}>Advanced Plan ($10 / month)</h3>
+                        <p style={styles.p}>Includes a <strong>7-day free trial</strong>.</p>
                         <ul style={styles.ul}>
                             <li style={styles.li}>Unlimited Tag Removal (5,000 items/run, max 20 tags)</li>
                             <li style={styles.li}>Unlimited Metafield Removal (5,000 items/run)</li>
@@ -160,7 +161,7 @@ const TagMetafieldManagerPrivacy: React.FC = () => {
                         </ul>
 
                         <p style={styles.p}>
-                            <strong style={styles.strong}>Free Plan Access Tracking:</strong> We securely save your shop domain to monitor and manage the starting 7-days free plan access. This ensures that the free trial usage is accurately tracked per store and prevents multiple free trial activations for the same store even if the app is reinstalled.
+                            <strong style={styles.strong}>Trial Days &amp; Subscriptions:</strong> If you cancel your subscription during a trial or choose to subscribe without a trial, any remaining trial days for that specific plan will be forfeited and billing will start immediately.
                         </p>
                     </section>
 

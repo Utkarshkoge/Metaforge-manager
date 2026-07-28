@@ -143,16 +143,16 @@ const TagMetafieldManagerFAQ: React.FC = () => {
                             We offer three tiers of subscription plans:
                         </p>
 
-                        <h3 style={styles.h3}>Starting 7 Days Free Plan</h3>
+                        <h3 style={styles.h3}>Trial Day Limits.</h3>
                         <ul style={styles.ul}>
-                            <li style={styles.li}>2 Global Tag Removal Actions (50 items/run, max 2 tags)</li>
+                            <li style={styles.li}>2 Global Tag Removal Actions (40 items/run, max 2 tags)</li>
                             <li style={styles.li}>2 Global Metafield Removal Actions (100 items/run)</li>
                             <li style={styles.li}>200 CSV Entries per operation</li>
                             <li style={styles.li}>Export All Resources</li>
-                            <li style={styles.li}>Standard Support</li>
                         </ul>
 
                         <h3 style={styles.h3}>Basic Plan ($5 / month)</h3>
+                        <p style={styles.p}>Includes a <strong>3-day free trial</strong>.</p>
                         <ul style={styles.ul}>
                             <li style={styles.li}>20 Global Tag Removal Actions (100 items/run, max 10 tags)</li>
                             <li style={styles.li}>20 Global Metafield Removal Actions (250 items/run)</li>
@@ -162,6 +162,7 @@ const TagMetafieldManagerFAQ: React.FC = () => {
                         </ul>
 
                         <h3 style={styles.h3}>Advanced Plan ($10 / month)</h3>
+                        <p style={styles.p}>Includes a <strong>7-day free trial</strong>.</p>
                         <ul style={styles.ul}>
                             <li style={styles.li}>Unlimited Tag Removal (5,000 items/run, max 20 tags)</li>
                             <li style={styles.li}>Unlimited Metafield Removal (5,000 items/run)</li>
@@ -171,9 +172,20 @@ const TagMetafieldManagerFAQ: React.FC = () => {
                         </ul>
                     </section>
 
+                    {/* Section 8: Trial Days */}
+                    <section style={styles.section}>
+                        <h2 style={styles.h2}>8. How do trial days work?</h2>
+                        <p style={styles.p}>
+                            We offer a 3-day free trial for the Basic Plan and a 7-day free trial for the Advanced Plan.
+                        </p>
+                        <p style={styles.p}>
+                            If you cancel your subscription while still on a trial, any remaining trial days for that plan are forfeited. Similarly, if you choose the "Subscribe without trial" option, your billing will begin immediately.
+                        </p>
+                    </section>
+
                     {/* Contact Us Section */}
                     <section style={styles.section}>
-                        <h2 style={styles.h2}>8. Contact Us</h2>
+                        <h2 style={styles.h2}>9. Contact Us</h2>
 
                         <p style={styles.p}>
                             If you have any questions, feedback, or require assistance with MetaForge Manager,
