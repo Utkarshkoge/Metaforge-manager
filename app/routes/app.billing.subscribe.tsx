@@ -356,7 +356,12 @@ export default function BillingPage() {
                                         <Divider />
 
                                         <BlockStack gap="200">
-                                            <Text as="p" variant="bodyMd" fontWeight="medium">Monthly Limits:</Text>
+                                            <div>
+                                                <Text as="p" variant="bodyMd" fontWeight="medium">Monthly Limits:</Text>
+                                                {trialDays.BASIC > 0 && (
+                                                    <Text as="p" variant="bodyXs" tone="subdued">These limits start after the trial period ends.</Text>
+                                                )}
+                                            </div>
                                             <BlockStack gap="150">
                                                 <FeatureItem
                                                     text="20 Global Tag Removal Actions"
@@ -486,7 +491,12 @@ export default function BillingPage() {
                                         <div style={{ height: "1px", backgroundColor: "rgba(255, 255, 255, 0.12)", margin: "8px 0" }} />
 
                                         <BlockStack gap="200">
-                                            <p style={{ fontSize: "14px", fontWeight: "500", color: "#90f590", margin: 0 }}>Everything Unlimited:</p>
+                                            <div>
+                                                <p style={{ fontSize: "14px", fontWeight: "500", color: "#90f590", margin: 0, paddingBottom: "2px" }}>Everything Unlimited:</p>
+                                                {trialDays.ADVANCED > 0 && (
+                                                    <p style={{ fontSize: "12px", color: "#d1d5db", margin: 0 }}>These limits start after the trial period ends.</p>
+                                                )}
+                                            </div>
                                             <BlockStack gap="150">
                                                 <DarkFeatureItem text="Unlimited Tag Removal" detail="5,000 items/run, max 20 tags" />
                                                 <DarkFeatureItem text="Unlimited Metafield Removal" detail="5,000 items/run" />

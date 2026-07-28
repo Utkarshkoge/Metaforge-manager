@@ -350,7 +350,7 @@ export default function HomePage() {
                   Current Subscription
                 </Text>
                 <Badge tone={planData?.plan === "FREE" ? "critical" : planData?.plan === "ADVANCED" ? "success" : "attention"}>
-                  {planData?.plan === "FREE" ? "No Plan" : planData?.plan}
+                  {planData?.plan === "FREE" ? "No Plan" : planData?.plan === "Free Trial Days" ? `${planData?.actualPlan} - Free Trial Days` : planData?.plan}
                 </Badge>
               </InlineStack>
               <Text tone="subdued" as="p">
@@ -419,7 +419,7 @@ export default function HomePage() {
                             fontWeight="medium"
                             as={"dd"}
                           >
-                            REMAINING
+                            {planData?.plan === "Free Trial Days" ? "TRIAL DAYS REMAINING" : "REMAINING"}
                           </Text>
                         </>
                       )}

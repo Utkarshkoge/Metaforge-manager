@@ -423,7 +423,7 @@ export default function ExportData() {
                             fontWeight="medium"
                             as={"dd"}
                           >
-                            REMAINING
+                            {planData?.plan === "Free Trial Days" ? "TRIAL DAYS REMAINING" : "REMAINING"}
                           </Text>
                         </>
                       )}

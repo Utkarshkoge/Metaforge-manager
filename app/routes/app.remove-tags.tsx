@@ -1036,7 +1036,7 @@ export default function TagManager() {
                             fontWeight="medium"
                             as={"dd"}
                           >
-                            REMAINING
+                            {planData?.plan === "Free Trial Days" ? "TRIAL DAYS REMAINING" : "REMAINING"}
                           </Text>
                         </>
                       )}

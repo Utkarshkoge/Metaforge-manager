@@ -35,6 +35,7 @@ async function syncFreeTrialDays(shopDomain: string, actualPlan: string, isFreeT
         create: data,
         update: updateData
       });
+
       return;
     }
 
@@ -221,6 +222,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       apiKey: process.env.SHOPIFY_API_KEY!,
       planData: {
         plan: displayPlan,
+        actualPlan,
         limits,
         remainingDays,
       },
