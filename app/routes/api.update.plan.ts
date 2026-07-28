@@ -10,7 +10,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         const body = await request.json();
 
         const { plan, updates } = body as {
-            plan: "FREE" | "BASIC";
+            plan: "FREE" | "BASIC" | "ADVANCED";
             updates: Partial<{
                 tagGlobal: number;
                 tagSpecific: number;
@@ -24,6 +24,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
         if (!plan || !updates || Object.keys(updates).length === 0) {
             throw new Response("Plan and update fields are required", { status: 400 });
+        }
+
+        if (plan === "ADVANCED") {
+            return Response.json({ success: true });
         }
 
         let updated;
@@ -46,7 +50,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
             throw new Response("Invalid plan", { status: 400 });
         }
 
-        return true;
+        return Response.json({ success: true });
     } catch (error) {
         console.error("Error in api.update.plan action:", error);
         if (error instanceof Response) {
