@@ -435,6 +435,11 @@ export default function BillingPage() {
                                                         >
                                                             {currentPlan === "ADVANCED" ? "Downgrade without trial" : "Subscribe without trial"}
                                                         </Button>
+                                                        {trialDays.BASIC < 3 && (
+                                                            <Text as="p" variant="bodySm" tone="subdued" alignment="center">
+                                                                You have already used {3 - trialDays.BASIC} trial {3 - trialDays.BASIC === 1 ? 'day' : 'days'}.
+                                                            </Text>
+                                                        )}
                                                     </BlockStack>
                                                 ) : (
                                                     <BlockStack gap="200">
@@ -560,6 +565,11 @@ export default function BillingPage() {
                                                         >
                                                             Subscribe without trial
                                                         </Button>
+                                                        {trialDays.ADVANCED < 7 && (
+                                                            <div style={{ textAlign: "center", fontSize: "12px", color: "#e2e8f0" }}>
+                                                                You have already used {7 - trialDays.ADVANCED} trial {7 - trialDays.ADVANCED === 1 ? 'day' : 'days'}.
+                                                            </div>
+                                                        )}
                                                     </BlockStack>
                                                 ) : (
                                                     <BlockStack gap="200">
