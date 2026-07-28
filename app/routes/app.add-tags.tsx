@@ -270,7 +270,7 @@ export default function SimpleTagManager() {
   const updateTagLimit = (tagAddCsvCount: number, planData: any) => {
     fetcher.submit(
       {
-        plan: planData?.plan === "Free Trial Days" ? "FREE" : planData?.plan,
+        plan: planData?.plan,
         updates: {
           tagAddCsvLimit: planData?.limits?.tagAddCsvLimit - tagAddCsvCount,
         },

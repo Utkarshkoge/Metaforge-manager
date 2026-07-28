@@ -10,7 +10,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         const body = await request.json();
 
         const { plan, updates } = body as {
-            plan: "FREE" | "BASIC" | "ADVANCED";
+            plan: "Free Trial Days" | "BASIC" | "ADVANCED";
             updates: Partial<{
                 tagGlobal: number;
                 tagSpecific: number;
@@ -32,7 +32,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
         let updated;
 
-        if (plan === "FREE") {
+        if (plan === "Free Trial Days") {
             updated = await prisma.freePlanLimits.update({
                 where: { shopDomain },
                 data: updates,
