@@ -46,10 +46,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
             });
         }
 
-        if (!updated) {
-            throw new Response("Invalid plan", { status: 400 });
-        }
-
         return Response.json({ success: true });
     } catch (error) {
         console.error("Error in api.update.plan action:", error);
