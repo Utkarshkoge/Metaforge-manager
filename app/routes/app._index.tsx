@@ -411,7 +411,15 @@ export default function HomePage() {
                             fontWeight="bold"
                             tone={remainingDays <= 5 ? "critical" : undefined}
                           >
-                            {remainingDays} {remainingDays === 1 ? "Day" : "Days"}
+                            {remainingDays}{" "}
+                            {planData?.plan === "Free Trial Days"
+                              ? remainingDays === 1
+                                ? "TRIAL DAY"
+                                : "TRIAL DAYS"
+                              : remainingDays === 1
+                                ? "DAY"
+                                : "DAYS"
+                            }
                           </Text>
                           <Text
                             variant="bodyXs"
@@ -419,7 +427,7 @@ export default function HomePage() {
                             fontWeight="medium"
                             as={"dd"}
                           >
-                            {planData?.plan === "Free Trial Days" ? "TRIAL DAYS REMAINING" : "REMAINING"}
+                            REMAINING
                           </Text>
                         </>
                       )}
