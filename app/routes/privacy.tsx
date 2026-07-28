@@ -174,6 +174,9 @@ const TagMetafieldManagerPrivacy: React.FC = () => {
                         <p style={styles.p}>
                             Information is retained only for as long as necessary to provide core App components, manage user history tabs, handle support tickets, and comply with platform obligations. Data is automatically removed after the App is uninstalled in accordance with Shopify data deletion requirements.
                         </p>
+                        <p style={styles.p}>
+                            <strong style={styles.strong}>Domain Tracking for Trial Days:</strong> We securely save your shop's domain name exclusively to manage and track the remaining trial days for our paid plans. This ensures accurate tracking and prevents the reuse of trial periods. No other sensitive store information is saved for this purpose.
+                        </p>
                     </section>
 
                     {/* Contact Us Section */}
