@@ -731,6 +731,11 @@ export default function BillingPage() {
                                         This subscription includes a <strong>{trialDays[pendingPlan]}-day free trial</strong>. You will not be charged until the trial period ends.
                                     </List.Item>
                                 )}
+                                {pendingSkipTrial && pendingPlan && trialDays[pendingPlan] > 0 && (
+                                    <List.Item>
+                                        <strong>Your remaining trial days will be cancelled.</strong> You won't be able to use trial days in the future for this plan, and the plan will start immediately without a trial.
+                                    </List.Item>
+                                )}
                                 <List.Item>
                                     Shopify will automatically handle any applicable billing adjustments.
                                 </List.Item>
