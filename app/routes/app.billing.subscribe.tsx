@@ -160,13 +160,12 @@ export async function action({ request }: ActionFunctionArgs) {
                 `${process.env.SHOPIFY_APP_URL}/app` +
                 `?shop=${shop}&host=${encodeURIComponent(host)}`;
 
-            const limits = await prisma.freePlanLimits.findUnique({ where: { shopDomain: shop } });
-
+            const trialDaysStr = formData.get("trialDays") as string;
             let trialDays = 0;
 
-            if (!skipTrial) {
-                if (planKey === "BASIC") trialDays = limits?.basic || 3;
-                if (planKey === "ADVANCED") trialDays = limits?.advanced || 7;
+            if (!skipTrial && trialDaysStr) {
+                trialDays = parseInt(trialDaysStr, 10);
+                if (isNaN(trialDays)) trialDays = 0;
             }
 
             const variables: any = {
@@ -176,6 +175,7 @@ export async function action({ request }: ActionFunctionArgs) {
                 amount: plan.price,
                 currency: "USD",
             };
+
             if (trialDays > 0) {
                 variables.trialDays = trialDays;
             }
@@ -236,7 +236,12 @@ export default function BillingPage() {
     const handleSubscribeConfirm = () => {
         if (pendingPlan) {
             fetcher.submit(
-                { plan: pendingPlan, actionType: "SUBSCRIBE", skipTrial: pendingSkipTrial ? "true" : "false" },
+                { 
+                    plan: pendingPlan, 
+                    actionType: "SUBSCRIBE", 
+                    skipTrial: pendingSkipTrial ? "true" : "false",
+                    trialDays: String(trialDays[pendingPlan] || 0)
+                },
                 {
                     method: "post",
                     action: "/app/billing/subscribe",
