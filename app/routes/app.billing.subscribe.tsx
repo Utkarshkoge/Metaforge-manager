@@ -236,9 +236,9 @@ export default function BillingPage() {
     const handleSubscribeConfirm = () => {
         if (pendingPlan) {
             fetcher.submit(
-                { 
-                    plan: pendingPlan, 
-                    actionType: "SUBSCRIBE", 
+                {
+                    plan: pendingPlan,
+                    actionType: "SUBSCRIBE",
                     skipTrial: pendingSkipTrial ? "true" : "false",
                     trialDays: String(trialDays[pendingPlan] || 0)
                 },
@@ -637,7 +637,7 @@ export default function BillingPage() {
                         <BlockStack gap="400">
                             <Banner tone="success">
                                 <Text as="p" variant="bodyMd" fontWeight="semibold">
-                                    Your subscription has been cancelled. You are now on the FREE plan.
+                                    Your subscription has been cancelled. You don't have an active plan.
                                 </Text>
                             </Banner>
                         </BlockStack>
