@@ -2017,8 +2017,8 @@ export async function getPaginationInfo(admin: any, resource: string, plan: stri
     throw new Error(`Unsupported pagination resource: ${resource}`);
   }
 
-  const pageSize = plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 5000;
-  const loopLimit = plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 200;
+  const pageSize = plan === "Free Trial Days" ? 100 : plan === "BASIC" ? 250 : 5000;
+  const loopLimit = plan === "Free Trial Days" ? 100 : plan === "BASIC" ? 250 : 200;
   const query = rawQuery.replace("first: 200", `first: ${loopLimit}`);
 
   const pages = [];

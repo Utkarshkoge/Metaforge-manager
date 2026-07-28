@@ -617,7 +617,7 @@ export default function MetafieldManage() {
       }).filter((r): r is CsvRow => r !== null);
 
 
-      const maxCsvRows = plan === "FREE" ? 200 : plan === "BASIC" ? 3000 : 5000;
+      const maxCsvRows = plan === "Free Trial Days" ? 200 : plan === "BASIC" ? 3000 : 5000;
       if (rows.length > maxCsvRows) {
         setAlert({ active: true, title: "Limit Exceeded", message: `Your plan allows updating up to ${maxCsvRows} records at a time. Please upgrade your plan to add more.`, tone: 'critical' });
         setWarning((prev) => ({ ...prev, active: false }));
@@ -701,7 +701,7 @@ export default function MetafieldManage() {
           }).filter((r: unknown): r is CsvRow => r !== null);
 
 
-          const maxCsvRows = plan === "FREE" ? 200 : plan === "BASIC" ? 3000 : 5000;
+          const maxCsvRows = plan === "Free Trial Days" ? 200 : plan === "BASIC" ? 3000 : 5000;
           if (rows.length > maxCsvRows) {
             setAlert({ active: true, title: "Limit Exceeded", message: `Your plan allows removing metafields for up to ${maxCsvRows} records at a time. Please upgrade your plan to add more.`, tone: 'critical' });
             setWarning((prev) => ({ ...prev, active: false }));
@@ -981,7 +981,7 @@ export default function MetafieldManage() {
     if (removeMode === "all") {
       setIsDeleting(true);
       setBatchProcessedCount(0);
-      const maxMetafieldItems = plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 5000;
+      const maxMetafieldItems = plan === "Free Trial Days" ? 100 : plan === "BASIC" ? 250 : 5000;
       const batchSize = selectedBatch ? (selectedBatch.end - selectedBatch.start + 1) : maxMetafieldItems;
       const initialLimit = Math.min(200, batchSize);
       const formData = new FormData();
@@ -1194,7 +1194,7 @@ export default function MetafieldManage() {
         const newProcessedCount = batchProcessedCount + batch.length;
         setBatchProcessedCount(newProcessedCount);
 
-        const maxMetafieldItems = plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 5000;
+        const maxMetafieldItems = plan === "Free Trial Days" ? 100 : plan === "BASIC" ? 250 : 5000;
         const batchSize = selectedBatch ? (selectedBatch.end - selectedBatch.start + 1) : maxMetafieldItems;
 
         if (batchSize && batchSize > 0) {
@@ -2298,9 +2298,9 @@ export default function MetafieldManage() {
                     <ChoiceList
                       title="Operation Mode"
                       choices={(typeof selectedMetafield?.type === 'string' ? selectedMetafield.type : selectedMetafield?.type?.name) === 'file_reference' ? [
-                        { label: `Global Deletion (from ${plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 5000} records at a time)`, value: 'all' }] :
+                        { label: `Global Deletion (from ${plan === "Free Trial Days" ? 100 : plan === "BASIC" ? 250 : 5000} records at a time)`, value: 'all' }] :
                         [
-                          { label: `Global Deletion (from ${plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 5000} records at a time)`, value: 'all' },
+                          { label: `Global Deletion (from ${plan === "Free Trial Days" ? 100 : plan === "BASIC" ? 250 : 5000} records at a time)`, value: 'all' },
                           { label: 'Targeted Removal (from CSV)', value: 'specific' },
                           { label: 'Bulk Update (Update/Add via CSV)', value: 'update' }
                         ]}
@@ -2365,7 +2365,7 @@ export default function MetafieldManage() {
                               <DropZone onDrop={handleCsvInput} accept=".csv" allowMultiple={false} disabled={isDeleting}>
                                 <DropZone.FileUpload actionTitle="Add CSV File" />
                               </DropZone>
-                              <Text as="p" tone="subdued">Only {plan === "FREE" ? 100 : plan === "BASIC" ? 250 : 5000} records will be processed at a time</Text>
+                              <Text as="p" tone="subdued">Only {plan === "Free Trial Days" ? 100 : plan === "BASIC" ? 250 : 5000} records will be processed at a time</Text>
                             </BlockStack>
                           ) : (
                             <Banner tone="success" onDismiss={handleClearCSV}>
@@ -2517,7 +2517,7 @@ export default function MetafieldManage() {
               <BlockStack gap="400">
                 <Text as="p">
                   This metafield will be deleted across the selected  {
-                    plan === "FREE"
+                    plan === "Free Trial Days"
                       ? "100"
                       : plan === "BASIC"
                         ? "250"

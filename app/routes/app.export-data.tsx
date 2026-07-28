@@ -108,7 +108,6 @@ export default function ExportData() {
 
   let plan = planData?.plan || "FREE";
   let remainingDays = planData?.remainingDays;
-  const isPlanExpired = plan === "FREE" && remainingDays === 0;
 
   const [resource, setResource] = useState("product");
   const [includeTags, setIncludeTags] = useState(true);
@@ -525,26 +524,15 @@ export default function ExportData() {
                   </Box>
                 )}
 
-                {isPlanExpired ? (
-                  <InlineStack gap="300">
-                    <Button disabled>Export CSV</Button>
-                    <Button
-                      variant="primary"
-                      onClick={() => navigate("/app/billing/subscribe")}
-                    >
-                      Upgrade your plan to use export
-                    </Button>
-                  </InlineStack>
-                ) : (
-                  <Button
-                    variant="primary"
-                    loading={isExporting}
-                    onClick={() => setModalOpen(true)}
-                    disabled={isExporting}
-                  >
-                    {isExporting ? "Exporting…" : "Export CSV"}
-                  </Button>
-                )}
+                <Button
+                  variant="primary"
+                  loading={isExporting}
+                  onClick={() => setModalOpen(true)}
+                  disabled={isExporting}
+                >
+                  {isExporting ? "Exporting…" : "Export CSV"}
+                </Button>
+
               </BlockStack>
             </Card>
           </Layout.Section>

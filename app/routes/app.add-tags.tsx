@@ -507,7 +507,7 @@ export default function SimpleTagManager() {
 
 
 
-        const maxCsvRows = plan === "FREE" ? 200 : plan === "BASIC" ? 3000 : 5000;
+        const maxCsvRows = plan === "Free Trial Days" ? 200 : plan === "BASIC" ? 3000 : 5000;
         if (rows.length > maxCsvRows) {
           setAlert({
             active: true,
@@ -591,7 +591,7 @@ export default function SimpleTagManager() {
       return;
     }
 
-    const maxTags = plan === "FREE" ? 2 : plan === "BASIC" ? 10 : 20;
+    const maxTags = plan === "Free Trial Days" ? 2 : plan === "BASIC" ? 10 : 20;
     if (tags.length >= maxTags) {
       setAlert({
         active: true,
@@ -1034,7 +1034,7 @@ export default function SimpleTagManager() {
                         {file.name} — {csvData.length} records loaded. <Button variant="plain" onClick={() => { setFile(null); setCsvData([]); }}>Remove</Button>
                       </Text>
                     )}
-                    <Text as="p" tone="subdued">Only {plan === "FREE" ? 200 : plan === "BASIC" ? 3000 : 5000} records will be processed at a time</Text>
+                    <Text as="p" tone="subdued">Only {plan === "Free Trial Days" ? 200 : plan === "BASIC" ? 3000 : 5000} records will be processed at a time</Text>
 
                     <Button
                       variant="primary"

@@ -181,7 +181,7 @@ export function RemoveTagsInstructionsModal({ open, onClose, plan }: Props) {
                   Global Remove
                 </Text>{" "}
                 to remove tags from up to {
-                  plan === "FREE"
+                  plan === "Free Trial Days"
                     ? "50"
                     : plan === "BASIC"
                       ? "100"
@@ -306,7 +306,7 @@ export function MetafieldManageInstructionsModal({ open, onClose, plan }: Props)
                   Global Remove
                 </Text>{" "}
                 will remove metafields from up to {
-                  plan === "FREE"
+                  plan === "Free Trial Days"
                     ? "100"
                     : plan === "BASIC"
                       ? "250"

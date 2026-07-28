@@ -431,7 +431,7 @@ export default function TagManager() {
       // Global Remove Mode
       if (data.mode === "remove-global") {
         const currentProcessed = globalResult.results.length + (data.results?.length || 0);
-        const maxGlobalItems = plan === "FREE" ? 40 : plan === "BASIC" ? 100 : 5000;
+        const maxGlobalItems = plan === "Free Trial Days" ? 40 : plan === "BASIC" ? 100 : 5000;
         const limitReached = currentProcessed >= maxGlobalItems;
 
         setGlobalResult((prev: any) => {
@@ -629,7 +629,7 @@ export default function TagManager() {
             .filter(Boolean);
 
 
-          const maxCsvRows = plan === "FREE" ? 200 : plan === "BASIC" ? 3000 : 5000;
+          const maxCsvRows = plan === "Free Trial Days" ? 200 : plan === "BASIC" ? 3000 : 5000;
           if (values.length > maxCsvRows) {
             setAlert({
               active: true,
@@ -1300,7 +1300,7 @@ export default function TagManager() {
                                   pressed={isSelected}
                                   variant={isSelected ? "primary" : "secondary"}
                                   onClick={() => {
-                                    const maxTags = plan === "FREE" ? 2 : plan === "BASIC" ? 10 : 20;
+                                    const maxTags = plan === "Free Trial Days" ? 2 : plan === "BASIC" ? 10 : 20;
                                     setSelectedTags((prev) => {
                                       if (prev.includes(tag)) {
                                         return prev.filter((t) => t !== tag);
@@ -1345,7 +1345,7 @@ export default function TagManager() {
                             title=""
                             choices={[
                               {
-                                label: `Global Removal (From ${plan === "FREE" ? 40 : plan === "BASIC" ? 100 : 5000} ${objectType}s at a time)`,
+                                label: `Global Removal (From ${plan === "Free Trial Days" ? 40 : plan === "BASIC" ? 100 : 5000} ${objectType}s at a time)`,
                                 value: "global",
                               },
                               {
@@ -1398,7 +1398,7 @@ export default function TagManager() {
                                     {fileName} — {csvIds.length} records.
                                   </Text>
                                 )}
-                                <Text as="p" tone="subdued">Only {plan === "FREE" ? 200 : plan === "BASIC" ? 3000 : 5000} records will be processed at a time</Text>
+                                <Text as="p" tone="subdued">Only {plan === "Free Trial Days" ? 200 : plan === "BASIC" ? 3000 : 5000} records will be processed at a time</Text>
                               </BlockStack>
 
                             </Box>
@@ -1671,7 +1671,7 @@ export default function TagManager() {
             )}
             <Text as="p">
               Are you sure you want to remove {selectedTags.length === 1 ? "1 tag" : `${selectedTags.length} tags`} from up to {
-                plan === "FREE"
+                plan === "Free Trial Days"
                   ? "40"
                   : plan === "BASIC"
                     ? "100"
