@@ -534,7 +534,7 @@ export default function BillingPage() {
                             flexDirection: "column"
                         }}>
                             <div style={{
-                                background: "#6b7691ff", // Deep slate background
+                                background: "#ffffffff", // Deep slate background
                                 color: "#ffffff",
                                 padding: "20px",
                                 borderRadius: "13px",
@@ -555,7 +555,7 @@ export default function BillingPage() {
                                         <p style={{ fontSize: "24px", fontWeight: "700", color: "#000000ff", margin: 0 }}>$10 <span style={{ fontSize: "14px", fontWeight: "normal", color: "#94a3b8" }}>/ month</span></p>
                                     </BlockStack>
 
-                                    <div style={{ height: "1px", backgroundColor: "rgba(255, 255, 255, 1)", margin: "8px 0" }} />
+                                    <div style={{ height: "1px", backgroundColor: "rgba(0, 0, 0, 1)", margin: "8px 0" }} />
 
                                     <BlockStack gap="200">
                                         <div>
