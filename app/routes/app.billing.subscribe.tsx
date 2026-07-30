@@ -217,6 +217,11 @@ export default function BillingPage() {
     const fetcher = useFetcher<typeof action>();
     const navigate = useNavigate();
 
+    const hasTrial = trialDays.BASIC > 0 || trialDays.ADVANCED > 0;
+    const colSpan = hasTrial
+        ? { xs: 6, sm: 6, md: 4, lg: 4, xl: 4 }
+        : { xs: 6, sm: 6, md: 6, lg: 6, xl: 6 };
+
     // Cancellation Modal States
     const [cancelModalOpen, setCancelModalOpen] = useState(false);
     const [cancelSuccess, setCancelSuccess] = useState(false);
@@ -305,50 +310,65 @@ export default function BillingPage() {
                     Choose the best plan for your shop's growth.
                 </Text>
             </div>
+            <style>{`
+                .stretch-card { height: 100%; }
+                .stretch-card .Polaris-Card { height: 100%; display: flex; flex-direction: column; }
+                .stretch-card-content { display: flex; flex-direction: column; flex-grow: 1; height: 100%; }
+            `}</style>
             <Layout>
                 <Layout.Section>
                     <Grid>
                         {/* ================= FREE PLAN ================= */}
-                        <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 4, lg: 4, xl: 4 }}>
-                            <div style={{
-                                height: "100%",
-                                display: "flex",
-                                flexDirection: "column"
-                            }}>
-                                <Card>
-                                    <BlockStack gap="400">
-                                        <BlockStack gap="200">
-                                            <InlineStack align="space-between" gap="200">
-                                                <Text as="h2" variant="headingLg">Trial Day Limits.</Text>
-                                            </InlineStack>
-                                        </BlockStack>
+                        {hasTrial && (
+                            <Grid.Cell columnSpan={colSpan}>
+                                <div className="stretch-card" style={{
+                                    height: "100%",
+                                    display: "flex",
+                                    flexDirection: "column"
+                                }}>
+                                    <Card>
+                                        <div className="stretch-card-content">
+                                            <BlockStack gap="400">
+                                                <BlockStack gap="200">
+                                                    <InlineStack align="space-between" gap="200">
+                                                        <Text as="h2" variant="headingLg">Trial Day Limits.</Text>
+                                                    </InlineStack>
+                                                </BlockStack>
 
-                                        <Divider />
+                                                <Divider />
 
-                                        <BlockStack gap="200">
-                                            <BlockStack gap="150">
-                                                <FeatureItem text="2 Global Tag Removal Actions" detail="40 items/run, max 2 tags" />
-                                                <FeatureItem text="2 Global Metafield Removal Actions" detail="100 items/run" />
-                                                <FeatureItem text="200 CSV Entries" />
-                                                <FeatureItem text="Export All Resources" />
+                                                <BlockStack gap="200">
+                                                    <BlockStack gap="150">
+                                                        <FeatureItem text="2 Global Tag Removal Actions" detail="40 items/run, max 2 tags" />
+                                                        <FeatureItem text="2 Global Metafield Removal Actions" detail="100 items/run" />
+                                                        <FeatureItem text="200 CSV Entries" />
+                                                        <FeatureItem text="Export All Resources" />
+                                                    </BlockStack>
+                                                </BlockStack>
+
+                                                <Divider />
+                                                <Text as="p" variant="bodySm" tone="subdued">
+                                                    Free trial will work on any subscription trial days. After the trial days end, your subscription plan days and limit will start.
+                                                </Text>
                                             </BlockStack>
-                                        </BlockStack>
-                                    </BlockStack>
-                                </Card>
-                            </div>
-                        </Grid.Cell>
+                                        </div>
+                                    </Card>
+                                </div>
+                            </Grid.Cell>
+                        )}
 
                         {/* ================= BASIC PLAN ================= */}
-                        <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 4, lg: 4, xl: 4 }}>
-                            <div style={{
+                        <Grid.Cell columnSpan={colSpan}>
+                            <div className="stretch-card" style={{
                                 height: "100%",
                                 display: "flex",
                                 flexDirection: "column"
                             }}>
                                 <Card>
-                                    <BlockStack gap="400">
-                                        <BlockStack gap="200">
-                                            <InlineStack align="space-between" gap="200">
+                                    <div className="stretch-card-content">
+                                        <BlockStack gap="400">
+                                            <BlockStack gap="200">
+                                                <InlineStack align="space-between" gap="200">
                                                 <Text as="h2" variant="headingLg">Basic</Text>
                                                 <InlineStack gap="100">
                                                     {currentPlan === "BASIC" && <Badge tone="success">Active</Badge>}
@@ -385,10 +405,12 @@ export default function BillingPage() {
                                                 <FeatureItem text="Standard Support" />
                                             </BlockStack>
                                         </BlockStack>
+                                        </BlockStack>
 
-                                        <Box paddingBlockStart="400">
-                                            {currentPlan === "BASIC" ? (
-                                                <BlockStack gap="200">
+                                        <div style={{ marginTop: 'auto' }}>
+                                            <Box paddingBlockStart="400">
+                                                {currentPlan === "BASIC" ? (
+                                                    <BlockStack gap="200">
                                                     <Button
                                                         variant="secondary"
                                                         fullWidth
@@ -457,14 +479,15 @@ export default function BillingPage() {
                                                     </BlockStack>
                                                 )
                                             )}
-                                        </Box>
-                                    </BlockStack>
+                                            </Box>
+                                        </div>
+                                    </div>
                                 </Card>
                             </div>
                         </Grid.Cell>
 
                         {/* ================= ADVANCED PLAN ================= */}
-                        <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 4, lg: 4, xl: 4 }}>
+                        <Grid.Cell columnSpan={colSpan}>
                             {/* Highlighted Card for the Recommended Plan */}
                             <div style={{
                                 background: "linear-gradient(135deg, #dfdb15ff 0%, #06a36fff 100%)",
