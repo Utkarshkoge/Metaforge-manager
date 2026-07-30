@@ -342,13 +342,18 @@ export default function BillingPage() {
                                     <BlockStack gap="400">
                                         <BlockStack gap="200">
                                             <InlineStack align="space-between" gap="200">
-                                                <Text as="h2" variant="headingLg">Trial Day Limits.</Text>
+                                                <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#202223", margin: 0 }}>Trial Day Limits.</h2>
                                             </InlineStack>
+                                            {/* Invisible price to perfectly align dividers across columns */}
+                                            <p style={{ fontSize: "24px", fontWeight: "700", color: "transparent", margin: 0, userSelect: "none" }}>$0 <span style={{ fontSize: "14px", fontWeight: "normal" }}>/ month</span></p>
                                         </BlockStack>
 
                                         <Divider />
 
                                         <BlockStack gap="200">
+                                            <div>
+                                                <p style={{ fontSize: "14px", fontWeight: "500", color: "#202223", margin: 0, paddingBottom: "2px" }}>Included Limits:</p>
+                                            </div>
                                             <BlockStack gap="150">
                                                 <FeatureItem text="2 Global Tag Removal Actions" detail="40 items/run, max 2 tags" />
                                                 <FeatureItem text="2 Global Metafield Removal Actions" detail="100 items/run" />
@@ -362,9 +367,9 @@ export default function BillingPage() {
                                         <Box paddingBlockStart="400">
                                             <BlockStack gap="400">
                                                 <Divider />
-                                                <Text as="p" variant="bodySm" tone="subdued">
+                                                <p style={{ fontSize: "14px", color: "#6d7175", margin: 0, lineHeight: "1.5" }}>
                                                     Free limit will work on free trial days. When free trial days end, your subscription feature limit and days will start.
-                                                </Text>
+                                                </p>
                                             </BlockStack>
                                         </Box>
                                     </div>
@@ -386,22 +391,22 @@ export default function BillingPage() {
                             <BlockStack gap="400">
                                 <BlockStack gap="200">
                                     <InlineStack align="space-between" gap="200">
-                                        <Text as="h2" variant="headingLg">Basic</Text>
+                                        <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#202223", margin: 0 }}>Basic</h2>
                                         <InlineStack gap="100">
                                             {currentPlan === "BASIC" && <Badge tone="success">Active</Badge>}
                                             {currentPlan === "BASIC" && trialDays.BASIC > 0 && <Badge tone="info">Trial - {trialDays.BASIC} days left</Badge>}
                                         </InlineStack>
                                     </InlineStack>
-                                    <Text as="p" variant="bodyLg" fontWeight="bold">$5 <Text as="span" variant="bodySm" tone="subdued">/ month</Text></Text>
+                                    <p style={{ fontSize: "24px", fontWeight: "700", color: "#202223", margin: 0 }}>$5 <span style={{ fontSize: "14px", fontWeight: "normal", color: "#6d7175" }}>/ month</span></p>
                                 </BlockStack>
 
                                 <Divider />
 
                                 <BlockStack gap="200">
                                     <div>
-                                        <Text as="p" variant="bodyMd" fontWeight="medium">Monthly Limits:</Text>
+                                        <p style={{ fontSize: "14px", fontWeight: "500", color: "#202223", margin: 0, paddingBottom: "2px" }}>Monthly Limits:</p>
                                         {trialDays.BASIC > 0 && (
-                                            <Text as="p" variant="bodyXs" tone="subdued">These limits start after the trial period ends.</Text>
+                                            <p style={{ fontSize: "12px", color: "#6d7175", margin: 0 }}>These limits start after the trial period ends.</p>
                                         )}
                                     </div>
                                     <BlockStack gap="150">
