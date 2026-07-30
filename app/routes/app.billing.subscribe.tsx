@@ -345,12 +345,18 @@ export default function BillingPage() {
                                                         <FeatureItem text="Export All Resources" />
                                                     </BlockStack>
                                                 </BlockStack>
-
-                                                <Divider />
-                                                <Text as="p" variant="bodySm" tone="subdued">
-                                                    Free trial will work on any subscription trial days. After the trial days end, your subscription plan days and limit will start.
-                                                </Text>
                                             </BlockStack>
+
+                                            <div style={{ marginTop: 'auto' }}>
+                                                <Box paddingBlockStart="400">
+                                                    <BlockStack gap="400">
+                                                        <Divider />
+                                                        <Text as="p" variant="bodySm" tone="subdued">
+                                                            Free limit will work on free trial days. When free trial days end, your subscription feature limit and days will start.
+                                                        </Text>
+                                                    </BlockStack>
+                                                </Box>
+                                            </div>
                                         </div>
                                     </Card>
                                 </div>
@@ -505,8 +511,7 @@ export default function BillingPage() {
                                     borderRadius: "13px",
                                     height: "100%",
                                     display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: "space-between"
+                                    flexDirection: "column"
                                 }}>
                                     <BlockStack gap="400">
                                         <BlockStack gap="200">
@@ -538,7 +543,9 @@ export default function BillingPage() {
                                                 <DarkFeatureItem text="Priority Support" />
                                             </BlockStack>
                                         </BlockStack>
+                                    </BlockStack>
 
+                                    <div style={{ marginTop: 'auto' }}>
                                         <Box paddingBlockStart="400">
                                             {currentPlan === "ADVANCED" ? (
                                                 <BlockStack gap="200">
@@ -611,7 +618,7 @@ export default function BillingPage() {
                                                 )
                                             )}
                                         </Box>
-                                    </BlockStack>
+                                    </div>
                                 </div>
                             </div>
                         </Grid.Cell>

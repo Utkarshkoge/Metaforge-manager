@@ -183,9 +183,20 @@ const TagMetafieldManagerFAQ: React.FC = () => {
                         </p>
                     </section>
 
+                    {/* Section 9: Free Trial Mechanics */}
+                    <section style={styles.section}>
+                        <h2 style={styles.h2}>9. What happens during and after the free trial?</h2>
+                        <p style={styles.p}>
+                            During the free trial period, you have access to the plan's features up to the trial limits. Once the free trial period ends, your subscription plan will start automatically, and billing will begin for the plan you selected.
+                        </p>
+                        <p style={styles.p}>
+                            If you decide the app isn't right for you, you can easily cancel the free trial before it ends, and you will not be charged.
+                        </p>
+                    </section>
+
                     {/* Contact Us Section */}
                     <section style={styles.section}>
-                        <h2 style={styles.h2}>9. Contact Us</h2>
+                        <h2 style={styles.h2}>10. Contact Us</h2>
 
                         <p style={styles.p}>
                             If you have any questions, feedback, or require assistance with MetaForge Manager,
