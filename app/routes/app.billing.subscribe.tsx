@@ -352,8 +352,9 @@ export default function BillingPage() {
                                             <InlineStack align="space-between" gap="500">
                                                 <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#1a1d1aff", margin: 0 }}>Trial Day Limits.</h2>
                                             </InlineStack>
-                                            {/* Invisible price to perfectly align dividers across columns */}
-                                            <p style={{ fontSize: "24px", fontWeight: "700", color: "transparent", margin: 0, userSelect: "none" }}>$0 <span style={{ fontSize: "14px", fontWeight: "normal" }}>/ month</span></p>
+                                            <p style={{ fontSize: "14px", fontWeight: "500", color: "#6d7175", margin: 0, paddingTop: "4px" }}>
+                                                Subscribe to any plan to get a free trial.
+                                            </p>
                                         </BlockStack>
 
                                         <div style={{ height: "1px", backgroundColor: "rgba(0, 0, 0, 0.1)", margin: "8px 0" }} />
