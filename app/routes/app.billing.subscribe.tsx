@@ -323,23 +323,22 @@ export default function BillingPage() {
                 @media (max-width: 767px) {
                     .pricing-grid { grid-template-columns: minmax(0, 1fr); }
                 }
-                
-                .stretch-card { height: 100%; display: flex; flex-direction: column; }
-                .stretch-card .Polaris-Card { height: 100%; display: flex; flex-direction: column; }
-                .stretch-card-content { display: flex; flex-direction: column; flex-grow: 1; height: 100%; }
             `}</style>
             <Layout>
                 <Layout.Section>
                     <div className={`pricing-grid ${hasTrial ? "cols-3" : "cols-2"}`}>
                         {/* ================= FREE PLAN ================= */}
                         {hasTrial && (
-                            <div className="stretch-card" style={{
+                            <div style={{
+                                background: "#ffffff",
+                                borderRadius: "13px",
+                                boxShadow: "0px 0px 0px 1px rgba(0, 0, 0, 0.05), 0px 1px 3px 0px rgba(0, 0, 0, 0.1)",
+                                padding: "20px",
                                 height: "100%",
                                 display: "flex",
                                 flexDirection: "column"
                             }}>
-                                    <Card>
-                                        <div className="stretch-card-content">
+                                <div style={{ display: "flex", flexDirection: "column", flexGrow: 1, height: "100%" }}>
                                             <BlockStack gap="400">
                                                 <BlockStack gap="200">
                                                     <InlineStack align="space-between" gap="200">
@@ -370,18 +369,21 @@ export default function BillingPage() {
                                                 </Box>
                                             </div>
                                         </div>
-                                    </Card>
+                                    </div>
                                 </div>
                         )}
 
                         {/* ================= BASIC PLAN ================= */}
-                            <div className="stretch-card" style={{
+                            <div style={{
+                                background: "#ffffff",
+                                borderRadius: "13px",
+                                boxShadow: "0px 0px 0px 1px rgba(0, 0, 0, 0.05), 0px 1px 3px 0px rgba(0, 0, 0, 0.1)",
+                                padding: "20px",
                                 height: "100%",
                                 display: "flex",
                                 flexDirection: "column"
                             }}>
-                                <Card>
-                                    <div className="stretch-card-content">
+                                <div style={{ display: "flex", flexDirection: "column", flexGrow: 1, height: "100%" }}>
                                         <BlockStack gap="400">
                                             <BlockStack gap="200">
                                                 <InlineStack align="space-between" gap="200">
@@ -498,7 +500,7 @@ export default function BillingPage() {
                                             </Box>
                                         </div>
                                     </div>
-                                </Card>
+                                </div>
                             </div>
 
                         {/* ================= ADVANCED PLAN ================= */}
