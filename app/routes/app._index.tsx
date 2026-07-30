@@ -356,6 +356,11 @@ export default function HomePage() {
               <Text tone="subdued" as="p">
                 Your plan controls how many actions you can perform.
               </Text>
+              {planData?.plan === "FREE" && (
+                <Text tone="critical" as="p" fontWeight="medium">
+                  Please add a subscription plan to use all features.
+                </Text>
+              )}
             </BlockStack>
 
             {/* Right: Icon + Time and Button */}

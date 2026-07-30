@@ -1943,7 +1943,16 @@ export default function MetafieldManage() {
                     </Text>
                   </BlockStack>
                 </>
-              ) : null}
+              ) : (
+                <BlockStack gap="200">
+                  <Text variant="bodyXs" tone="subdued" fontWeight="bold" as={"dd"}>
+                    FEATURE ACCESS
+                  </Text>
+                  <Text variant="bodyMd" tone="critical" as={"dd"}>
+                    Please add a subscription plan to use this feature.
+                  </Text>
+                </BlockStack>
+              )}
             </InlineStack>
 
             <InlineStack gap="600" blockAlign="center">

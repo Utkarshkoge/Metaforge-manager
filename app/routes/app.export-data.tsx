@@ -339,7 +339,7 @@ export default function ExportData() {
                 </Badge>
               </BlockStack>
 
-              {plan === "ADVANCED" && (
+              {plan === "ADVANCED" ? (
                 /* Advanced Status */
                 <BlockStack gap="200">
                   <Text
@@ -359,7 +359,16 @@ export default function ExportData() {
                     Unlimited Access Enabled
                   </Text>
                 </BlockStack>
-              )}
+              ) : plan === "FREE" ? (
+                <BlockStack gap="200">
+                  <Text variant="bodyXs" tone="subdued" fontWeight="bold" as={"dd"}>
+                    FEATURE ACCESS
+                  </Text>
+                  <Text variant="bodyMd" tone="critical" as={"dd"}>
+                    Please add a subscription plan to use this feature.
+                  </Text>
+                </BlockStack>
+              ) : null}
             </InlineStack>
 
             <InlineStack gap="600" blockAlign="center">
