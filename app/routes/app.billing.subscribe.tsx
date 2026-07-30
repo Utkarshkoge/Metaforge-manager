@@ -379,52 +379,60 @@ export default function BillingPage() {
 
                     {/* ================= BASIC PLAN ================= */}
                     <div style={{
-                        background: "#ffffff",
-                        borderRadius: "13px",
-                        boxShadow: "0px 0px 0px 1px rgba(0, 0, 0, 0.05), 0px 1px 3px 0px rgba(0, 0, 0, 0.1)",
-                        padding: "20px",
+                        background: "linear-gradient(135deg, #dfdb15ff 0%, #06a36fff 100%)",
+                        padding: "3px",
+                        borderRadius: "16px",
+                        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.25)",
                         height: "100%",
                         display: "flex",
                         flexDirection: "column"
                     }}>
-                        <div style={{ display: "flex", flexDirection: "column", flexGrow: 1, height: "100%" }}>
+                        <div style={{
+                            background: "#6b7691ff", // Deep slate background
+                            color: "#ffffff",
+                            padding: "20px",
+                            borderRadius: "13px",
+                            height: "100%",
+                            display: "flex",
+                            flexDirection: "column"
+                        }}>
                             <BlockStack gap="400">
                                 <BlockStack gap="200">
                                     <InlineStack align="space-between" gap="200">
-                                        <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#202223", margin: 0 }}>Basic</h2>
+                                        <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#ffffff", margin: 0 }}>Basic</h2>
                                         <InlineStack gap="100">
                                             {currentPlan === "BASIC" && <Badge tone="success">Active</Badge>}
                                             {currentPlan === "BASIC" && trialDays.BASIC > 0 && <Badge tone="info">Trial - {trialDays.BASIC} days left</Badge>}
                                         </InlineStack>
                                     </InlineStack>
-                                    <p style={{ fontSize: "24px", fontWeight: "700", color: "#202223", margin: 0 }}>$5 <span style={{ fontSize: "14px", fontWeight: "normal", color: "#6d7175" }}>/ month</span></p>
+                                    <p style={{ fontSize: "24px", fontWeight: "700", color: "#ffffff", margin: 0 }}>$5 <span style={{ fontSize: "14px", fontWeight: "normal", color: "#94a3b8" }}>/ month</span></p>
                                 </BlockStack>
 
-                                <Divider />
+                                <div style={{ height: "1px", backgroundColor: "rgba(255, 255, 255, 0.12)", margin: "8px 0" }} />
 
                                 <BlockStack gap="200">
                                     <div>
-                                        <p style={{ fontSize: "14px", fontWeight: "500", color: "#202223", margin: 0, paddingBottom: "2px" }}>Monthly Limits:</p>
+                                        <p style={{ fontSize: "14px", fontWeight: "500", color: "#90f590", margin: 0, paddingBottom: "2px" }}>Monthly Limits:</p>
                                         {trialDays.BASIC > 0 && (
-                                            <p style={{ fontSize: "12px", color: "#6d7175", margin: 0 }}>These limits start after the trial period ends.</p>
+                                            <p style={{ fontSize: "12px", color: "#d1d5db", margin: 0 }}>These limits start after the trial period ends.</p>
                                         )}
                                     </div>
                                     <BlockStack gap="150">
-                                        <FeatureItem
+                                        <DarkFeatureItem
                                             text="20 Global Tag Removal Actions"
                                             detail="100 items/run action, max 10 tags"
                                         />
 
-                                        <FeatureItem
+                                        <DarkFeatureItem
                                             text="20 Global Metafield Removal Actions"
                                             detail="250 items/run action"
                                         />
 
-                                        <FeatureItem
+                                        <DarkFeatureItem
                                             text="3,000 CSV Entries"
                                         />
-                                        <FeatureItem text="Export All Resources" />
-                                        <FeatureItem text="Standard Support" />
+                                        <DarkFeatureItem text="Export All Resources" />
+                                        <DarkFeatureItem text="Standard Support" />
                                     </BlockStack>
                                 </BlockStack>
                             </BlockStack>
@@ -446,7 +454,7 @@ export default function BillingPage() {
                                                     style={{
                                                         background: "none",
                                                         border: "none",
-                                                        color: "#d91e18",
+                                                        color: "#141313ff",
                                                         cursor: "pointer",
                                                         textDecoration: "underline",
                                                         width: "100%",
@@ -480,9 +488,9 @@ export default function BillingPage() {
                                                     {currentPlan === "ADVANCED" ? "Downgrade without trial" : "Subscribe without trial"}
                                                 </Button>
                                                 {trialDays.BASIC < 3 && (
-                                                    <Text as="p" variant="bodySm" tone="subdued" alignment="center">
+                                                    <div style={{ textAlign: "center", fontSize: "12px", color: "#e2e8f0" }}>
                                                         You have already used {3 - trialDays.BASIC} trial {3 - trialDays.BASIC === 1 ? 'day' : 'days'}.
-                                                    </Text>
+                                                    </div>
                                                 )}
                                             </BlockStack>
                                         ) : (
@@ -495,9 +503,9 @@ export default function BillingPage() {
                                                 >
                                                     {currentPlan === "ADVANCED" ? "Downgrade to Basic" : "Upgrade to Basic"}
                                                 </Button>
-                                                <Text as="p" variant="bodySm" tone="subdued" alignment="center">
+                                                <div style={{ textAlign: "center", fontSize: "12px", color: "#1c1d1dff" }}>
                                                     You already have used the free trial for this plan.
-                                                </Text>
+                                                </div>
                                             </BlockStack>
                                         )
                                     )}
