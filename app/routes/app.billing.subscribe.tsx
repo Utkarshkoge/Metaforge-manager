@@ -545,31 +545,31 @@ export default function BillingPage() {
                                 <BlockStack gap="400">
                                     <BlockStack gap="200">
                                         <InlineStack align="space-between" gap="200">
-                                            <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#ffffff", margin: 0 }}>Advanced</h2>
+                                            <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#000000ff", margin: 0 }}>Advanced</h2>
                                             <InlineStack gap="100">
                                                 {currentPlan === "ADVANCED" && <Badge tone="success">Active</Badge>}
                                                 {currentPlan === "ADVANCED" && trialDays.ADVANCED > 0 && <Badge tone="info">Trial - {trialDays.ADVANCED} days left</Badge>}
                                                 <Badge tone="attention">Best Value</Badge>
                                             </InlineStack>
                                         </InlineStack>
-                                        <p style={{ fontSize: "24px", fontWeight: "700", color: "#ffffff", margin: 0 }}>$10 <span style={{ fontSize: "14px", fontWeight: "normal", color: "#94a3b8" }}>/ month</span></p>
+                                        <p style={{ fontSize: "24px", fontWeight: "700", color: "#000000ff", margin: 0 }}>$10 <span style={{ fontSize: "14px", fontWeight: "normal", color: "#94a3b8" }}>/ month</span></p>
                                     </BlockStack>
 
-                                    <div style={{ height: "1px", backgroundColor: "rgba(255, 255, 255, 0.12)", margin: "8px 0" }} />
+                                    <div style={{ height: "1px", backgroundColor: "rgba(255, 255, 255, 1)", margin: "8px 0" }} />
 
                                     <BlockStack gap="200">
                                         <div>
-                                            <p style={{ fontSize: "14px", fontWeight: "500", color: "#90f590", margin: 0, paddingBottom: "2px" }}>Everything Unlimited:</p>
+                                            <p style={{ fontSize: "14px", fontWeight: "500", color: "#000000ff", margin: 0, paddingBottom: "2px" }}>Everything Unlimited:</p>
                                             {trialDays.ADVANCED > 0 && (
-                                                <p style={{ fontSize: "12px", color: "#d1d5db", margin: 0 }}>These limits start after the trial period ends.</p>
+                                                <p style={{ fontSize: "12px", color: "#6d7175", margin: 0 }}>These limits start after the trial period ends.</p>
                                             )}
                                         </div>
                                         <BlockStack gap="150">
-                                            <DarkFeatureItemAd text="Unlimited Tag Removal" detail="5,000 items/run, max 20 tags" />
-                                            <DarkFeatureItemAd text="Unlimited Metafield Removal" detail="5,000 items/run" />
-                                            <DarkFeatureItemAd text="Unlimited CSV Operations" detail="5,000 entries/run" />
-                                            <DarkFeatureItemAd text="Export All Resources" />
-                                            <DarkFeatureItemAd text="Priority Support" />
+                                            <DarkFeatureItem text="Unlimited Tag Removal" detail="5,000 items/run, max 20 tags" />
+                                            <DarkFeatureItem text="Unlimited Metafield Removal" detail="5,000 items/run" />
+                                            <DarkFeatureItem text="Unlimited CSV Operations" detail="5,000 entries/run" />
+                                            <DarkFeatureItem text="Export All Resources" />
+                                            <DarkFeatureItem text="Priority Support" />
                                         </BlockStack>
                                     </BlockStack>
                                 </BlockStack>
@@ -831,29 +831,6 @@ function DarkFeatureItem({ text, detail }: { text: string; detail?: string }) {
         </div>
     );
 }
-
-
-
-function DarkFeatureItemAd({ text, detail }: { text: string; detail?: string }) {
-    return (
-        <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
-            <span style={{ color: "#10b981", fontWeight: "bold", fontSize: "14px", lineHeight: "20px" }}>✓</span>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ color: "#0f0f0fff", fontSize: "14px", fontWeight: "500" }}>{text}</span>
-                {detail && (
-                    <span style={{ color: "#d1d5db", fontSize: "12px" }}>
-                        {detail}
-                    </span>
-                )}
-            </div>
-        </div>
-    );
-}
-
-
-
-
-
 
 export function ErrorBoundary() {
     return <RouteErrorBoundary routeName="Billing Page" />;
