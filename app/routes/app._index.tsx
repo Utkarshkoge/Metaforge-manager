@@ -353,9 +353,9 @@ export default function HomePage() {
                   {planData?.plan === "FREE" ? "No Plan" : planData?.plan === "Free Trial Days" ? `${planData?.actualPlan} - Free Trial Days` : planData?.plan}
                 </Badge>
               </InlineStack>
-              <Text tone="subdued" as="p">
+              {planData?.plan !== "FREE" && (<Text tone="subdued" as="p">
                 Your plan controls how many actions you can perform.
-              </Text>
+              </Text>)}
               {planData?.plan === "FREE" && (
                 <Text tone="critical" as="p" fontWeight="medium">
                   Please add a subscription plan to use all features.
