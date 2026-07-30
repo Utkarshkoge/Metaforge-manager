@@ -330,35 +330,43 @@ export default function BillingPage() {
                         {/* ================= FREE PLAN ================= */}
                         {hasTrial && (
                             <div style={{
-                                background: "#ffffff",
-                                borderRadius: "13px",
-                                boxShadow: "0px 0px 0px 1px rgba(0, 0, 0, 0.05), 0px 1px 3px 0px rgba(0, 0, 0, 0.1)",
-                                padding: "20px",
+                                background: "linear-gradient(135deg, #fcfcfcff 0%, #fcfcfcff 100%)",
+                                padding: "3px",
+                                borderRadius: "16px",
+                                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.25)",
                                 height: "100%",
                                 display: "flex",
                                 flexDirection: "column"
                             }}>
-                                <div style={{ display: "flex", flexDirection: "column", flexGrow: 1, height: "100%" }}>
+                                <div style={{
+                                    background: "#ffffffff", // Matching the user's white style
+                                    color: "#1a1d1aff",
+                                    padding: "20px",
+                                    borderRadius: "13px",
+                                    height: "100%",
+                                    display: "flex",
+                                    flexDirection: "column"
+                                }}>
                                     <BlockStack gap="400">
                                         <BlockStack gap="200">
                                             <InlineStack align="space-between" gap="200">
-                                                <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#202223", margin: 0 }}>Trial Day Limits.</h2>
+                                                <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#1a1d1aff", margin: 0 }}>Trial Day Limits.</h2>
                                             </InlineStack>
                                             {/* Invisible price to perfectly align dividers across columns */}
                                             <p style={{ fontSize: "24px", fontWeight: "700", color: "transparent", margin: 0, userSelect: "none" }}>$0 <span style={{ fontSize: "14px", fontWeight: "normal" }}>/ month</span></p>
                                         </BlockStack>
 
-                                        <Divider />
+                                        <div style={{ height: "1px", backgroundColor: "rgba(0, 0, 0, 0.1)", margin: "8px 0" }} />
 
                                         <BlockStack gap="200">
                                             <div>
-                                                <p style={{ fontSize: "14px", fontWeight: "500", color: "#202223", margin: 0, paddingBottom: "2px" }}>Included Limits:</p>
+                                                <p style={{ fontSize: "14px", fontWeight: "500", color: "#1a1d1aff", margin: 0, paddingBottom: "2px" }}>Included Limits:</p>
                                             </div>
                                             <BlockStack gap="150">
-                                                <FeatureItem text="2 Global Tag Removal Actions" detail="40 items/run, max 2 tags" />
-                                                <FeatureItem text="2 Global Metafield Removal Actions" detail="100 items/run" />
-                                                <FeatureItem text="200 CSV Entries" />
-                                                <FeatureItem text="Export All Resources" />
+                                                <DarkFeatureItem text="2 Global Tag Removal Actions" detail="40 items/run, max 2 tags" />
+                                                <DarkFeatureItem text="2 Global Metafield Removal Actions" detail="100 items/run" />
+                                                <DarkFeatureItem text="200 CSV Entries" />
+                                                <DarkFeatureItem text="Export All Resources" />
                                             </BlockStack>
                                         </BlockStack>
                                     </BlockStack>
@@ -366,7 +374,7 @@ export default function BillingPage() {
                                     <div style={{ marginTop: 'auto' }}>
                                         <Box paddingBlockStart="400">
                                             <BlockStack gap="400">
-                                                <Divider />
+                                                <div style={{ height: "1px", backgroundColor: "rgba(0, 0, 0, 0.1)" }} />
                                                 <p style={{ fontSize: "14px", color: "#6d7175", margin: 0, lineHeight: "1.5" }}>
                                                     Free limit will work on free trial days. When free trial days end, your subscription feature limit and days will start.
                                                 </p>
@@ -399,16 +407,16 @@ export default function BillingPage() {
                                 <BlockStack gap="400">
                                     <BlockStack gap="200">
                                         <InlineStack align="space-between" gap="200">
-                                            <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#ffffff", margin: 0 }}>Basic</h2>
+                                            <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#1a1d1aff", margin: 0 }}>Basic</h2>
                                             <InlineStack gap="100">
                                                 {currentPlan === "BASIC" && <Badge tone="success">Active</Badge>}
                                                 {currentPlan === "BASIC" && trialDays.BASIC > 0 && <Badge tone="info">Trial - {trialDays.BASIC} days left</Badge>}
                                             </InlineStack>
                                         </InlineStack>
-                                        <p style={{ fontSize: "24px", fontWeight: "700", color: "#ffffff", margin: 0 }}>$5 <span style={{ fontSize: "14px", fontWeight: "normal", color: "#94a3b8" }}>/ month</span></p>
+                                        <p style={{ fontSize: "24px", fontWeight: "700", color: "#1a1d1aff", margin: 0 }}>$5 <span style={{ fontSize: "14px", fontWeight: "normal", color: "#6d7175" }}>/ month</span></p>
                                     </BlockStack>
 
-                                    <div style={{ height: "1px", backgroundColor: "rgba(255, 255, 255, 1)", margin: "8px 0" }} />
+                                    <div style={{ height: "1px", backgroundColor: "rgba(0, 0, 0, 0.1)", margin: "8px 0" }} />
 
                                     <BlockStack gap="200">
                                         <div>
@@ -557,11 +565,11 @@ export default function BillingPage() {
                                             )}
                                         </div>
                                         <BlockStack gap="150">
-                                            <DarkFeatureItem text="Unlimited Tag Removal" detail="5,000 items/run, max 20 tags" />
-                                            <DarkFeatureItem text="Unlimited Metafield Removal" detail="5,000 items/run" />
-                                            <DarkFeatureItem text="Unlimited CSV Operations" detail="5,000 entries/run" />
-                                            <DarkFeatureItem text="Export All Resources" />
-                                            <DarkFeatureItem text="Priority Support" />
+                                            <DarkFeatureItemAd text="Unlimited Tag Removal" detail="5,000 items/run, max 20 tags" />
+                                            <DarkFeatureItemAd text="Unlimited Metafield Removal" detail="5,000 items/run" />
+                                            <DarkFeatureItemAd text="Unlimited CSV Operations" detail="5,000 entries/run" />
+                                            <DarkFeatureItemAd text="Export All Resources" />
+                                            <DarkFeatureItemAd text="Priority Support" />
                                         </BlockStack>
                                     </BlockStack>
                                 </BlockStack>
@@ -808,22 +816,6 @@ export default function BillingPage() {
     );
 }
 
-function FeatureItem({ text, detail }: { text: string; detail?: string }) {
-    return (
-        <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
-            <span style={{ color: "#10b981", fontWeight: "bold", fontSize: "14px", lineHeight: "20px" }}>✓</span>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-                <Text as="span" variant="bodyMd" fontWeight="medium">{text}</Text>
-                {detail && (
-                    <Text as="span" variant="bodySm" tone="subdued">
-                        {detail}
-                    </Text>
-                )}
-            </div>
-        </div>
-    );
-}
-
 function DarkFeatureItem({ text, detail }: { text: string; detail?: string }) {
     return (
         <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
@@ -839,6 +831,29 @@ function DarkFeatureItem({ text, detail }: { text: string; detail?: string }) {
         </div>
     );
 }
+
+
+
+function DarkFeatureItemAd({ text, detail }: { text: string; detail?: string }) {
+    return (
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
+            <span style={{ color: "#10b981", fontWeight: "bold", fontSize: "14px", lineHeight: "20px" }}>✓</span>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+                <span style={{ color: "#0f0f0fff", fontSize: "14px", fontWeight: "500" }}>{text}</span>
+                {detail && (
+                    <span style={{ color: "#d1d5db", fontSize: "12px" }}>
+                        {detail}
+                    </span>
+                )}
+            </div>
+        </div>
+    );
+}
+
+
+
+
+
 
 export function ErrorBoundary() {
     return <RouteErrorBoundary routeName="Billing Page" />;
