@@ -348,8 +348,8 @@ export default function BillingPage() {
                                     flexDirection: "column"
                                 }}>
                                     <BlockStack gap="400">
-                                        <BlockStack gap="500">
-                                            <InlineStack align="space-between" gap="200">
+                                        <BlockStack gap="200">
+                                            <InlineStack align="space-between" gap="500">
                                                 <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#1a1d1aff", margin: 0 }}>Trial Day Limits.</h2>
                                             </InlineStack>
                                             {/* Invisible price to perfectly align dividers across columns */}
