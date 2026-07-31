@@ -227,25 +227,8 @@ export default function FaqPage() {
       answer: (
         <div className="space-y-3">
           <p className="text-sm text-gray-800">
-            Subscribe to any plan to get a free trial. <strong>Free trial limits</strong> will apply during your trial period. Once the trial ends, your chosen subscription plan limits will take effect.
+            Subscribe to any plan and enjoy a free trial. <strong>Free trial limits</strong> will apply during the trial period. After the trial ends, your selected subscription plan, including its feature limits, will automatically become active.
           </p>
-          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-            <p className="text-sm font-semibold text-gray-800 mb-2">Included Trial Limits:</p>
-            <ul className="list-disc pl-4 space-y-2 text-sm text-gray-700">
-              <li>
-                <strong>2 Global Tag Removal Actions:</strong> 40 items/run, max 2 tags
-              </li>
-              <li>
-                <strong>2 Global Metafield Removal Actions:</strong> 100 items/run
-              </li>
-              <li>
-                <strong>200 CSV Entries</strong>
-              </li>
-              <li>
-                <strong>Export All Resources</strong>
-              </li>
-            </ul>
-          </div>
         </div>
       ),
     },
