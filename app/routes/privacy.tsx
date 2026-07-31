@@ -78,6 +78,9 @@ const TagMetafieldManagerPrivacy: React.FC = () => {
                         <p style={styles.p}>
                             We do not collect, copy, or store your store resources for unrelated purposes. Resource data is temporarily accessed only when strictly required to execute bulk tasks requested by the merchant.
                         </p>
+                        <p style={styles.p}>
+                            <strong style={styles.strong}>Uploaded CSV Files:</strong> When you upload CSV files to perform bulk operations, the files are processed securely in memory or temporary storage and are discarded immediately after the operation completes. We do not retain copies of your uploaded CSV files or their contents.
+                        </p>
                     </section>
 
                     {/* Section 5 */}
@@ -141,7 +144,7 @@ const TagMetafieldManagerPrivacy: React.FC = () => {
                         </ul>
 
                         <h3 style={styles.h3}>Basic Plan ($5 / month)</h3>
-                        <p style={styles.p}>Includes a <strong>3-day free trial</strong>.</p>
+                        <p style={styles.p}>Includes a <strong>3-day trial</strong>.</p>
                         <ul style={styles.ul}>
                             <li style={styles.li}>20 Global Tag Removal Actions (100 items/run, max 10 tags)</li>
                             <li style={styles.li}>20 Global Metafield Removal Actions (250 items/run)</li>
@@ -151,7 +154,7 @@ const TagMetafieldManagerPrivacy: React.FC = () => {
                         </ul>
 
                         <h3 style={styles.h3}>Advanced Plan ($10 / month)</h3>
-                        <p style={styles.p}>Includes a <strong>7-day free trial</strong>.</p>
+                        <p style={styles.p}>Includes a <strong>7-day trial</strong>.</p>
                         <ul style={styles.ul}>
                             <li style={styles.li}>Unlimited Tag Removal (5,000 items/run, max 20 tags)</li>
                             <li style={styles.li}>Unlimited Metafield Removal (5,000 items/run)</li>
@@ -179,9 +182,28 @@ const TagMetafieldManagerPrivacy: React.FC = () => {
                         </p>
                     </section>
 
+                    {/* Section 10 */}
+                    <section style={styles.section}>
+                        <h2 style={styles.h2}>10. Data Sharing &amp; Third-Party Services</h2>
+                        <p style={styles.p}>
+                            We do not sell, rent, or trade your store data to any third parties. Your data is only shared with essential infrastructure providers (such as secure cloud hosting) strictly to operate the App, or if required by law.
+                        </p>
+                    </section>
+
+                    {/* Section 11 */}
+                    <section style={styles.section}>
+                        <h2 style={styles.h2}>11. Your Rights (GDPR &amp; CCPA)</h2>
+                        <p style={styles.p}>
+                            Depending on your location, you or your customers may have certain rights regarding personal data (such as the right to access, correct, or delete data). Since the App operates natively within your Shopify environment and we do not store customer data externally, any requests regarding customer data should be handled directly through your Shopify Admin. 
+                        </p>
+                        <p style={styles.p}>
+                            For requests related to merchant data we hold (e.g., domain and billing tracking), you can contact us to request deletion or access.
+                        </p>
+                    </section>
+
                     {/* Contact Us Section */}
                     <section style={styles.section}>
-                        <h2 style={styles.h2}>10. Contact Us</h2>
+                        <h2 style={styles.h2}>12. Contact Us</h2>
                         <p style={styles.p}>
                             If you have questions about this Privacy Policy, our data containment boundaries, or wish to seek operational support, please contact us:
                         </p>

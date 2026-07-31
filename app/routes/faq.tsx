@@ -152,7 +152,7 @@ const TagMetafieldManagerFAQ: React.FC = () => {
                         </ul>
 
                         <h3 style={styles.h3}>Basic Plan ($5 / month)</h3>
-                        <p style={styles.p}>Includes a <strong>3-day free trial</strong>.</p>
+                        <p style={styles.p}>Includes a <strong>3-day trial</strong>.</p>
                         <ul style={styles.ul}>
                             <li style={styles.li}>20 Global Tag Removal Actions (100 items/run, max 10 tags)</li>
                             <li style={styles.li}>20 Global Metafield Removal Actions (250 items/run)</li>
@@ -162,7 +162,7 @@ const TagMetafieldManagerFAQ: React.FC = () => {
                         </ul>
 
                         <h3 style={styles.h3}>Advanced Plan ($10 / month)</h3>
-                        <p style={styles.p}>Includes a <strong>7-day free trial</strong>.</p>
+                        <p style={styles.p}>Includes a <strong>7-day trial</strong>.</p>
                         <ul style={styles.ul}>
                             <li style={styles.li}>Unlimited Tag Removal (5,000 items/run, max 20 tags)</li>
                             <li style={styles.li}>Unlimited Metafield Removal (5,000 items/run)</li>
@@ -176,7 +176,7 @@ const TagMetafieldManagerFAQ: React.FC = () => {
                     <section style={styles.section}>
                         <h2 style={styles.h2}>8. How do trial days work?</h2>
                         <p style={styles.p}>
-                            We offer a 3-day free trial for the Basic Plan and a 7-day free trial for the Advanced Plan.
+                            We offer a 3-day trial for the Basic Plan and a 7-day trial for the Advanced Plan.
                         </p>
                         <p style={styles.p}>
                             If you cancel your subscription while still on a trial, any remaining trial days for that plan are forfeited. Similarly, if you choose the "Subscribe without trial" option, your billing will begin immediately.
@@ -185,12 +185,12 @@ const TagMetafieldManagerFAQ: React.FC = () => {
 
                     {/* Section 9: Free Trial Mechanics */}
                     <section style={styles.section}>
-                        <h2 style={styles.h2}>9. What happens during and after the free trial?</h2>
+                        <h2 style={styles.h2}>9. What happens during and after the trial?</h2>
                         <p style={styles.p}>
-                            During the free trial period, you have access to the plan's features up to the trial limits. Once the free trial period ends, your subscription plan will start automatically, and billing will begin for the plan you selected.
+                            During the trial period, you have access to the plan's features up to the trial limits. Once the trial period ends, your subscription plan will start automatically, and billing will begin for the plan you selected.
                         </p>
                         <p style={styles.p}>
-                            If you decide the app isn't right for you, you can easily cancel the free trial before it ends, and you will not be charged.
+                            If you decide the app isn't right for you, you can easily cancel the trial before it ends, and you will not be charged.
                         </p>
                     </section>
 
