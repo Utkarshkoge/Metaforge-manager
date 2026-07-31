@@ -178,28 +178,43 @@ export default function FaqPage() {
       question: "What are the usage limits?",
       icon: AlertCircle,
       answer: (
-        <div className="space-y-3">
-          <div className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200 text-sm">
-            <FileText className="w-5 h-5 text-gray-600 mt-0.5 shrink-0" />
-            <p>
-              <strong>CSV Limit:</strong> Maximum <strong>5,000 records</strong> per file.
-              Larger datasets must be split.
-            </p>
+        <div className="space-y-4">
+          <p className="text-sm text-gray-800">
+            <strong>Note:</strong> The limits below are the maximum values supported by the app.
+            Your available limits depend on your <strong>subscription plan</strong>.
+          </p>
+
+          <div className="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm">
+            <FileText className="mt-0.5 h-5 w-5 shrink-0 text-gray-600" />
+            <div>
+              <p className="font-medium text-gray-900">CSV Import Limit</p>
+              <p className="text-gray-700">
+                You can import up to <strong>5,000 records</strong> in a single CSV file.
+                If your dataset exceeds this limit, split it into multiple files and import them separately.
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200 text-sm">
-            <Database className="w-5 h-5 text-gray-600 mt-0.5 shrink-0" />
-            <p>
-              <strong>Global Removal Limit:</strong> Maximum <strong>5,000 resource entries</strong> can be processed at a time. If more entries are available, you can continue removing from the subsequent 5,000-entries.
-            </p>
+          <div className="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm">
+            <Database className="mt-0.5 h-5 w-5 shrink-0 text-gray-600" />
+            <div>
+              <p className="font-medium text-gray-900">Global Removal Limit</p>
+              <p className="text-gray-700">
+                A maximum of <strong>5,000 resources</strong> can be processed in a single removal operation.
+                If more resources are available, simply run the operation again to remove the next batch.
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-start gap-3 bg-red-50 p-3 rounded-lg border border-red-100 text-sm">
-            <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 shrink-0" />
-            <p className="text-red-900 font-medium">
-              <strong>Important:</strong> Keep the app tab open. Refreshing, navigating away,
-              or closing the tab will stop the operation.
-            </p>
+          <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm">
+            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+            <div>
+              <p className="font-medium text-amber-900">Important</p>
+              <p className="text-amber-800">
+                Keep the app tab open while an operation is running. Refreshing the page,
+                navigating away, or closing the tab will interrupt the operation.
+              </p>
+            </div>
           </div>
         </div>
       ),
