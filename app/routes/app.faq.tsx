@@ -219,7 +219,6 @@ export default function FaqPage() {
         </div>
       ),
     },
-
     {
       question: "Can I export data for editing?",
       icon: Download,
