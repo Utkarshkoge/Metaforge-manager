@@ -223,12 +223,12 @@ export default function FaqPage() {
       ),
     },
     {
-      question: "How do free trial limits work?",
+      question: "How do trial limits work?",
       icon: Clock,
       answer: (
         <div className="space-y-3">
           <p className="text-sm text-gray-800">
-            Subscribe to any plan and enjoy a free trial. <strong>Free trial limits</strong> will apply during the trial period. After the trial ends, your selected subscription plan, including its feature limits, will automatically become active.
+            Subscribe to any plan and enjoy a trial. <strong>Trial limits</strong> will apply during the trial period. After the trial ends, your selected subscription plan, including its feature limits, will automatically become active.
           </p>
         </div>
       ),
