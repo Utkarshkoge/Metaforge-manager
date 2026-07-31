@@ -497,7 +497,7 @@ export default function BillingPage() {
                                                         {currentPlan === "ADVANCED" ? "Downgrade without trial" : "Subscribe without trial"}
                                                     </Button>
                                                     {trialDays.BASIC < 3 && (
-                                                        <div style={{ textAlign: "center", fontSize: "12px", color: "#e2e8f0" }}>
+                                                        <div style={{ textAlign: "center", fontSize: "12px", color: "#6d7175" }}>
                                                             You have already used {3 - trialDays.BASIC} trial {3 - trialDays.BASIC === 1 ? 'day' : 'days'}.
                                                         </div>
                                                     )}
