@@ -83,6 +83,8 @@ export async function action({ request }: ActionFunctionArgs) {
     try {
         const { admin, session } = await authenticate.admin(request);
         const shop = session.shop;
+        const isTest = process.env.SHOPIFY_BILLING_TEST === "true" || process.env.NODE_ENV !== "production";
+
 
         const url = new URL(request.url);
         const formData = await request.formData();
@@ -171,7 +173,7 @@ export async function action({ request }: ActionFunctionArgs) {
             const variables: any = {
                 name: plan.name,
                 returnUrl,
-                test: true,
+                test: isTest,
                 amount: plan.price,
                 currency: "USD",
             };
