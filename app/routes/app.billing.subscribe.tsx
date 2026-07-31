@@ -463,7 +463,7 @@ export default function BillingPage() {
                                                         style={{
                                                             background: "none",
                                                             border: "none",
-                                                            color: "#141313ff",
+                                                            color: "#e22424ff",
                                                             cursor: "pointer",
                                                             textDecoration: "underline",
                                                             width: "100%",
@@ -592,7 +592,7 @@ export default function BillingPage() {
                                                         style={{
                                                             background: "none",
                                                             border: "none",
-                                                            color: "#141313ff",
+                                                            color: "#e22424ff",
                                                             cursor: "pointer",
                                                             textDecoration: "underline",
                                                             width: "100%",
@@ -626,7 +626,7 @@ export default function BillingPage() {
                                                         Subscribe without trial
                                                     </Button>
                                                     {trialDays.ADVANCED < 7 && (
-                                                        <div style={{ textAlign: "center", fontSize: "12px", color: "#e2e8f0" }}>
+                                                        <div style={{ textAlign: "center", fontSize: "12px", color: "#6d7175" }}>
                                                             You have already used {7 - trialDays.ADVANCED} trial {7 - trialDays.ADVANCED === 1 ? 'day' : 'days'}.
                                                         </div>
                                                     )}
