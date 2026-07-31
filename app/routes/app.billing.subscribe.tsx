@@ -176,6 +176,23 @@ export async function action({ request }: ActionFunctionArgs) {
                 currency: "USD",
             };
 
+            const activeSub = await prisma.activeSubscription.findUnique({
+                where: { shopDomain: shop },
+                select: { plan: true },
+            });
+            const currentPlan = activeSub?.plan ?? "FREE";
+
+            if (currentPlan !== "FREE" && currentPlan !== planKey) {
+                // Determine if upgrade or downgrade
+                if (currentPlan === "BASIC" && planKey === "ADVANCED") {
+                    variables.replacementBehavior = "APPLY_IMMEDIATELY";
+                } else if (currentPlan === "ADVANCED" && planKey === "BASIC") {
+                    variables.replacementBehavior = "STANDARD";
+                } else {
+                    variables.replacementBehavior = "STANDARD";
+                }
+            }
+
             if (trialDays > 0) {
                 variables.trialDays = trialDays;
             }
@@ -411,7 +428,7 @@ export default function BillingPage() {
                                             <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#1a1d1aff", margin: 0 }}>Basic</h2>
                                             <InlineStack gap="100">
                                                 {currentPlan === "BASIC" && <Badge tone="success">Active</Badge>}
-                                                {currentPlan === "BASIC" && trialDays.BASIC > 0 && <Badge tone="info">Trial - {trialDays.BASIC} days left</Badge>}
+                                                {currentPlan === "BASIC" && trialDays.BASIC > 0 && <Badge tone="info">{`Trial - ${trialDays.BASIC} days left`}</Badge>}
                                             </InlineStack>
                                         </InlineStack>
                                         <p style={{ fontSize: "24px", fontWeight: "700", color: "#1a1d1aff", margin: 0 }}>$5 <span style={{ fontSize: "14px", fontWeight: "normal", color: "#6d7175" }}>/ month</span></p>
@@ -486,7 +503,7 @@ export default function BillingPage() {
                                                         onClick={() => handleSubscribeClick("BASIC", false)}
                                                         loading={fetcher.state === "submitting" && fetcher.formData?.get("plan") === "BASIC" && fetcher.formData?.get("skipTrial") === "false"}
                                                     >
-                                                        Subscribe with {trialDays.BASIC}-day trial
+                                                        {`Subscribe with ${trialDays.BASIC}-day trial`}
                                                     </Button>
                                                     <Button
                                                         variant="secondary"
@@ -549,7 +566,7 @@ export default function BillingPage() {
                                             <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#000000ff", margin: 0 }}>Advanced</h2>
                                             <InlineStack gap="100">
                                                 {currentPlan === "ADVANCED" && <Badge tone="success">Active</Badge>}
-                                                {currentPlan === "ADVANCED" && trialDays.ADVANCED > 0 && <Badge tone="info">Trial - {trialDays.ADVANCED} days left</Badge>}
+                                                {currentPlan === "ADVANCED" && trialDays.ADVANCED > 0 && <Badge tone="info">{`Trial - ${trialDays.ADVANCED} days left`}</Badge>}
                                                 <Badge tone="attention">Best Value</Badge>
                                             </InlineStack>
                                         </InlineStack>
@@ -615,7 +632,7 @@ export default function BillingPage() {
                                                         onClick={() => handleSubscribeClick("ADVANCED", false)}
                                                         loading={fetcher.state === "submitting" && fetcher.formData?.get("plan") === "ADVANCED" && fetcher.formData?.get("skipTrial") === "false"}
                                                     >
-                                                        Subscribe with {trialDays.ADVANCED}-day trial
+                                                        {`Subscribe with ${trialDays.ADVANCED}-day trial`}
                                                     </Button>
                                                     <Button
                                                         variant="secondary"
