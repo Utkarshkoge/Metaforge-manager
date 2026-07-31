@@ -5,9 +5,26 @@ import { boundary } from "@shopify/shopify-app-react-router/server";
 import { useRouteError, isRouteErrorResponse } from "react-router";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await authenticate.admin(request);
-
-  return null;
+  try {
+    await authenticate.admin(request);
+    return null;
+  } catch (error) {
+    // Shopify's authenticate.admin throws a redirect Response after OAuth callback.
+    // We intercept it to ensure it redirects directly to our intended app UI (/app) 
+    // instead of the root marketing page (/) to avoid double redirects.
+    if (error instanceof Response && error.status === 302) {
+      const location = error.headers.get("Location");
+      if (location) {
+        // If it's a relative redirect to /?shop=... or absolute to appUrl/?shop=...
+        const url = new URL(location, "http://localhost");
+        if (url.pathname === "/") {
+          url.pathname = "/app";
+          error.headers.set("Location", url.pathname + url.search);
+        }
+      }
+    }
+    throw error;
+  }
 };
 
 export const headers: HeadersFunction = (headersArgs) => {
